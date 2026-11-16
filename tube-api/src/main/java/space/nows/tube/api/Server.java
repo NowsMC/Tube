@@ -12,6 +12,8 @@ public interface Server {
 
     WorldManager worlds();
 
+    Scheduler scheduler();
+
     Collection<Player> players();
 
     Collection<PluginDescriptor> plugins();

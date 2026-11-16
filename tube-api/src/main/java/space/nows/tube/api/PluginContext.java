@@ -17,4 +17,6 @@ public interface PluginContext {
     PluginConfig config();
 
     CommandRegistry commands();
+
+    Scheduler scheduler();
 }
