@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public enum Material {
+public enum Material implements Keyed {
     ACACIA_BOAT("acacia_boat", true, false),
     ACACIA_BUTTON("acacia_button", true, true),
     ACACIA_CHEST_BOAT("acacia_chest_boat", true, false),
@@ -1715,6 +1715,7 @@ public enum Material {
         this.block = block;
     }
 
+    @Override
     public NamespacedKey getKey() {
         return NamespacedKey.minecraft(key);
     }

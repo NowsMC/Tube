@@ -29,4 +29,16 @@ public interface Block {
     boolean isEmpty();
 
     boolean isLiquid();
+
+    org.bukkit.block.data.BlockData getBlockData();
+
+    void setBlockData(org.bukkit.block.data.BlockData data);
+
+    void setBlockData(org.bukkit.block.data.BlockData data, boolean applyPhysics);
+
+    BlockState getState();
+
+    BlockState getState(boolean useSnapshot);
+
+    org.bukkit.Chunk getChunk();
 }

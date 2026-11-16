@@ -12,6 +12,7 @@ public class ItemStack implements Cloneable {
     private int amount;
     private short durability;
     private ItemMeta meta;
+    private final java.util.Map<org.bukkit.enchantments.Enchantment, Integer> enchantments = new java.util.LinkedHashMap<>();
 
     public ItemStack(Material type) {
         this(type, 1);
@@ -72,14 +73,47 @@ public class ItemStack implements Cloneable {
         return true;
     }
 
+    public void addEnchantment(org.bukkit.enchantments.Enchantment enchantment, int level) {
+        if (level < enchantment.getStartLevel() || level > enchantment.getMaxLevel()) {
+            throw new IllegalArgumentException("Enchantment level is either too low or too high (given " + level + ", bounds are " + enchantment.getStartLevel() + " to " + enchantment.getMaxLevel() + ")");
+        }
+        addUnsafeEnchantment(enchantment, level);
+    }
+
+    public void addUnsafeEnchantment(org.bukkit.enchantments.Enchantment enchantment, int level) {
+        enchantments.put(enchantment, level);
+    }
+
+    public void addEnchantments(java.util.Map<org.bukkit.enchantments.Enchantment, Integer> map) {
+        map.forEach(this::addEnchantment);
+    }
+
+    public int removeEnchantment(org.bukkit.enchantments.Enchantment enchantment) {
+        Integer level = enchantments.remove(enchantment);
+        return level == null ? 0 : level;
+    }
+
+    public boolean containsEnchantment(org.bukkit.enchantments.Enchantment enchantment) {
+        return enchantments.containsKey(enchantment);
+    }
+
+    public int getEnchantmentLevel(org.bukkit.enchantments.Enchantment enchantment) {
+        return enchantments.getOrDefault(enchantment, 0);
+    }
+
+    public java.util.Map<org.bukkit.enchantments.Enchantment, Integer> getEnchantments() {
+        return new java.util.LinkedHashMap<>(enchantments);
+    }
+
     public boolean isSimilar(ItemStack other) {
-        return other != null && type == other.type && durability == other.durability && Objects.equals(meta, other.meta);
+        return other != null && type == other.type && durability == other.durability && Objects.equals(meta, other.meta) && enchantments.equals(other.enchantments);
     }
 
     @Override
     public ItemStack clone() {
         ItemStack copy = new ItemStack(type, amount, durability);
         copy.meta = meta == null ? null : meta.clone();
+        copy.enchantments.putAll(enchantments);
         return copy;
     }
 

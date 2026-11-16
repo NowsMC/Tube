@@ -33,6 +33,38 @@ public interface World {
 
     int getSeaLevel();
 
+    Chunk getChunkAt(int x, int z);
+
+    Chunk getChunkAt(int x, int z, boolean generate);
+
+    Chunk getChunkAt(Location location);
+
+    Chunk getChunkAt(org.bukkit.block.Block block);
+
+    boolean isChunkLoaded(int x, int z);
+
+    boolean isChunkLoaded(Chunk chunk);
+
+    boolean isChunkGenerated(int x, int z);
+
+    boolean loadChunk(int x, int z, boolean generate);
+
+    void loadChunk(int x, int z);
+
+    boolean unloadChunk(int x, int z);
+
+    Chunk[] getLoadedChunks();
+
+    int getChunkCount();
+
+    java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(int x, int z);
+
+    java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(int x, int z, boolean generate);
+
+    java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(int x, int z, boolean generate, boolean urgent);
+
+    java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(Location location);
+
     void save();
 
     enum Environment {

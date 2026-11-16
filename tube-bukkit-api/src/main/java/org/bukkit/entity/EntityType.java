@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public enum EntityType {
+public enum EntityType implements org.bukkit.Keyed {
     ACACIA_BOAT("acacia_boat"),
     ACACIA_CHEST_BOAT("acacia_chest_boat"),
     ALLAY("allay"),
@@ -181,6 +181,7 @@ public enum EntityType {
         this.key = key;
     }
 
+    @Override
     public NamespacedKey getKey() {
         return NamespacedKey.minecraft(key);
     }
