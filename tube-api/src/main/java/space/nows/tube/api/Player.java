@@ -35,6 +35,14 @@ public interface Player extends LivingEntity, CommandSender {
 
     void showTitle(Component title, Component subtitle);
 
+    int latency();
+
+    int protocolVersion();
+
+    Optional<String> clientBrand();
+
+    void sendResourcePack(ResourcePack pack);
+
     void kick(Component reason);
 
     default void kick(String reason) {

@@ -2,6 +2,7 @@ package space.nows.tube.api;
 
 import net.kyori.adventure.text.Component;
 import space.nows.tube.api.event.EventBus;
+import space.nows.tube.api.network.Network;
 
 import java.util.Collection;
 
@@ -32,6 +33,8 @@ public interface Server {
     Scheduler scheduler();
 
     EventBus events();
+
+    Network network();
 
     Collection<Player> players();
 
