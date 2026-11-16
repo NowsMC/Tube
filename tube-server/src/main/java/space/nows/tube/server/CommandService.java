@@ -1,5 +1,7 @@
 package space.nows.tube.server;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import space.nows.tube.api.Command;
@@ -40,8 +42,9 @@ final class CommandService implements CommandRegistry {
 
         var bridge = new net.minestom.server.command.builder.Command(labels.getFirst(), labels.stream().skip(1).toArray(String[]::new));
         var args = ArgumentType.StringArray("args");
-        bridge.setDefaultExecutor((sender, context) -> command.execute(wrap(sender), List.of()));
-        bridge.addSyntax((sender, context) -> command.execute(wrap(sender), List.of(context.get(args))), args);
+        bridge.setCondition((sender, commandString) -> command.permission() == null || wrap(sender).hasPermission(command.permission()));
+        bridge.setDefaultExecutor((sender, context) -> run(command, wrap(sender), List.of()));
+        bridge.addSyntax((sender, context) -> run(command, wrap(sender), List.of(context.get(args))), args);
         MinecraftServer.getCommandManager().register(bridge);
 
         Entry entry = new Entry(labels.getFirst(), command, bridge, List.copyOf(labels));
@@ -64,6 +67,10 @@ final class CommandService implements CommandRegistry {
     }
 
     void dispatchConsole(String line) {
+        dispatch(console, line);
+    }
+
+    void dispatch(CommandSender sender, String line) {
         String trimmed = line.strip();
         if (trimmed.startsWith("/")) {
             trimmed = trimmed.substring(1);
@@ -74,10 +81,19 @@ final class CommandService implements CommandRegistry {
         String[] parts = trimmed.split("\\s+");
         Entry entry = entries.get(normalize(parts[0]));
         if (entry == null) {
-            console.sendMessage("Unknown command: " + parts[0]);
+            sender.sendMessage("Unknown command: " + parts[0]);
             return;
         }
-        entry.handler().execute(console, List.of(parts).subList(1, parts.length));
+        run(entry.handler(), sender, List.of(parts).subList(1, parts.length));
+    }
+
+    private static void run(Command command, CommandSender sender, List<String> args) {
+        String permission = command.permission();
+        if (permission != null && !sender.hasPermission(permission)) {
+            sender.sendMessage(Component.text("You do not have permission to use this command", NamedTextColor.RED));
+            return;
+        }
+        command.execute(sender, args);
     }
 
     private CommandSender wrap(net.minestom.server.command.CommandSender sender) {

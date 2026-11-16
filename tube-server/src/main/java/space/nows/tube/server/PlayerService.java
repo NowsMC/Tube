@@ -10,14 +10,16 @@ import java.util.UUID;
 final class PlayerService {
 
     private final WorldService worlds;
+    private final PermissionService permissions;
     private final ConcurrentChainedObject2ObjectHashTable<UUID, TubePlayer> players = ConcurrentChainedObject2ObjectHashTable.createWithExpected(64);
 
-    PlayerService(WorldService worlds) {
+    PlayerService(WorldService worlds, PermissionService permissions) {
         this.worlds = worlds;
+        this.permissions = permissions;
     }
 
     TubePlayer wrap(net.minestom.server.entity.Player handle) {
-        return players.computeIfAbsent(handle.getUuid(), uuid -> new TubePlayer(handle, worlds));
+        return players.computeIfAbsent(handle.getUuid(), uuid -> new TubePlayer(handle, worlds, permissions));
     }
 
     void remove(net.minestom.server.entity.Player handle) {

@@ -9,9 +9,13 @@ public interface Server {
 
     String name();
 
+    String version();
+
     String minecraftVersion();
 
     CommandRegistry commands();
+
+    PermissionManager permissions();
 
     WorldManager worlds();
 

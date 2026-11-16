@@ -23,7 +23,7 @@ class PlayerApiTest {
     @Test
     void changesGameModeAndHealth(Env env) {
         WorldService worlds = new WorldService(directory, "main");
-        PlayerService players = new PlayerService(worlds);
+        PlayerService players = new PlayerService(worlds, new PermissionService(directory));
         var handle = env.createPlayer(((TubeWorld) worlds.defaultWorld()).instance(), new Pos(0, 42, 0));
         TubePlayer player = players.wrap(handle);
 
@@ -38,7 +38,7 @@ class PlayerApiTest {
     @Test
     void teleportsBetweenWorlds(Env env) {
         WorldService worlds = new WorldService(directory, "main");
-        PlayerService players = new PlayerService(worlds);
+        PlayerService players = new PlayerService(worlds, new PermissionService(directory));
         var handle = env.createPlayer(((TubeWorld) worlds.defaultWorld()).instance(), new Pos(0, 42, 0));
         TubePlayer player = players.wrap(handle);
         var other = worlds.load("other");
@@ -52,7 +52,7 @@ class PlayerApiTest {
     @Test
     void sendsRichTextWithoutFailing(Env env) {
         WorldService worlds = new WorldService(directory, "main");
-        TubePlayer player = new PlayerService(worlds).wrap(env.createPlayer(((TubeWorld) worlds.defaultWorld()).instance(), new Pos(0, 42, 0)));
+        TubePlayer player = new PlayerService(worlds, new PermissionService(directory)).wrap(env.createPlayer(((TubeWorld) worlds.defaultWorld()).instance(), new Pos(0, 42, 0)));
         player.sendMessage(Text.mini("<green>hello"));
         player.sendActionBar(Text.mini("<gold>bar"));
         player.showTitle(Text.mini("<red>title"), Text.plain("sub"));

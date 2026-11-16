@@ -16,15 +16,22 @@ final class TubePlayer implements Player {
 
     private final net.minestom.server.entity.Player handle;
     private final WorldService worlds;
+    private final PermissionService permissions;
 
-    TubePlayer(net.minestom.server.entity.Player handle, WorldService worlds) {
+    TubePlayer(net.minestom.server.entity.Player handle, WorldService worlds, PermissionService permissions) {
         this.handle = handle;
         this.worlds = worlds;
+        this.permissions = permissions;
     }
 
     @Override
     public String name() {
         return handle.getUsername();
+    }
+
+    @Override
+    public boolean hasPermission(String node) {
+        return permissions.has(handle.getUuid(), node);
     }
 
     @Override

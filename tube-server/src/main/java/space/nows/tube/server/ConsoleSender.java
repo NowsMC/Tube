@@ -16,6 +16,11 @@ final class ConsoleSender implements CommandSender {
     }
 
     @Override
+    public boolean hasPermission(String node) {
+        return true;
+    }
+
+    @Override
     public void sendMessage(Component message) {
         LOGGER.info(PlainTextComponentSerializer.plainText().serialize(message));
     }

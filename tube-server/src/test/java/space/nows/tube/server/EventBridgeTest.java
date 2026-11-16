@@ -40,7 +40,7 @@ class EventBridgeTest {
 
     private void install() {
         worlds = new WorldService(directory, "main");
-        players = new PlayerService(worlds);
+        players = new PlayerService(worlds, new PermissionService(directory));
         new EventBridge(bus, players, worlds).install(MinecraftServer.getGlobalEventHandler());
     }
 

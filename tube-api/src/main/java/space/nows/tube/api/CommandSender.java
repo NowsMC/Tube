@@ -6,6 +6,8 @@ public interface CommandSender {
 
     String name();
 
+    boolean hasPermission(String node);
+
     void sendMessage(Component message);
 
     default void sendMessage(String message) {
