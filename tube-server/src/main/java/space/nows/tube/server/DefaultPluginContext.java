@@ -9,6 +9,7 @@ import space.nows.tube.api.PluginDescriptor;
 import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.event.EventBus;
+import space.nows.tube.api.network.Network;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,10 +30,11 @@ final class DefaultPluginContext implements PluginContext {
     private final CommandRegistry commands;
     private final Scheduler scheduler;
     private final EventBus events;
+    private final Network network;
     private final Logger logger;
     private PluginConfig config;
 
-    DefaultPluginContext(Server server, PluginDescriptor descriptor, Path jar, Path dataFolder, CommandRegistry commands, Scheduler scheduler, EventBus events) {
+    DefaultPluginContext(Server server, PluginDescriptor descriptor, Path jar, Path dataFolder, CommandRegistry commands, Scheduler scheduler, EventBus events, Network network) {
         this.server = server;
         this.descriptor = descriptor;
         this.jar = jar;
@@ -40,6 +42,7 @@ final class DefaultPluginContext implements PluginContext {
         this.commands = commands;
         this.scheduler = scheduler;
         this.events = events;
+        this.network = network;
         this.logger = LoggerFactory.getLogger(descriptor.name());
     }
 
@@ -71,6 +74,11 @@ final class DefaultPluginContext implements PluginContext {
     @Override
     public EventBus events() {
         return events;
+    }
+
+    @Override
+    public Network network() {
+        return network;
     }
 
     @Override

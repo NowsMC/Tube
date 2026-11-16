@@ -5,6 +5,7 @@ import net.kyori.adventure.title.Title;
 import space.nows.tube.api.GameMode;
 import space.nows.tube.api.Inventory;
 import space.nows.tube.api.Player;
+import space.nows.tube.api.ResourcePack;
 
 import java.net.InetSocketAddress;
 import java.util.Optional;
@@ -13,6 +14,7 @@ final class TubePlayer extends TubeLivingEntity implements Player {
 
     private final net.minestom.server.entity.Player player;
     private final PermissionService permissions;
+    private volatile String clientBrand;
 
     TubePlayer(net.minestom.server.entity.Player player, WorldService worlds, PermissionService permissions) {
         super(player, worlds);
@@ -105,6 +107,35 @@ final class TubePlayer extends TubeLivingEntity implements Player {
     @Override
     public void showTitle(Component title, Component subtitle) {
         player.showTitle(Title.title(title, subtitle));
+    }
+
+    void setClientBrand(String brand) {
+        this.clientBrand = brand;
+    }
+
+    @Override
+    public int latency() {
+        return player.getLatency();
+    }
+
+    @Override
+    public int protocolVersion() {
+        return player.getPlayerConnection().getProtocolVersion();
+    }
+
+    @Override
+    public Optional<String> clientBrand() {
+        return Optional.ofNullable(clientBrand);
+    }
+
+    @Override
+    public void sendResourcePack(ResourcePack pack) {
+        var request = net.kyori.adventure.resource.ResourcePackRequest.resourcePackRequest()
+                .packs(net.kyori.adventure.resource.ResourcePackInfo.resourcePackInfo(pack.id(), java.net.URI.create(pack.url()), pack.sha1()))
+                .required(pack.required())
+                .prompt(pack.prompt())
+                .build();
+        player.sendResourcePacks(request);
     }
 
     @Override

@@ -8,6 +8,7 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
+import net.minestom.server.event.player.PlayerResourcePackStatusEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.server.ServerListPingEvent;
 import net.minestom.server.inventory.InventoryType;
@@ -31,6 +32,11 @@ import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
 import space.nows.tube.api.event.EventBus;
+import space.nows.tube.api.event.PlayerResourcePackEvent;
+import space.nows.tube.api.network.Network;
+import space.nows.tube.network.NettyNetwork;
+import space.nows.tube.network.QueryServer;
+import space.nows.tube.network.RconServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +49,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -70,6 +77,10 @@ public final class TubeServer implements Server {
     private SchedulerService scheduler;
     private DefaultEventBus events;
     private PluginManager plugins;
+    private NettyNetwork network;
+    private TubePluginChannels channels;
+    private RconServer rcon;
+    private QueryServer query;
     private ScheduledExecutorService autosave;
     private final java.util.List<ServerExtension> extensions = new java.util.ArrayList<>();
 
@@ -131,6 +142,11 @@ public final class TubeServer implements Server {
     @Override
     public WorldManager worlds() {
         return worlds;
+    }
+
+    @Override
+    public Network network() {
+        return network;
     }
 
     @Override
@@ -198,6 +214,8 @@ public final class TubeServer implements Server {
 
         MinecraftServer server = MinecraftServer.init(settings.onlineMode() ? new Auth.Online() : new Auth.Offline());
         MinecraftServer.setBrandName(name());
+        int threshold = settings.networkCompressionThreshold();
+        MinecraftServer.setCompressionThreshold(threshold < 0 ? 0 : Math.max(1, threshold));
         MinecraftServer.setDifficulty(Difficulty.valueOf(settings.difficulty().name()));
 
         permissions = new PermissionService(directory);
@@ -211,11 +229,14 @@ public final class TubeServer implements Server {
         commands = new CommandService(players);
         scheduler = new SchedulerService();
         events = new DefaultEventBus();
+        channels = new TubePluginChannels(players);
+        network = new NettyNetwork(channels);
         plugins = new PluginManager(this, commands, scheduler, events, directory.resolve("plugins"));
 
         installConnectionHandlers();
         new EventBridge(events, players, worlds).install(MinecraftServer.getGlobalEventHandler());
         installServerListeners();
+        channels.install(MinecraftServer.getGlobalEventHandler());
 
         Profiles profiles = new Profiles(this::players, userCache);
         BuiltinCommands.register(this, commands, profiles);
@@ -224,6 +245,7 @@ public final class TubeServer implements Server {
         worlds.defaultWorld();
         plugins.loadAll();
         enableExtensions();
+        startRemoteAccess();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "tube-shutdown"));
         startAutosave();
@@ -233,7 +255,8 @@ public final class TubeServer implements Server {
 
     private void installConnectionHandlers() {
         var handler = MinecraftServer.getGlobalEventHandler();
-        Component motd = MiniMessage.miniMessage().deserialize(settings.motd());
+        Component motd = parseMotd(settings.motd());
+        var resourcePack = resourcePack();
 
         handler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             event.setHardcore(settings.hardcore());
@@ -250,6 +273,9 @@ public final class TubeServer implements Server {
                 return;
             }
             players.wrap(event.getPlayer());
+            if (resourcePack != null) {
+                players.wrap(event.getPlayer()).sendResourcePack(resourcePack);
+            }
             var saved = playerData.spawn(event.getPlayer().getUuid()).flatMap(spawn -> worlds.loadExisting(spawn.world()).map(world -> Map.entry(world, spawn.position())));
             if (saved.isPresent()) {
                 event.setSpawningInstance(worlds.instanceOf(saved.get().getKey()));
@@ -274,21 +300,119 @@ public final class TubeServer implements Server {
 
         handler.addListener(PlayerDisconnectEvent.class, event -> savePlayer(event.getPlayer()));
 
+        handler.addListener(PlayerResourcePackStatusEvent.class, event -> {
+            var status = event.getStatus();
+            events.post(new PlayerResourcePackEvent(players.wrap(event.getPlayer()), event.getPackUuid(), status));
+            boolean failed = !status.intermediate() && status != net.kyori.adventure.resource.ResourcePackStatus.SUCCESSFULLY_LOADED;
+            if (settings.requireResourcePack() && failed) {
+                event.getPlayer().kick(Component.text("This server requires its resource pack"));
+            }
+        });
+
         handler.addListener(ServerListPingEvent.class, event -> {
             if (!settings.enableStatus()) {
                 event.setCancelled(true);
                 return;
             }
             Status status = event.getStatus();
-            Status.PlayerInfo playerInfo = settings.hideOnlinePlayers()
-                    ? new Status.PlayerInfo(MinecraftServer.getConnectionManager().getOnlinePlayers().size(), settings.maxPlayers())
-                    : Status.PlayerInfo.builder(Status.PlayerInfo.online(12)).maxPlayers(settings.maxPlayers()).build();
+            int online = MinecraftServer.getConnectionManager().getOnlinePlayers().size();
+            var ping = events.post(new space.nows.tube.api.event.ServerListPingEvent(
+                    event.getConnection() == null ? null : event.getConnection().getRemoteAddress(),
+                    status.versionInfo().protocolVersion(), motd, online, settings.maxPlayers(), settings.hideOnlinePlayers()));
+            if (ping.isCancelled()) {
+                event.setCancelled(true);
+                return;
+            }
+            Status.PlayerInfo playerInfo = ping.hidePlayers()
+                    ? new Status.PlayerInfo(ping.online(), ping.maxPlayers())
+                    : Status.PlayerInfo.builder(Status.PlayerInfo.online(12)).maxPlayers(ping.maxPlayers()).build();
             event.setStatus(Status.builder(status)
-                    .description(motd)
+                    .description(ping.motd())
                     .playerInfo(playerInfo)
                     .versionInfo(new Status.VersionInfo(name() + " " + minecraftVersion(), status.versionInfo().protocolVersion()))
                     .build());
         });
+    }
+
+    private static Component parseMotd(String text) {
+        return text.indexOf('§') >= 0
+                ? net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(text)
+                : MiniMessage.miniMessage().deserialize(text);
+    }
+
+    private space.nows.tube.api.ResourcePack resourcePack() {
+        if (settings.resourcePack().isEmpty()) {
+            return null;
+        }
+        try {
+            java.net.URI.create(settings.resourcePack());
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("server.properties: resource-pack is not a valid URL, no resource pack will be sent");
+            return null;
+        }
+        java.util.UUID id = settings.resourcePackId().isEmpty()
+                ? java.util.UUID.nameUUIDFromBytes(settings.resourcePack().getBytes(StandardCharsets.UTF_8))
+                : java.util.UUID.fromString(settings.resourcePackId());
+        Component prompt = settings.resourcePackPrompt().isEmpty() ? null : parseMotd(settings.resourcePackPrompt());
+        return new space.nows.tube.api.ResourcePack(id, settings.resourcePack(), settings.resourcePackSha1(), settings.requireResourcePack(), prompt);
+    }
+
+    private void startRemoteAccess() {
+        if (settings.enableRcon()) {
+            if (settings.rconPassword().isEmpty()) {
+                LOGGER.warn("server.properties: enable-rcon is true but rcon.password is empty, RCON stays disabled");
+            } else {
+                try {
+                    rcon = new RconServer(network, new java.net.InetSocketAddress(settings.bindAddress(), settings.rconPort()), settings.rconPassword(), this::runRcon);
+                    LOGGER.info("RCON running on {}:{}", settings.bindAddress(), settings.rconPort());
+                } catch (RuntimeException e) {
+                    LOGGER.error("Could not start RCON on port {}", settings.rconPort(), e);
+                }
+            }
+        }
+        if (settings.enableQuery()) {
+            try {
+                query = new QueryServer(network, new java.net.InetSocketAddress(settings.bindAddress(), settings.queryPort()), this::queryInfo);
+                LOGGER.info("Query running on {}:{}", settings.bindAddress(), settings.queryPort());
+            } catch (RuntimeException e) {
+                LOGGER.error("Could not start Query on port {}", settings.queryPort(), e);
+            }
+        }
+    }
+
+    private CompletableFuture<String> runRcon(String line) {
+        CompletableFuture<String> result = new CompletableFuture<>();
+        scheduler.runSync(() -> {
+            RconSender sender = new RconSender();
+            try {
+                if (settings.broadcastRconToOps()) {
+                    players().stream().filter(player -> permissions.isOp(player.uuid()))
+                            .forEach(player -> player.sendMessage(Component.text("[Rcon: " + line + "]", net.kyori.adventure.text.format.NamedTextColor.GRAY)));
+                }
+                commands.dispatch(sender, line);
+                result.complete(sender.output());
+            } catch (RuntimeException e) {
+                LOGGER.error("RCON command failed: {}", line, e);
+                result.completeExceptionally(e);
+            }
+        });
+        return result;
+    }
+
+    private QueryServer.Info queryInfo() {
+        String pluginList = plugins().stream().map(plugin -> plugin.name() + " " + plugin.version()).collect(java.util.stream.Collectors.joining("; "));
+        var online = players();
+        return new QueryServer.Info(
+                PlainTextComponentSerializer.plainText().serialize(parseMotd(settings.motd())),
+                "SMP",
+                settings.levelName(),
+                minecraftVersion(),
+                pluginList.isEmpty() ? name() + " " + version : name() + " " + version + ": " + pluginList,
+                online.size(),
+                settings.maxPlayers(),
+                settings.serverPort(),
+                settings.bindAddress(),
+                online.stream().map(Player::name).toList());
     }
 
     private void installServerListeners() {
@@ -360,6 +484,15 @@ public final class TubeServer implements Server {
             }
         });
         plugins.disableAll();
+        if (rcon != null) {
+            rcon.close();
+        }
+        if (query != null) {
+            query.close();
+        }
+        if (network != null) {
+            network.close();
+        }
         try {
             saveAll();
         } catch (RuntimeException e) {

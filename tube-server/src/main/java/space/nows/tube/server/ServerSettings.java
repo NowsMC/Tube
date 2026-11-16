@@ -37,7 +37,19 @@ record ServerSettings(
         int spawnProtection,
         int viewDistance,
         boolean logIps,
-        int autosaveSeconds) {
+        int autosaveSeconds,
+        boolean enableRcon,
+        int rconPort,
+        String rconPassword,
+        boolean broadcastRconToOps,
+        boolean enableQuery,
+        int queryPort,
+        int networkCompressionThreshold,
+        String resourcePack,
+        String resourcePackSha1,
+        String resourcePackId,
+        String resourcePackPrompt,
+        boolean requireResourcePack) {
 
     enum Difficulty {
         PEACEFUL,
@@ -73,6 +85,18 @@ record ServerSettings(
         defaults.put("view-distance", "10");
         defaults.put("log-ips", "true");
         defaults.put("autosave-seconds", "300");
+        defaults.put("enable-rcon", "false");
+        defaults.put("rcon.port", "25575");
+        defaults.put("rcon.password", "");
+        defaults.put("broadcast-rcon-to-ops", "true");
+        defaults.put("enable-query", "false");
+        defaults.put("query.port", "25565");
+        defaults.put("network-compression-threshold", "256");
+        defaults.put("resource-pack", "");
+        defaults.put("resource-pack-sha1", "");
+        defaults.put("resource-pack-id", "");
+        defaults.put("resource-pack-prompt", "");
+        defaults.put("require-resource-pack", "false");
         return defaults;
     }
 
@@ -80,8 +104,6 @@ record ServerSettings(
         Map<String, String> keys = new LinkedHashMap<>();
         keys.put("accepts-transfers", "false");
         keys.put("allow-flight", "false");
-        keys.put("enable-query", "false");
-        keys.put("enable-rcon", "false");
         keys.put("enforce-secure-profile", "true");
         keys.put("entity-broadcast-range-percentage", "100");
         keys.put("generate-structures", "true");
@@ -90,13 +112,10 @@ record ServerSettings(
         keys.put("level-seed", "");
         keys.put("max-tick-time", "60000");
         keys.put("max-world-size", "29999984");
-        keys.put("network-compression-threshold", "256");
         keys.put("pause-when-empty-seconds", "-1");
         keys.put("player-idle-timeout", "0");
         keys.put("prevent-proxy-connections", "false");
         keys.put("rate-limit", "0");
-        keys.put("require-resource-pack", "false");
-        keys.put("resource-pack", "");
         keys.put("simulation-distance", "10");
         keys.put("use-native-transport", "true");
         return keys;
@@ -136,7 +155,19 @@ record ServerSettings(
                 integer(properties, "spawn-protection", 0, Integer.MAX_VALUE),
                 integer(properties, "view-distance", 2, 32),
                 bool(properties, "log-ips"),
-                integer(properties, "autosave-seconds", 0, Integer.MAX_VALUE));
+                integer(properties, "autosave-seconds", 0, Integer.MAX_VALUE),
+                bool(properties, "enable-rcon"),
+                integer(properties, "rcon.port", 1, 65535),
+                text(properties, "rcon.password"),
+                bool(properties, "broadcast-rcon-to-ops"),
+                bool(properties, "enable-query"),
+                integer(properties, "query.port", 1, 65535),
+                integer(properties, "network-compression-threshold", -1, Integer.MAX_VALUE),
+                text(properties, "resource-pack"),
+                text(properties, "resource-pack-sha1"),
+                resourcePackId(properties),
+                text(properties, "resource-pack-prompt"),
+                bool(properties, "require-resource-pack"));
     }
 
     static void set(Path file, String key, String value) {
@@ -212,6 +243,19 @@ record ServerSettings(
             // falls through to the default below
         }
         return invalid(key, value, Integer.parseInt(DEFAULTS.get(key)));
+    }
+
+    private static String resourcePackId(Properties properties) {
+        String value = text(properties, "resource-pack-id");
+        if (value.isEmpty()) {
+            return value;
+        }
+        try {
+            java.util.UUID.fromString(value);
+            return value;
+        } catch (IllegalArgumentException e) {
+            return invalid("resource-pack-id", value, "");
+        }
     }
 
     private static String levelName(Properties properties) {

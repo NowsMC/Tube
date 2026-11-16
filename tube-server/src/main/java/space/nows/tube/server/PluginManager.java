@@ -35,7 +35,7 @@ public final class PluginManager {
     private record Candidate(Path jar, PluginDescriptor descriptor) {
     }
 
-    private record Running(PluginDescriptor descriptor, Plugin plugin, URLClassLoader loader, ScopedCommands commands, ScopedScheduler scheduler, ScopedEvents events) {
+    private record Running(PluginDescriptor descriptor, Plugin plugin, URLClassLoader loader, ScopedCommands commands, ScopedScheduler scheduler, ScopedEvents events, space.nows.tube.network.ScopedNetwork network) {
     }
 
     private final Server server;
@@ -78,6 +78,7 @@ public final class PluginManager {
             plugin.commands().unregisterAll();
             plugin.scheduler().cancelAll();
             plugin.events().cancelAll();
+            plugin.network().closeAll();
             try {
                 plugin.loader().close();
             } catch (IOException e) {
@@ -207,6 +208,7 @@ public final class PluginManager {
         ScopedCommands scoped = new ScopedCommands(commands);
         ScopedScheduler scopedScheduler = new ScopedScheduler(scheduler);
         ScopedEvents scopedEvents = new ScopedEvents(events);
+        space.nows.tube.network.ScopedNetwork scopedNetwork = new space.nows.tube.network.ScopedNetwork(server.network());
         URLClassLoader loader = null;
         try {
             URL url = candidate.jar().toUri().toURL();
@@ -217,14 +219,15 @@ public final class PluginManager {
             }
             Plugin plugin = (Plugin) type.getDeclaredConstructor().newInstance();
             Path dataFolder = directory.resolve(descriptor.name());
-            plugin.onEnable(new DefaultPluginContext(server, descriptor, candidate.jar(), dataFolder, scoped, scopedScheduler, scopedEvents));
-            running.add(new Running(descriptor, plugin, loader, scoped, scopedScheduler, scopedEvents));
+            plugin.onEnable(new DefaultPluginContext(server, descriptor, candidate.jar(), dataFolder, scoped, scopedScheduler, scopedEvents, scopedNetwork));
+            running.add(new Running(descriptor, plugin, loader, scoped, scopedScheduler, scopedEvents, scopedNetwork));
             LOGGER.info("Enabled {} {}", descriptor.name(), descriptor.version());
         } catch (Throwable e) {
             LOGGER.error("Could not enable {}", descriptor.name(), e);
             scoped.unregisterAll();
             scopedScheduler.cancelAll();
             scopedEvents.cancelAll();
+            scopedNetwork.closeAll();
             if (loader != null) {
                 try {
                     loader.close();
