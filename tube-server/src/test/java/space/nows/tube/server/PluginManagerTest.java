@@ -9,6 +9,8 @@ import org.junit.jupiter.api.io.TempDir;
 import space.nows.tube.api.Command;
 import space.nows.tube.api.CommandRegistry;
 import space.nows.tube.api.PluginDescriptor;
+import space.nows.tube.api.ScheduledTask;
+import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
 
 import java.io.IOException;
@@ -52,6 +54,22 @@ class PluginManagerTest {
     Path directory;
 
     private final MapRegistry registry = new MapRegistry();
+    private final Scheduler scheduler = new Scheduler() {
+        @Override
+        public ScheduledTask runSync(Runnable task) {
+            return null;
+        }
+
+        @Override
+        public ScheduledTask runLater(long delayTicks, Runnable task) {
+            return null;
+        }
+
+        @Override
+        public ScheduledTask runRepeating(long delayTicks, long periodTicks, Runnable task) {
+            return null;
+        }
+    };
     private final Server server = (Server) Proxy.newProxyInstance(
             Server.class.getClassLoader(), new Class<?>[] {Server.class}, (proxy, method, args) -> null);
 
@@ -65,7 +83,7 @@ class PluginManagerTest {
         writePlugin("1-first.jar", "b", List.of("a"), null);
         writePlugin("2-second.jar", "a", List.of(), "greeting: hello\n");
 
-        PluginManager manager = new PluginManager(server, registry, directory);
+        PluginManager manager = new PluginManager(server, registry, scheduler, directory);
         manager.loadAll();
 
         assertEquals(List.of("enable:a:hello", "enable:b:none"), RecordingPlugin.EVENTS);
@@ -83,7 +101,7 @@ class PluginManagerTest {
     @Test
     void copiesDefaultConfigIntoDataFolder() throws IOException {
         writePlugin("a.jar", "a", List.of(), "greeting: hello\n");
-        new PluginManager(server, registry, directory).loadAll();
+        new PluginManager(server, registry, scheduler, directory).loadAll();
         assertTrue(Files.isRegularFile(directory.resolve("a").resolve("config.yml")));
     }
 
@@ -91,7 +109,7 @@ class PluginManagerTest {
     void readsDescriptorAndConfigInJsonAndToml() throws IOException {
         writePlugin("json.jar", "j", List.of(), "{\"greeting\": \"from-json\"}", "config.json", "json");
         writePlugin("toml.jar", "t", List.of("j"), "greeting = \"from-toml\"\n", "config.toml", "toml");
-        new PluginManager(server, registry, directory).loadAll();
+        new PluginManager(server, registry, scheduler, directory).loadAll();
         assertEquals(List.of("enable:j:from-json", "enable:t:from-toml"), RecordingPlugin.EVENTS);
         assertTrue(Files.isRegularFile(directory.resolve("t").resolve("config.toml")));
     }
@@ -99,7 +117,7 @@ class PluginManagerTest {
     @Test
     void skipsPluginWithMissingDependency() throws IOException {
         writePlugin("b.jar", "b", List.of("missing"), null);
-        PluginManager manager = new PluginManager(server, registry, directory);
+        PluginManager manager = new PluginManager(server, registry, scheduler, directory);
         manager.loadAll();
         assertTrue(RecordingPlugin.EVENTS.isEmpty());
         assertTrue(manager.descriptors().isEmpty());
@@ -110,7 +128,7 @@ class PluginManagerTest {
         try (JarOutputStream ignored = new JarOutputStream(Files.newOutputStream(directory.resolve("broken.jar")))) {
             ignored.flush();
         }
-        PluginManager manager = new PluginManager(server, registry, directory);
+        PluginManager manager = new PluginManager(server, registry, scheduler, directory);
         manager.loadAll();
         assertTrue(manager.descriptors().isEmpty());
     }

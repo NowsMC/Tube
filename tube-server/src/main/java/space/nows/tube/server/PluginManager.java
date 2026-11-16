@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import space.nows.tube.api.CommandRegistry;
 import space.nows.tube.api.Plugin;
 import space.nows.tube.api.PluginDescriptor;
+import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
 
 import java.io.IOException;
@@ -33,17 +34,19 @@ public final class PluginManager {
     private record Candidate(Path jar, PluginDescriptor descriptor) {
     }
 
-    private record Running(PluginDescriptor descriptor, Plugin plugin, URLClassLoader loader, ScopedCommands commands) {
+    private record Running(PluginDescriptor descriptor, Plugin plugin, URLClassLoader loader, ScopedCommands commands, ScopedScheduler scheduler) {
     }
 
     private final Server server;
     private final CommandRegistry commands;
+    private final Scheduler scheduler;
     private final Path directory;
     private final List<Running> running = new ArrayList<>();
 
-    public PluginManager(Server server, CommandRegistry commands, Path directory) {
+    public PluginManager(Server server, CommandRegistry commands, Scheduler scheduler, Path directory) {
         this.server = server;
         this.commands = commands;
+        this.scheduler = scheduler;
         this.directory = directory;
     }
 
@@ -70,6 +73,7 @@ public final class PluginManager {
                 LOGGER.error("Plugin {} failed to disable", plugin.descriptor().name(), e);
             }
             plugin.commands().unregisterAll();
+            plugin.scheduler().cancelAll();
             try {
                 plugin.loader().close();
             } catch (IOException e) {
@@ -187,6 +191,7 @@ public final class PluginManager {
         }
 
         ScopedCommands scoped = new ScopedCommands(commands);
+        ScopedScheduler scopedScheduler = new ScopedScheduler(scheduler);
         URLClassLoader loader = null;
         try {
             URL url = candidate.jar().toUri().toURL();
@@ -197,12 +202,13 @@ public final class PluginManager {
             }
             Plugin plugin = (Plugin) type.getDeclaredConstructor().newInstance();
             Path dataFolder = directory.resolve(descriptor.name());
-            plugin.onEnable(new DefaultPluginContext(server, descriptor, candidate.jar(), dataFolder, scoped));
-            running.add(new Running(descriptor, plugin, loader, scoped));
+            plugin.onEnable(new DefaultPluginContext(server, descriptor, candidate.jar(), dataFolder, scoped, scopedScheduler));
+            running.add(new Running(descriptor, plugin, loader, scoped, scopedScheduler));
             LOGGER.info("Enabled {} {}", descriptor.name(), descriptor.version());
         } catch (Throwable e) {
             LOGGER.error("Could not enable {}", descriptor.name(), e);
             scoped.unregisterAll();
+            scopedScheduler.cancelAll();
             if (loader != null) {
                 try {
                     loader.close();

@@ -12,6 +12,7 @@ import space.nows.tube.api.CommandRegistry;
 import space.nows.tube.api.Location;
 import space.nows.tube.api.Player;
 import space.nows.tube.api.PluginDescriptor;
+import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.WorldManager;
 
@@ -39,6 +40,7 @@ public final class TubeServer implements Server {
     private WorldService worlds;
     private PlayerService players;
     private CommandService commands;
+    private SchedulerService scheduler;
     private PluginManager plugins;
     private ScheduledExecutorService autosave;
 
@@ -68,6 +70,11 @@ public final class TubeServer implements Server {
     }
 
     @Override
+    public Scheduler scheduler() {
+        return scheduler;
+    }
+
+    @Override
     public Collection<Player> players() {
         return players.online();
     }
@@ -85,8 +92,11 @@ public final class TubeServer implements Server {
 
     @Override
     public void stop() {
-        shutdown();
-        Runtime.getRuntime().exit(0);
+        Thread thread = new Thread(() -> {
+            shutdown();
+            Runtime.getRuntime().exit(0);
+        }, "tube-stop");
+        thread.start();
     }
 
     public void start() {
@@ -98,7 +108,8 @@ public final class TubeServer implements Server {
         worlds = new WorldService(directory.resolve("worlds"), config.defaultWorld());
         players = new PlayerService(worlds);
         commands = new CommandService(players);
-        plugins = new PluginManager(this, commands, directory.resolve("plugins"));
+        scheduler = new SchedulerService();
+        plugins = new PluginManager(this, commands, scheduler, directory.resolve("plugins"));
 
         MinecraftServer.getGlobalEventHandler().addListener(AsyncPlayerConfigurationEvent.class, event -> {
             players.wrap(event.getPlayer());
@@ -153,16 +164,21 @@ public final class TubeServer implements Server {
         }, config.autosaveSeconds(), config.autosaveSeconds(), TimeUnit.SECONDS);
     }
 
+    private void dispatchConsole(String line) {
+        try {
+            commands.dispatchConsole(line);
+        } catch (RuntimeException e) {
+            LOGGER.error("Command failed", e);
+        }
+    }
+
     private void startConsole() {
         Thread thread = new Thread(() -> {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    try {
-                        commands.dispatchConsole(line);
-                    } catch (RuntimeException e) {
-                        LOGGER.error("Command failed", e);
-                    }
+                    String input = line;
+                    scheduler.runSync(() -> dispatchConsole(input));
                 }
             } catch (IOException e) {
                 LOGGER.warn("Console input closed", e);

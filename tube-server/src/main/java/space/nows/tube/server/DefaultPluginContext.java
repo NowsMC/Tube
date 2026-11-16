@@ -6,6 +6,7 @@ import space.nows.tube.api.CommandRegistry;
 import space.nows.tube.api.PluginConfig;
 import space.nows.tube.api.PluginContext;
 import space.nows.tube.api.PluginDescriptor;
+import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
 
 import java.io.IOException;
@@ -25,15 +26,17 @@ final class DefaultPluginContext implements PluginContext {
     private final Path jar;
     private final Path dataFolder;
     private final CommandRegistry commands;
+    private final Scheduler scheduler;
     private final Logger logger;
     private PluginConfig config;
 
-    DefaultPluginContext(Server server, PluginDescriptor descriptor, Path jar, Path dataFolder, CommandRegistry commands) {
+    DefaultPluginContext(Server server, PluginDescriptor descriptor, Path jar, Path dataFolder, CommandRegistry commands, Scheduler scheduler) {
         this.server = server;
         this.descriptor = descriptor;
         this.jar = jar;
         this.dataFolder = dataFolder;
         this.commands = commands;
+        this.scheduler = scheduler;
         this.logger = LoggerFactory.getLogger(descriptor.name());
     }
 
@@ -60,6 +63,11 @@ final class DefaultPluginContext implements PluginContext {
     @Override
     public CommandRegistry commands() {
         return commands;
+    }
+
+    @Override
+    public Scheduler scheduler() {
+        return scheduler;
     }
 
     @Override
