@@ -1,17 +1,16 @@
 package space.nows.tube.server;
 
+import ca.spottedleaf.concurrentutil.map.concurrent.objects.ConcurrentChainedObject2ObjectHashTable;
 import space.nows.tube.api.Player;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 final class PlayerService {
 
     private final WorldService worlds;
-    private final Map<UUID, TubePlayer> players = new ConcurrentHashMap<>();
+    private final ConcurrentChainedObject2ObjectHashTable<UUID, TubePlayer> players = ConcurrentChainedObject2ObjectHashTable.createWithExpected(64);
 
     PlayerService(WorldService worlds) {
         this.worlds = worlds;
