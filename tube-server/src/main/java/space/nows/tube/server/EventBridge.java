@@ -1,6 +1,7 @@
 package space.nows.tube.server;
 
 import net.kyori.adventure.text.Component;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
@@ -25,16 +26,24 @@ final class EventBridge {
         this.worlds = worlds;
     }
 
+    private static void announce(Component message) {
+        if (message != null) {
+            MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(player -> player.sendMessage(message));
+        }
+    }
+
     void install(EventNode<net.minestom.server.event.Event> node) {
         node.addListener(PlayerSpawnEvent.class, event -> {
             if (event.isFirstSpawn()) {
-                bus.post(new PlayerJoinEvent(players.wrap(event.getPlayer())));
+                var joined = bus.post(new PlayerJoinEvent(players.wrap(event.getPlayer())));
+                announce(joined.joinMessage());
             }
         });
 
         node.addListener(PlayerDisconnectEvent.class, event -> {
-            bus.post(new PlayerQuitEvent(players.wrap(event.getPlayer())));
+            var left = bus.post(new PlayerQuitEvent(players.wrap(event.getPlayer())));
             players.remove(event.getPlayer());
+            announce(left.quitMessage());
         });
 
         node.addListener(PlayerChatEvent.class, event -> {
