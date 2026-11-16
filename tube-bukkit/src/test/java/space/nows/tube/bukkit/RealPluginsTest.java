@@ -77,7 +77,7 @@ class RealPluginsTest {
             stub.scheduler.tick();
             report.add("== plugins that are enabled");
             for (Plugin plugin : runtime.pluginManager.getPlugins()) {
-                report.add((plugin.isEnabled() ? "ENABLED  " : "DISABLED ") + plugin.getName() + " " + plugin.getPluginMeta().getVersion());
+                report.add((plugin.isEnabled() ? "ENABLED  " : "DISABLED ") + plugin.getName() + " " + plugin.getDescription().getVersion());
             }
         } finally {
             runtime.shutdown();

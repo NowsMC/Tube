@@ -1,6 +1,5 @@
 package space.nows.tube.bukkit;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -42,7 +41,6 @@ final class TubeBukkitServer {
                 .on("getWorld(String)", args -> tube.worlds().get((String) args[0]).map(runtime.wrappers::world).orElse(null))
                 .on("getWorld(UUID)", args -> tube.worlds().all().stream().map(runtime.wrappers::world).filter(world -> world.getUID().equals(args[0])).findFirst().orElse(null))
                 .on("getWorldContainer", args -> new File("worlds"))
-                .on("getPluginsFolder", args -> runtime.pluginsDirectory)
                 .on("getUpdateFolder", args -> "update")
                 .on("getUpdateFolderFile", args -> new File(runtime.pluginsDirectory, "update"))
                 .on("getMaxPlayers", args -> tube.maxPlayers())
@@ -51,6 +49,7 @@ final class TubeBukkitServer {
                 .on("getPort", args -> tube.port())
                 .on("getIp", args -> tube.bindAddress().equals("0.0.0.0") ? "" : tube.bindAddress())
                 .on("getMessenger", args -> runtime.messenger)
+                .on("getUnsafe", args -> runtime.unsafe)
                 .on("getHelpMap", args -> runtime.helpMap)
                 .on("isPrimaryThread", args -> runtime.isPrimaryThread())
                 .on("isStopping", args -> false)
@@ -59,12 +58,8 @@ final class TubeBukkitServer {
                     tube.broadcast((String) args[0]);
                     return tube.players().size();
                 })
-                .on("broadcast/1", args -> {
-                    if (args[0] instanceof Component component) {
-                        tube.broadcast(component);
-                    } else {
-                        tube.broadcast(String.valueOf(args[0]));
-                    }
+                .on("broadcast/2", args -> {
+                    tube.broadcast((String) args[0]);
                     return tube.players().size();
                 })
                 .on("shutdown", args -> {

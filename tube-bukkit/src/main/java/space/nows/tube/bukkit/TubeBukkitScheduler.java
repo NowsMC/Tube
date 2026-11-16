@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -329,10 +328,5 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     @Deprecated
     public BukkitTask runTaskTimerAsynchronously(Plugin plugin, BukkitRunnable task, long delay, long period) {
         return runTaskTimerAsynchronously(plugin, (Runnable) task, delay, period);
-    }
-
-    @Override
-    public Executor getMainThreadExecutor(Plugin plugin) {
-        return command -> runTask(plugin, command);
     }
 }

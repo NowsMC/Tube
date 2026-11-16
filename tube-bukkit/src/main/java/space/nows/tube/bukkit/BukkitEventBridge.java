@@ -1,6 +1,7 @@
 package space.nows.tube.bukkit;
 
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.PlayerChatEvent;
@@ -12,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 
 final class BukkitEventBridge {
+
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
     private final BukkitRuntime runtime;
 
@@ -27,16 +30,16 @@ final class BukkitEventBridge {
 
     private void join(PlayerJoinEvent event) {
         var player = runtime.wrappers.player(event.player());
-        var bukkit = new org.bukkit.event.player.PlayerJoinEvent(player, event.joinMessage());
+        var bukkit = new org.bukkit.event.player.PlayerJoinEvent(player, text(event.joinMessage()));
         runtime.pluginManager.callEvent(bukkit);
-        event.setJoinMessage(bukkit.joinMessage());
+        event.setJoinMessage(component(bukkit.getJoinMessage()));
     }
 
     private void quit(PlayerQuitEvent event) {
         var player = runtime.wrappers.player(event.player());
-        var bukkit = new org.bukkit.event.player.PlayerQuitEvent(player, event.quitMessage());
+        var bukkit = new org.bukkit.event.player.PlayerQuitEvent(player, text(event.quitMessage()));
         runtime.pluginManager.callEvent(bukkit);
-        event.setQuitMessage(bukkit.quitMessage());
+        event.setQuitMessage(component(bukkit.getQuitMessage()));
         runtime.wrappers.forget(event.player().uuid());
     }
 
@@ -52,8 +55,11 @@ final class BukkitEventBridge {
         event.setMessage(bukkit.getMessage());
     }
 
-    @SuppressWarnings("unused")
-    private static String plain(net.kyori.adventure.text.Component component) {
-        return component == null ? "" : PlainTextComponentSerializer.plainText().serialize(component);
+    private static String text(Component component) {
+        return component == null ? null : LEGACY.serialize(component);
+    }
+
+    private static Component component(String text) {
+        return text == null || text.isEmpty() ? null : LEGACY.deserialize(text);
     }
 }

@@ -1,6 +1,7 @@
 package space.nows.tube.bukkit;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -20,12 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 final class Wrappers {
 
-    private static final net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer LEGACY = net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection();
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
     private static final Map<Object, Object> BACKING = Collections.synchronizedMap(new WeakHashMap<>());
 
     private final BukkitRuntime runtime;
@@ -108,6 +108,10 @@ final class Wrappers {
         return worlds.computeIfAbsent(tube.name(), name -> createWorld(tube));
     }
 
+    List<Player> onlinePlayers() {
+        return runtime.tube.players().stream().map(this::player).toList();
+    }
+
     Location location(space.nows.tube.api.Location tube) {
         return new Location(world(tube.world()), tube.x(), tube.y(), tube.z(), tube.yaw(), tube.pitch());
     }
@@ -117,30 +121,22 @@ final class Wrappers {
                 location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
 
-    private void send(space.nows.tube.api.CommandSender target, Object[] args) {
-        Object first = args.length > 0 ? args[args.length - 1] : null;
-        if (args.length == 2 && args[0] instanceof UUID) {
-            first = args[1];
-        }
-        space.nows.tube.api.CommandSender sender = target == null ? consoleSender() : target;
-        if (first instanceof String text) {
-            sender.sendMessage(LEGACY.deserialize(text));
-        } else if (first instanceof String[] lines) {
+    private static void send(space.nows.tube.api.CommandSender target, Object[] args) {
+        Object message = args.length == 2 && args[0] instanceof UUID ? args[1] : args[args.length - 1];
+        if (message instanceof String text) {
+            target.sendMessage(LEGACY.deserialize(text));
+        } else if (message instanceof String[] lines) {
             for (String line : lines) {
-                sender.sendMessage(LEGACY.deserialize(line));
+                target.sendMessage(LEGACY.deserialize(line));
             }
-        } else if (first instanceof Component component) {
-            sender.sendMessage(component);
-        } else if (first != null) {
-            sender.sendMessage(String.valueOf(first));
         }
     }
 
-    private space.nows.tube.api.CommandSender consoleSender() {
+    private static space.nows.tube.api.CommandSender consoleSender() {
         return new space.nows.tube.api.CommandSender() {
             @Override
             public String name() {
-                return "CONSOLE";
+                return "Console";
             }
 
             @Override
@@ -173,7 +169,6 @@ final class Wrappers {
                 .on("getName", args -> tube.name())
                 .on("getUniqueId", args -> tube.uuid())
                 .on("getDisplayName", args -> tube.name())
-                .on("displayName", args -> Component.text(tube.name()))
                 .on("getPlayerListName", args -> tube.name())
                 .on("getPlayer", args -> runtime.wrappers.player(tube))
                 .on("isOnline", args -> true)
@@ -193,12 +188,6 @@ final class Wrappers {
                     send(tube, args);
                     return null;
                 })
-                .on("sendActionBar", args -> {
-                    if (args[0] instanceof Component component) {
-                        tube.sendActionBar(component);
-                    }
-                    return null;
-                })
                 .on("getWorld", args -> world(tube.world()))
                 .on("getLocation/0", args -> location(tube.location()))
                 .on("teleport", args -> {
@@ -208,7 +197,6 @@ final class Wrappers {
                     }
                     return false;
                 })
-                .on("teleportAsync", args -> tube.teleport(tubeLocation((Location) args[0])).thenApply(ignored -> true))
                 .on("getHealth", args -> tube.health())
                 .on("setHealth", args -> {
                     tube.setHealth((Double) args[0]);
@@ -234,32 +222,23 @@ final class Wrappers {
                     tube.kick(args[0] == null ? "" : String.valueOf(args[0]));
                     return null;
                 })
-                .on("kick/1", args -> {
-                    tube.kick(args[0] == null ? Component.empty() : (Component) args[0]);
-                    return null;
-                })
                 .on("getAddress", args -> tube.address().orElse((InetSocketAddress) null))
                 .on("performCommand", args -> runtime.commandMap.dispatch(runtime.wrappers.player(tube), (String) args[0]))
-                .on("equals", args -> args[0] instanceof Object other && sameTube(other, tube))
+                .on("equals", args -> args[0] != null && BACKING.get(args[0]) instanceof space.nows.tube.api.Player other && other.uuid().equals(tube.uuid()))
                 .on("hashCode", args -> tube.uuid().hashCode())
                 .on("toString", args -> "CraftPlayer{name=" + tube.name() + "}")
                 .build(), tube);
     }
 
-    private static boolean sameTube(Object other, space.nows.tube.api.Player tube) {
-        Object target = BACKING.get(other);
-        return target instanceof space.nows.tube.api.Player player && player.uuid().equals(tube.uuid());
-    }
-
     private World createWorld(space.nows.tube.api.World tube) {
         return backed(Proxies.of(World.class, "World(" + tube.name() + ")")
                 .on("getName", args -> tube.name())
-                .on("getKey", args -> org.bukkit.NamespacedKey.minecraft(tube.name().toLowerCase()))
                 .on("getUID", args -> UUID.nameUUIDFromBytes(("tube:world:" + tube.name()).getBytes()))
                 .on("getEnvironment", args -> World.Environment.NORMAL)
                 .on("getSpawnLocation", args -> location(tube.spawn()))
                 .on("getMinHeight", args -> -64)
                 .on("getMaxHeight", args -> 320)
+                .on("removePluginChunkTickets", args -> null)
                 .on("getSeaLevel", args -> 63)
                 .on("getBlockAt/3", args -> block(tube, (Integer) args[0], (Integer) args[1], (Integer) args[2]))
                 .on("getBlockAt/1", args -> {
@@ -295,8 +274,7 @@ final class Wrappers {
                 })
                 .on("isEmpty", args -> tube.block(x, y, z).isAir())
                 .on("isLiquid", args -> false)
-                .on("equals", args -> args[0] != null && java.lang.reflect.Proxy.isProxyClass(args[0].getClass())
-                        && args[0] instanceof Block other && other.getX() == x && other.getY() == y && other.getZ() == z && world.equals(other.getWorld()))
+                .on("equals", args -> args[0] instanceof Block other && other.getX() == x && other.getY() == y && other.getZ() == z && world.equals(other.getWorld()))
                 .on("hashCode", args -> java.util.Objects.hash(x, y, z))
                 .build();
     }
@@ -304,13 +282,5 @@ final class Wrappers {
     private static Material materialOf(space.nows.tube.api.Block block) {
         Material material = Material.matchMaterial(block.key());
         return material == null ? Material.AIR : material;
-    }
-
-    List<Player> onlinePlayers() {
-        return runtime.tube.players().stream().map(this::player).toList();
-    }
-
-    CompletableFuture<Void> noop() {
-        return CompletableFuture.completedFuture(null);
     }
 }

@@ -109,6 +109,7 @@ class BukkitLayerTest {
         stub = new StubServer();
         runtime = BukkitRuntime.install(stub.server, plugins);
         runtime.loadPlugins();
+        runtime.useCurrentThreadAsTickThread();
     }
 
     @AfterEach
@@ -127,7 +128,7 @@ class BukkitLayerTest {
         assertEquals(List.of("load", "enable:hello:Tube"), log());
         assertEquals(1, runtime.pluginManager.getPlugins().length);
         assertTrue(runtime.pluginManager.getPlugin("Demo").isEnabled());
-        assertEquals("1.2.3", runtime.pluginManager.getPlugin("Demo").getPluginMeta().getVersion());
+        assertEquals("1.2.3", runtime.pluginManager.getPlugin("Demo").getDescription().getVersion());
     }
 
     @Test
