@@ -1,5 +1,6 @@
 package space.nows.tube.server.event;
 
+import ca.spottedleaf.concurrentutil.map.concurrent.objects.ConcurrentChainedReference2ReferenceHashTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.event.Cancellable;
@@ -8,19 +9,21 @@ import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.Subscription;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 public final class DefaultEventBus implements EventBus {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube");
+    private static final Registration[] NONE = new Registration[0];
 
     private record Registration(Class<? extends Event> type, EventPriority priority, boolean ignoreCancelled, Consumer<Event> listener) {
     }
 
-    private final List<Registration> registrations = new CopyOnWriteArrayList<>();
+    private final List<Registration> registrations = new ArrayList<>();
+    private final ConcurrentChainedReference2ReferenceHashTable<Class<?>, Registration[]> byType = ConcurrentChainedReference2ReferenceHashTable.createWithExpected(64);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -35,17 +38,21 @@ public final class DefaultEventBus implements EventBus {
                 index--;
             }
             registrations.add(index, registration);
+            byType.clear();
         }
-        return () -> registrations.remove(registration);
+        return () -> {
+            synchronized (registrations) {
+                if (registrations.remove(registration)) {
+                    byType.clear();
+                }
+            }
+        };
     }
 
     @Override
     public <E extends Event> E post(E event) {
         Objects.requireNonNull(event, "event");
-        for (Registration registration : registrations) {
-            if (!registration.type().isInstance(event)) {
-                continue;
-            }
+        for (Registration registration : listeners(event.getClass())) {
             if (registration.ignoreCancelled() && event instanceof Cancellable cancellable && cancellable.isCancelled()) {
                 continue;
             }
@@ -56,5 +63,18 @@ public final class DefaultEventBus implements EventBus {
             }
         }
         return event;
+    }
+
+    private Registration[] listeners(Class<?> type) {
+        Registration[] cached = byType.get(type);
+        if (cached != null) {
+            return cached;
+        }
+        synchronized (registrations) {
+            Registration[] matching = registrations.stream().filter(registration -> registration.type().isAssignableFrom(type)).toArray(Registration[]::new);
+            Registration[] result = matching.length == 0 ? NONE : matching;
+            byType.put(type, result);
+            return result;
+        }
     }
 }

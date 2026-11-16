@@ -24,6 +24,9 @@ import space.nows.tube.bukkit.BukkitRuntime;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -303,13 +306,18 @@ public final class BukkitPluginManager extends SimplePluginManager {
     }
 
     private static EventExecutor reflect(Method method, Class<? extends Event> eventType) {
+        MethodHandle handle;
+        try {
+            handle = MethodHandles.lookup().unreflect(method).asType(MethodType.methodType(void.class, Listener.class, Event.class));
+        } catch (IllegalAccessException e) {
+            throw new IllegalPluginAccessException("Cannot access listener method " + method + ": " + e);
+        }
         return (target, event) -> {
+            if (!eventType.isInstance(event)) {
+                return;
+            }
             try {
-                if (eventType.isAssignableFrom(event.getClass())) {
-                    method.invoke(target, event);
-                }
-            } catch (InvocationTargetException e) {
-                throw new EventException(e.getCause());
+                handle.invokeExact(target, event);
             } catch (Throwable e) {
                 throw new EventException(e);
             }

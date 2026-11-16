@@ -1,5 +1,6 @@
 package space.nows.tube.bukkit.scheduler;
 
+import ca.spottedleaf.concurrentutil.map.concurrent.ints.ConcurrentChainedInt2ReferenceHashTable;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
@@ -9,7 +10,6 @@ import space.nows.tube.api.scheduler.ScheduledTask;
 import space.nows.tube.api.scheduler.Scheduler;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
@@ -69,7 +69,7 @@ public final class BukkitTaskScheduler implements BukkitScheduler {
 
     private final Scheduler tube;
     private final AtomicInteger ids = new AtomicInteger(1);
-    private final Map<Integer, Task> tasks = new java.util.concurrent.ConcurrentHashMap<>();
+    private final ConcurrentChainedInt2ReferenceHashTable<Task> tasks = ConcurrentChainedInt2ReferenceHashTable.createWithExpected(64);
     private final ScheduledExecutorService asyncPool;
 
     public BukkitTaskScheduler(Scheduler tube) {

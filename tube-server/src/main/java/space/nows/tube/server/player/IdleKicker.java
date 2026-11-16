@@ -1,5 +1,6 @@
 package space.nows.tube.server.player;
 
+import ca.spottedleaf.concurrentutil.map.concurrent.objects.ConcurrentChainedObject2LongHashTable;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.event.BlockBreakEvent;
@@ -13,9 +14,7 @@ import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerMoveEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.LongSupplier;
 
 public final class IdleKicker {
@@ -24,7 +23,7 @@ public final class IdleKicker {
 
     private final long timeoutMillis;
     private final LongSupplier clock;
-    private final Map<UUID, Long> lastActive = new ConcurrentHashMap<>();
+    private final ConcurrentChainedObject2LongHashTable<UUID> lastActive = ConcurrentChainedObject2LongHashTable.createWithExpected(64);
 
     public IdleKicker(int timeoutMinutes, LongSupplier clock) {
         this.timeoutMillis = timeoutMinutes * 60_000L;
@@ -56,8 +55,8 @@ public final class IdleKicker {
     }
 
     public boolean isIdle(Player player) {
-        Long last = lastActive.get(player.uuid());
-        return last != null && clock.getAsLong() - last >= timeoutMillis;
+        long last = lastActive.getOrDefault(player.uuid(), Long.MIN_VALUE);
+        return last != Long.MIN_VALUE && clock.getAsLong() - last >= timeoutMillis;
     }
 
     private void kickIfIdle(Player player) {

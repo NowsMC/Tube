@@ -23,33 +23,44 @@ public final class PermissionService implements PermissionManager {
     private final Path permissionsFile;
     private final Map<UUID, String> ops = new LinkedHashMap<>();
     private final Map<UUID, Set<String>> grants = new HashMap<>();
+    private volatile Set<UUID> opView = Set.of();
+    private volatile Map<UUID, Set<String>> grantView = Map.of();
 
     public PermissionService(Path directory) {
         this.opsFile = directory.resolve("ops.json");
         this.permissionsFile = directory.resolve("permissions.json");
         loadOps();
         loadGrants();
+        publish();
+    }
+
+    private void publish() {
+        opView = Set.copyOf(ops.keySet());
+        Map<UUID, Set<String>> copy = new HashMap<>();
+        grants.forEach((uuid, nodes) -> copy.put(uuid, Set.copyOf(nodes)));
+        grantView = Map.copyOf(copy);
     }
 
     @Override
-    public synchronized boolean isOp(UUID uuid) {
-        return ops.containsKey(uuid);
+    public boolean isOp(UUID uuid) {
+        return opView.contains(uuid);
     }
 
     @Override
     public synchronized void setOp(UUID uuid, String name, boolean op) {
         boolean changed = op ? !name.equals(ops.put(uuid, name)) : ops.remove(uuid) != null;
         if (changed) {
+            publish();
             saveOps();
         }
     }
 
     @Override
-    public synchronized boolean has(UUID uuid, String node) {
-        if (ops.containsKey(uuid)) {
+    public boolean has(UUID uuid, String node) {
+        if (opView.contains(uuid)) {
             return true;
         }
-        Set<String> granted = grants.get(uuid);
+        Set<String> granted = grantView.get(uuid);
         if (granted == null) {
             return false;
         }
@@ -67,6 +78,7 @@ public final class PermissionService implements PermissionManager {
     @Override
     public synchronized void grant(UUID uuid, String node) {
         if (grants.computeIfAbsent(uuid, key -> new HashSet<>()).add(node)) {
+            publish();
             saveGrants();
         }
     }
@@ -78,6 +90,7 @@ public final class PermissionService implements PermissionManager {
             if (granted.isEmpty()) {
                 grants.remove(uuid);
             }
+            publish();
             saveGrants();
         }
     }
