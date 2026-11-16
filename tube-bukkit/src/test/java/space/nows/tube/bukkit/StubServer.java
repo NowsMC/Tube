@@ -138,15 +138,29 @@ final class StubServer {
             case "isOp", "has" -> ops.contains((UUID) args[0]);
             default -> null;
         });
+        World world = (World) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {World.class}, (proxy, method, args) -> switch (method.getName()) {
+            case "name" -> "world";
+            case "folder" -> java.nio.file.Path.of("world");
+            case "spawn" -> new space.nows.tube.api.world.Location((World) proxy, 0.5, 64, 0.5);
+            case "entities", "loadedChunks" -> List.of();
+            case "isChunkLoaded" -> false;
+            case "border" -> space.nows.tube.api.world.WorldBorder.DEFAULT;
+            case "equals" -> proxy == args[0];
+            case "hashCode" -> 1;
+            case "toString" -> "StubWorld(world)";
+            default -> null;
+        });
         WorldManager worlds = (WorldManager) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {WorldManager.class}, (proxy, method, args) -> switch (method.getName()) {
-            case "all" -> List.<World>of();
-            case "get" -> Optional.empty();
+            case "all" -> List.of(world);
+            case "get" -> "world".equals(args[0]) ? Optional.of(world) : Optional.empty();
+            case "defaultWorld" -> world;
             default -> null;
         });
         server = (Server) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {Server.class}, (proxy, method, args) -> switch (method.getName()) {
             case "name" -> "Tube";
             case "version" -> "2026.11.1-test";
             case "minecraftVersion" -> "26.2";
+            case "dataVersion" -> 4700;
             case "maxPlayers" -> 20;
             case "onlineMode" -> false;
             case "motd" -> "A Tube Server";
@@ -196,7 +210,7 @@ final class StubServer {
             case "health", "maxHealth" -> 20.0;
             case "food" -> 20;
             case "level" -> 0;
-            case "address" -> Optional.empty();
+            case "address" -> Optional.of(new java.net.InetSocketAddress("127.0.0.1", 50000));
             case "isRemoved" -> false;
             case "sendMessage" -> {
                 playerMessages.add(name + " <- " + (args[0] instanceof Component component ? net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(component) : String.valueOf(args[0])));

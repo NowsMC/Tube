@@ -89,12 +89,10 @@ class RealPluginsTest {
                     StringBuilder chain = new StringBuilder();
                     for (Throwable cause = record.getThrown(); cause != null; cause = cause.getCause()) {
                         chain.append("\n      caused by ").append(cause.getClass().getName()).append(": ").append(String.valueOf(cause.getMessage()).lines().findFirst().orElse(""));
-                        for (StackTraceElement frame : cause.getStackTrace()) {
-                            if (frame.getClassName().startsWith("org.bukkit") || frame.getClassName().startsWith("io.papermc") || frame.getClassName().startsWith("space.nows")) {
-                                chain.append("  @ ").append(frame.getClassName()).append('.').append(frame.getMethodName()).append(':').append(frame.getLineNumber());
-                                break;
-                            }
-                        }
+                        java.util.Arrays.stream(cause.getStackTrace())
+                                .filter(frame -> !frame.getClassName().startsWith("java.") && !frame.getClassName().startsWith("jdk."))
+                                .limit(3)
+                                .forEach(frame -> chain.append("\n          at ").append(frame));
                     }
                     String firstCause = chain.toString();
                     problems.add("[" + record.getLevel() + "] " + record.getLoggerName() + ": " + record.getMessage() + firstCause);
