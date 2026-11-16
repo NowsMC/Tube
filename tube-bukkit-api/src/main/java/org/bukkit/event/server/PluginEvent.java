@@ -1,9 +1,8 @@
 package org.bukkit.event.server;
 
-import org.bukkit.event.Event;
 import org.bukkit.plugin.Plugin;
 
-public abstract class PluginEvent extends Event {
+public abstract class PluginEvent extends ServerEvent {
 
     private final Plugin plugin;
 

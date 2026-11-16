@@ -10,8 +10,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import space.nows.tube.bukkit.command.BukkitCommandSender;
 import space.nows.tube.bukkit.command.BukkitConsoleSender;
+import space.nows.tube.bukkit.entity.BukkitEntity;
 import space.nows.tube.bukkit.entity.BukkitItem;
-import space.nows.tube.bukkit.entity.BukkitLivingEntity;
+import space.nows.tube.bukkit.entity.BukkitMob;
 import space.nows.tube.bukkit.entity.BukkitOfflinePlayer;
 import space.nows.tube.bukkit.entity.BukkitPlayer;
 import space.nows.tube.bukkit.world.BukkitWorld;
@@ -57,7 +58,15 @@ public final class Adapters {
         if (tube instanceof space.nows.tube.api.entity.Player player) {
             return player(player);
         }
-        return new BukkitLivingEntity(runtime, tube);
+        return new BukkitMob(runtime, tube);
+    }
+
+    public org.bukkit.entity.Entity entity(space.nows.tube.api.entity.Entity tube) {
+        return switch (tube) {
+            case space.nows.tube.api.entity.LivingEntity living -> living(living);
+            case space.nows.tube.api.entity.ItemEntity item -> item(item);
+            default -> new BukkitEntity(runtime, tube);
+        };
     }
 
     public Item item(space.nows.tube.api.entity.ItemEntity tube) {

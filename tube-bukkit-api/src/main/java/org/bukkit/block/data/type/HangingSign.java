@@ -1,0 +1,4 @@
+package org.bukkit.block.data.type;
+
+public interface HangingSign extends org.bukkit.block.data.Attachable, org.bukkit.block.data.Rotatable, org.bukkit.block.data.Waterlogged {
+}

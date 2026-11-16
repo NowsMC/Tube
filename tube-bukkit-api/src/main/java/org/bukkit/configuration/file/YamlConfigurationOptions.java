@@ -33,6 +33,24 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
         return this;
     }
 
+    @Override
+    public YamlConfigurationOptions setHeader(java.util.List<String> value) {
+        super.setHeader(value);
+        return this;
+    }
+
+    @Override
+    public YamlConfigurationOptions setFooter(java.util.List<String> value) {
+        super.setFooter(value);
+        return this;
+    }
+
+    @Override
+    public YamlConfigurationOptions parseComments(boolean value) {
+        super.parseComments(value);
+        return this;
+    }
+
     public int indent() {
         return indent;
     }

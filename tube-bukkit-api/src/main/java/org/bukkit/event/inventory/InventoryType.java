@@ -36,4 +36,14 @@ public enum InventoryType {
     public int getDefaultSize() {
         return size;
     }
+
+    public enum SlotType {
+        RESULT,
+        CRAFTING,
+        ARMOR,
+        CONTAINER,
+        QUICKBAR,
+        OUTSIDE,
+        FUEL
+    }
 }

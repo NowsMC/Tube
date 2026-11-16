@@ -1,15 +1,13 @@
-package org.bukkit.plugin.java;
-
-import org.bukkit.plugin.Plugin;
+package org.bukkit.plugin;
 
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-final class PluginLogger extends Logger {
+public class PluginLogger extends Logger {
 
     private final String prefix;
 
-    PluginLogger(Plugin plugin) {
+    public PluginLogger(Plugin plugin) {
         super(plugin.getClass().getCanonicalName(), null);
         String declared = plugin.getDescription().getPrefix();
         this.prefix = "[" + (declared != null ? declared : plugin.getDescription().getName()) + "] ";

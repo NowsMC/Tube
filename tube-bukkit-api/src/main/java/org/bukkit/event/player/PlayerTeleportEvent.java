@@ -10,6 +10,10 @@ public class PlayerTeleportEvent extends PlayerMoveEvent {
 
     private final TeleportCause cause;
 
+    public PlayerTeleportEvent(Player player, Location from, Location to) {
+        this(player, from, to, TeleportCause.PLUGIN);
+    }
+
     public PlayerTeleportEvent(Player player, Location from, Location to, TeleportCause cause) {
         super(player, from, to);
         this.cause = cause;

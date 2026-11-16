@@ -316,6 +316,17 @@ class BukkitLayerTest {
         assertEquals("world", respawn.location().world().name());
     }
 
+    private static space.nows.tube.api.inventory.Inventory chestHolding(space.nows.tube.api.inventory.ItemStack item) {
+        return (space.nows.tube.api.inventory.Inventory) java.lang.reflect.Proxy.newProxyInstance(BukkitLayerTest.class.getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.inventory.Inventory.class}, (proxy, method, args) -> switch (method.getName()) {
+                    case "size" -> 27;
+                    case "item" -> (Integer) args[0] == 5 ? item : space.nows.tube.api.inventory.ItemStack.AIR;
+                    case "equals" -> proxy == args[0];
+                    case "hashCode" -> System.identityHashCode(proxy);
+                    default -> null;
+                });
+    }
+
     private static space.nows.tube.api.entity.ItemEntity droppedItem(space.nows.tube.api.inventory.ItemStack stack) {
         var uuid = java.util.UUID.randomUUID();
         return (space.nows.tube.api.entity.ItemEntity) java.lang.reflect.Proxy.newProxyInstance(BukkitLayerTest.class.getClassLoader(),
@@ -330,11 +341,11 @@ class BukkitLayerTest {
     @Test
     void inventoryClicksCanBeCancelled() {
         var player = stub.player("Steve");
-        var inventory = (space.nows.tube.api.inventory.Inventory) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] {space.nows.tube.api.inventory.Inventory.class}, (proxy, method, args) -> method.getName().equals("equals") ? proxy == args[0] : method.getName().equals("hashCode") ? 1 : null);
+        var three = chestHolding(space.nows.tube.api.inventory.ItemStack.of("stone", 3));
+        var two = chestHolding(space.nows.tube.api.inventory.ItemStack.of("stone", 2));
 
-        var cancelled = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 3), space.nows.tube.api.inventory.ClickType.LEFT, -1));
-        var kept = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 2), space.nows.tube.api.inventory.ClickType.LEFT, -1));
+        var cancelled = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, three, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 3), space.nows.tube.api.inventory.ClickType.LEFT, -1));
+        var kept = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, two, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 2), space.nows.tube.api.inventory.ClickType.LEFT, -1));
 
         assertTrue(cancelled.isCancelled());
         assertTrue(!kept.isCancelled());

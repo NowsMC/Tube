@@ -2,20 +2,18 @@ package org.bukkit.event.inventory;
 
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 
 public class InventoryCloseEvent extends InventoryEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final HumanEntity player;
 
-    public InventoryCloseEvent(HumanEntity player, Inventory inventory) {
-        super(inventory);
-        this.player = player;
+    public InventoryCloseEvent(InventoryView transaction) {
+        super(transaction);
     }
 
-    public HumanEntity getPlayer() {
-        return player;
+    public final HumanEntity getPlayer() {
+        return transaction.getPlayer();
     }
 
     @Override

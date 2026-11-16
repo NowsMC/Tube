@@ -1,54 +1,93 @@
 package org.bukkit.event.inventory;
 
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-public class InventoryClickEvent extends InventoryEvent implements Cancellable {
+public class InventoryClickEvent extends InventoryInteractEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private boolean cancelled;
-    private final HumanEntity whoClicked;
-    private final int slot;
-    private final ItemStack current;
 
-    public InventoryClickEvent(HumanEntity whoClicked, Inventory clicked, int slot, ItemStack current) {
-        super(clicked);
-        this.whoClicked = whoClicked;
-        this.slot = slot;
-        this.current = current;
+    private final ClickType click;
+    private final InventoryAction action;
+    private final InventoryType.SlotType slotType;
+    private final int whichSlot;
+    private final int rawSlot;
+    private final int hotbarKey;
+    private ItemStack current;
+
+    public InventoryClickEvent(InventoryView view, InventoryType.SlotType type, int slot, ClickType click, InventoryAction action) {
+        this(view, type, slot, click, action, -1);
     }
 
-    public HumanEntity getWhoClicked() {
-        return whoClicked;
+    public InventoryClickEvent(InventoryView view, InventoryType.SlotType type, int slot, ClickType click, InventoryAction action, int key) {
+        super(view);
+        this.slotType = type;
+        this.rawSlot = slot;
+        this.whichSlot = view.convertSlot(slot);
+        this.click = click;
+        this.action = action;
+        this.hotbarKey = key;
     }
 
-    public Inventory getClickedInventory() {
-        return getInventory();
+    public InventoryType.SlotType getSlotType() {
+        return slotType;
     }
 
-    public int getSlot() {
-        return slot;
-    }
-
-    public int getRawSlot() {
-        return slot;
+    public ItemStack getCursor() {
+        return getView().getCursor();
     }
 
     public ItemStack getCurrentItem() {
-        return current;
+        if (slotType == InventoryType.SlotType.OUTSIDE) {
+            return current;
+        }
+        return getView().getItem(rawSlot);
     }
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
+    public void setCurrentItem(ItemStack item) {
+        if (slotType == InventoryType.SlotType.OUTSIDE) {
+            current = item;
+        } else {
+            getView().setItem(rawSlot, item);
+        }
     }
 
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
+    public Inventory getClickedInventory() {
+        return getView().getInventory(rawSlot);
+    }
+
+    public boolean isRightClick() {
+        return click.isRightClick();
+    }
+
+    public boolean isLeftClick() {
+        return click.isLeftClick();
+    }
+
+    public boolean isShiftClick() {
+        return click.isShiftClick();
+    }
+
+    public int getSlot() {
+        return whichSlot;
+    }
+
+    public int getRawSlot() {
+        return rawSlot;
+    }
+
+    public int getHotbarButton() {
+        return hotbarKey;
+    }
+
+    public InventoryAction getAction() {
+        return action;
+    }
+
+    public ClickType getClick() {
+        return click;
     }
 
     @Override

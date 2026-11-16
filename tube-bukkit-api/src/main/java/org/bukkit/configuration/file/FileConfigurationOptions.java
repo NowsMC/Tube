@@ -8,6 +8,8 @@ public class FileConfigurationOptions extends ConfigurationOptions {
 
     private String header;
     private boolean copyHeader = true;
+    private String footer;
+    private boolean parseComments = true;
 
     protected FileConfigurationOptions(MemoryConfiguration configuration) {
         super(configuration);
@@ -31,6 +33,33 @@ public class FileConfigurationOptions extends ConfigurationOptions {
 
     public FileConfigurationOptions header(String value) {
         this.header = value;
+        return this;
+    }
+
+    public java.util.List<String> getHeader() {
+        return header == null ? java.util.List.of() : header.lines().toList();
+    }
+
+    public FileConfigurationOptions setHeader(java.util.List<String> value) {
+        this.header = value == null || value.isEmpty() ? null : String.join("\n", value);
+        return this;
+    }
+
+    public java.util.List<String> getFooter() {
+        return footer == null ? java.util.List.of() : footer.lines().toList();
+    }
+
+    public FileConfigurationOptions setFooter(java.util.List<String> value) {
+        this.footer = value == null || value.isEmpty() ? null : String.join("\n", value);
+        return this;
+    }
+
+    public boolean parseComments() {
+        return parseComments;
+    }
+
+    public FileConfigurationOptions parseComments(boolean value) {
+        this.parseComments = value;
         return this;
     }
 

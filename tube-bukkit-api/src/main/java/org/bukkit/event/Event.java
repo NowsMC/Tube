@@ -21,4 +21,10 @@ public abstract class Event {
     public final boolean isAsynchronous() {
         return async;
     }
+
+    public enum Result {
+        DENY,
+        DEFAULT,
+        ALLOW
+    }
 }

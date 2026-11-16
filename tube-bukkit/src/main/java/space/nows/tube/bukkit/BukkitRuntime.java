@@ -38,6 +38,7 @@ public final class BukkitRuntime {
     private final CommandBridge commands;
     private final BukkitPluginManager pluginManager;
     private final Server server;
+    private final BukkitHelpMap helpMap = new BukkitHelpMap();
 
     private final List<Subscription> subscriptions = new ArrayList<>();
     private volatile Thread tickThread;
@@ -112,6 +113,10 @@ public final class BukkitRuntime {
 
     public BukkitPluginManager pluginManager() {
         return pluginManager;
+    }
+
+    public BukkitHelpMap helpMap() {
+        return helpMap;
     }
 
     public Server server() {

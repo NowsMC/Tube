@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import space.nows.tube.api.event.BlockBreakEvent;
 import space.nows.tube.api.event.BlockPlaceEvent;
+import space.nows.tube.api.event.CommandDispatchEvent;
 import space.nows.tube.api.event.EntityDamageEvent;
 import space.nows.tube.api.event.EntityDeathEvent;
 import space.nows.tube.api.event.EntityPickupItemEvent;
@@ -11,8 +12,11 @@ import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.InventoryClickEvent;
 import space.nows.tube.api.event.InventoryCloseEvent;
+import space.nows.tube.api.event.InventoryDragEvent;
+import space.nows.tube.api.event.InventoryOpenEvent;
 import space.nows.tube.api.event.PlayerChatEvent;
 import space.nows.tube.api.event.PlayerDropItemEvent;
+import space.nows.tube.api.event.PlayerGameModeChangeEvent;
 import space.nows.tube.api.event.PlayerInteractEvent;
 import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerMoveEvent;
@@ -23,7 +27,10 @@ import space.nows.tube.api.event.PlayerTeleportEvent;
 import space.nows.tube.api.event.Subscription;
 import space.nows.tube.bukkit.BukkitRuntime;
 import space.nows.tube.bukkit.inventory.BukkitInventory;
-import space.nows.tube.bukkit.inventory.ItemConverter;
+import space.nows.tube.bukkit.inventory.BukkitInventoryView;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import java.util.HashSet;
 import java.util.List;
@@ -55,10 +62,23 @@ public final class EventBridge {
         subscriptions.add(bus.subscribe(EntityPickupItemEvent.class, EventPriority.NORMAL, false, this::pickupItem));
         subscriptions.add(bus.subscribe(PlayerRespawnEvent.class, EventPriority.NORMAL, false, this::respawn));
         subscriptions.add(bus.subscribe(PlayerPreLoginEvent.class, EventPriority.NORMAL, false, this::preLogin));
+        subscriptions.add(bus.subscribe(CommandDispatchEvent.class, EventPriority.NORMAL, false, this::command));
+        subscriptions.add(bus.subscribe(PlayerGameModeChangeEvent.class, EventPriority.NORMAL, false, this::gameModeChange));
+        subscriptions.add(bus.subscribe(InventoryOpenEvent.class, EventPriority.NORMAL, false, this::inventoryOpen));
+        subscriptions.add(bus.subscribe(InventoryDragEvent.class, EventPriority.NORMAL, false, this::inventoryDrag));
     }
 
     private void join(PlayerJoinEvent event) {
         var player = runtime.adapters().player(event.player());
+        var address = event.player().address().map(java.net.InetSocketAddress::getAddress).orElse(null);
+        var login = new org.bukkit.event.player.PlayerLoginEvent(player, "", address);
+        runtime.pluginManager().callEvent(login);
+        if (login.getResult() != org.bukkit.event.player.PlayerLoginEvent.Result.ALLOWED) {
+            String message = login.getKickMessage();
+            event.setJoinMessage(null);
+            event.player().kick(message == null || message.isEmpty() ? Component.text("You are not allowed to join") : LEGACY.deserialize(message));
+            return;
+        }
         var bukkit = new org.bukkit.event.player.PlayerJoinEvent(player, text(event.joinMessage()));
         runtime.pluginManager().callEvent(bukkit);
         event.setJoinMessage(component(bukkit.getJoinMessage()));
@@ -100,15 +120,77 @@ public final class EventBridge {
     }
 
     private void inventoryClick(InventoryClickEvent event) {
-        var player = runtime.adapters().player(event.player());
-        var bukkit = new org.bukkit.event.inventory.InventoryClickEvent(player, inventory(event.player(), event.inventory()), event.slot(), ItemConverter.fromTube(event.clicked()));
+        var view = view(event.player(), event.inventory());
+        var click = org.bukkit.event.inventory.ClickType.valueOf(event.click().name());
+        var slotType = event.slot() < 0 ? org.bukkit.event.inventory.InventoryType.SlotType.OUTSIDE : view.getSlotType(event.slot());
+        var bukkit = new org.bukkit.event.inventory.InventoryClickEvent(view, slotType, event.slot(), click, action(click, event.clicked()), event.hotbarButton());
+        runtime.pluginManager().callEvent(bukkit);
+        event.setCancelled(bukkit.isCancelled());
+    }
+
+    private static org.bukkit.event.inventory.InventoryAction action(org.bukkit.event.inventory.ClickType click, space.nows.tube.api.inventory.ItemStack clicked) {
+        boolean empty = clicked == null || clicked.isAir();
+        return switch (click) {
+            case LEFT -> empty ? org.bukkit.event.inventory.InventoryAction.PLACE_ALL : org.bukkit.event.inventory.InventoryAction.PICKUP_ALL;
+            case RIGHT -> empty ? org.bukkit.event.inventory.InventoryAction.PLACE_ONE : org.bukkit.event.inventory.InventoryAction.PICKUP_HALF;
+            case SHIFT_LEFT, SHIFT_RIGHT -> org.bukkit.event.inventory.InventoryAction.MOVE_TO_OTHER_INVENTORY;
+            case NUMBER_KEY, SWAP_OFFHAND -> org.bukkit.event.inventory.InventoryAction.HOTBAR_SWAP;
+            case DROP -> org.bukkit.event.inventory.InventoryAction.DROP_ONE_SLOT;
+            case CONTROL_DROP -> org.bukkit.event.inventory.InventoryAction.DROP_ALL_SLOT;
+            case DOUBLE_CLICK -> org.bukkit.event.inventory.InventoryAction.COLLECT_TO_CURSOR;
+            case MIDDLE -> org.bukkit.event.inventory.InventoryAction.CLONE_STACK;
+            case WINDOW_BORDER_LEFT -> org.bukkit.event.inventory.InventoryAction.DROP_ALL_CURSOR;
+            case WINDOW_BORDER_RIGHT -> org.bukkit.event.inventory.InventoryAction.DROP_ONE_CURSOR;
+            default -> org.bukkit.event.inventory.InventoryAction.UNKNOWN;
+        };
+    }
+
+    private void inventoryDrag(InventoryDragEvent event) {
+        var view = view(event.player(), event.inventory());
+        Map<Integer, org.bukkit.inventory.ItemStack> slots = new LinkedHashMap<>();
+        for (int slot : event.slots()) {
+            slots.put(slot, view.getItem(slot));
+        }
+        var bukkit = new org.bukkit.event.inventory.InventoryDragEvent(view, null, view.getCursor(), event.isRightClick(), slots);
+        runtime.pluginManager().callEvent(bukkit);
+        event.setCancelled(bukkit.isCancelled());
+    }
+
+    private void inventoryOpen(InventoryOpenEvent event) {
+        var bukkit = new org.bukkit.event.inventory.InventoryOpenEvent(view(event.player(), event.inventory()));
         runtime.pluginManager().callEvent(bukkit);
         event.setCancelled(bukkit.isCancelled());
     }
 
     private void inventoryClose(InventoryCloseEvent event) {
-        var player = runtime.adapters().player(event.player());
-        runtime.pluginManager().callEvent(new org.bukkit.event.inventory.InventoryCloseEvent(player, inventory(event.player(), event.inventory())));
+        runtime.pluginManager().callEvent(new org.bukkit.event.inventory.InventoryCloseEvent(view(event.player(), event.inventory())));
+    }
+
+    private void command(CommandDispatchEvent event) {
+        String line = event.line().startsWith("/") ? event.line().substring(1) : event.line();
+        if (event.sender() instanceof space.nows.tube.api.entity.Player tubePlayer) {
+            var bukkit = new org.bukkit.event.player.PlayerCommandPreprocessEvent(runtime.adapters().player(tubePlayer), "/" + line);
+            runtime.pluginManager().callEvent(bukkit);
+            if (bukkit.isCancelled()) {
+                event.setCancelled(true);
+            } else if (!bukkit.getMessage().equals("/" + line)) {
+                event.setLine(bukkit.getMessage().startsWith("/") ? bukkit.getMessage().substring(1) : bukkit.getMessage());
+            }
+            return;
+        }
+        var bukkit = new org.bukkit.event.server.ServerCommandEvent(runtime.adapters().sender(event.sender()), line);
+        runtime.pluginManager().callEvent(bukkit);
+        if (bukkit.isCancelled()) {
+            event.setCancelled(true);
+        } else if (!bukkit.getCommand().equals(line)) {
+            event.setLine(bukkit.getCommand());
+        }
+    }
+
+    private void gameModeChange(PlayerGameModeChangeEvent event) {
+        var bukkit = new org.bukkit.event.player.PlayerGameModeChangeEvent(runtime.adapters().player(event.player()), org.bukkit.GameMode.valueOf(event.newGameMode().name()));
+        runtime.pluginManager().callEvent(bukkit);
+        event.setCancelled(bukkit.isCancelled());
     }
 
     private void entityDamage(EntityDamageEvent event) {
@@ -207,11 +289,13 @@ public final class EventBridge {
         }
     }
 
-    private org.bukkit.inventory.Inventory inventory(space.nows.tube.api.entity.Player owner, space.nows.tube.api.inventory.Inventory inventory) {
+    private org.bukkit.inventory.InventoryView view(space.nows.tube.api.entity.Player owner, space.nows.tube.api.inventory.Inventory inventory) {
+        var player = runtime.adapters().player(owner);
+        org.bukkit.inventory.Inventory own = player.getInventory();
         if (inventory.equals(owner.inventory())) {
-            return (org.bukkit.inventory.Inventory) runtime.adapters().player(owner).getInventory();
+            return new BukkitInventoryView(owner, player, own, own, org.bukkit.event.inventory.InventoryType.PLAYER, "Inventory");
         }
-        return new BukkitInventory(inventory);
+        return new BukkitInventoryView(owner, player, new BukkitInventory(inventory), own, org.bukkit.event.inventory.InventoryType.CHEST, "Chest");
     }
 
     private static String text(Component component) {

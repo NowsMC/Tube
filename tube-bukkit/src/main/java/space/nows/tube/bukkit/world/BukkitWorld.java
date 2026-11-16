@@ -32,8 +32,29 @@ public final class BukkitWorld implements World {
     }
 
     @Override
+    public org.bukkit.WorldBorder getWorldBorder() {
+        return new BukkitWorldBorder(this);
+    }
+
+    @Override
+    public <T extends Entity> java.util.Collection<T> getEntitiesByClass(Class<T> type) {
+        return tube.entities().stream().map(runtime.adapters()::entity).filter(type::isInstance).map(type::cast).toList();
+    }
+
+    @Override
     public java.io.File getWorldFolder() {
         return tube.folder().toFile();
+    }
+
+    @Override
+    public org.bukkit.entity.Item dropItem(Location location, org.bukkit.inventory.ItemStack item) {
+        var dropped = tube.dropItem(runtime.adapters().tubeLocation(location), space.nows.tube.bukkit.inventory.ItemConverter.toTube(item));
+        return runtime.adapters().item((space.nows.tube.api.entity.ItemEntity) dropped);
+    }
+
+    @Override
+    public org.bukkit.entity.Item dropItemNaturally(Location location, org.bukkit.inventory.ItemStack item) {
+        return dropItem(location.clone().add(0.5, 0.5, 0.5), item);
     }
 
     @Override

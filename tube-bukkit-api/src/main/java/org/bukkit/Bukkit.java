@@ -73,6 +73,14 @@ public final class Bukkit {
         return server.getMessenger();
     }
 
+    public static UnsafeValues getUnsafe() {
+        return server.getUnsafe();
+    }
+
+    public static org.bukkit.help.HelpMap getHelpMap() {
+        return server.getHelpMap();
+    }
+
     public static PluginCommand getPluginCommand(String name) {
         return server.getPluginCommand(name);
     }

@@ -97,6 +97,16 @@ final class BukkitServer implements Server {
     }
 
     @Override
+    public org.bukkit.help.HelpMap getHelpMap() {
+        return runtime.helpMap();
+    }
+
+    @Override
+    public org.bukkit.UnsafeValues getUnsafe() {
+        return () -> runtime.tube().dataVersion();
+    }
+
+    @Override
     public org.bukkit.packs.DataPackManager getDataPackManager() {
         return NO_DATA_PACKS;
     }

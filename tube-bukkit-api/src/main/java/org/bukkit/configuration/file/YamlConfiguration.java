@@ -3,14 +3,20 @@ package org.bukkit.configuration.file;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class YamlConfiguration extends FileConfiguration {
 
@@ -53,7 +59,7 @@ public class YamlConfiguration extends FileConfiguration {
             set(key, null);
         }
         if (loaded instanceof Map<?, ?> map) {
-            map.forEach((key, value) -> set(String.valueOf(key), value));
+            map.forEach((key, value) -> set(String.valueOf(key), fromYaml(value)));
         }
     }
 
@@ -69,18 +75,59 @@ public class YamlConfiguration extends FileConfiguration {
             data.putAll(toMap(yamlDefaults));
         }
         data.putAll(toMap(this));
-        String header = options().header();
         String body = data.isEmpty() ? "" : new Yaml(dumper).dump(data);
-        return header == null || header.isEmpty() ? body : header.lines().map(line -> "# " + line).collect(java.util.stream.Collectors.joining("\n")) + "\n" + body;
+        String header = comment(options().getHeader());
+        String footer = comment(options().getFooter());
+        return (header.isEmpty() ? "" : header + "\n") + body + (footer.isEmpty() ? "" : footer + "\n");
+    }
+
+    private static String comment(List<String> lines) {
+        return lines.stream().map(line -> line.isEmpty() ? "#" : "# " + line).collect(Collectors.joining("\n"));
     }
 
     private static Map<String, Object> toMap(ConfigurationSection section) {
         Map<String, Object> result = new LinkedHashMap<>();
         for (String key : section.getKeys(false)) {
-            Object value = section.get(key);
-            result.put(key, value instanceof ConfigurationSection nested ? toMap(nested) : value);
+            result.put(key, toYaml(section.get(key)));
         }
         return result;
+    }
+
+    private static Object fromYaml(Object value) {
+        if (value instanceof Map<?, ?> map) {
+            Map<String, Object> converted = new LinkedHashMap<>();
+            map.forEach((key, nested) -> converted.put(String.valueOf(key), fromYaml(nested)));
+            if (converted.containsKey(ConfigurationSerialization.SERIALIZED_TYPE_KEY)) {
+                ConfigurationSerializable object = ConfigurationSerialization.deserializeObject(converted);
+                return object != null ? object : converted;
+            }
+            return converted;
+        }
+        if (value instanceof List<?> list) {
+            return list.stream().map(YamlConfiguration::fromYaml).collect(Collectors.toCollection(ArrayList::new));
+        }
+        return value;
+    }
+
+    private static Object toYaml(Object value) {
+        if (value instanceof ConfigurationSection section) {
+            return toMap(section);
+        }
+        if (value instanceof ConfigurationSerializable serializable) {
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias(serializable.getClass()));
+            serializable.serialize().forEach((key, nested) -> result.put(key, toYaml(nested)));
+            return result;
+        }
+        if (value instanceof Map<?, ?> map) {
+            Map<String, Object> result = new LinkedHashMap<>();
+            map.forEach((key, nested) -> result.put(String.valueOf(key), toYaml(nested)));
+            return result;
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(YamlConfiguration::toYaml).collect(Collectors.toCollection(ArrayList::new));
+        }
+        return value;
     }
 
     @Override

@@ -13,6 +13,14 @@ public interface World {
 
     java.io.File getWorldFolder();
 
+    WorldBorder getWorldBorder();
+
+    <T extends org.bukkit.entity.Entity> java.util.Collection<T> getEntitiesByClass(Class<T> type);
+
+    org.bukkit.entity.Item dropItem(Location location, org.bukkit.inventory.ItemStack item);
+
+    org.bukkit.entity.Item dropItemNaturally(Location location, org.bukkit.inventory.ItemStack item);
+
     UUID getUID();
 
     NamespacedKey getKey();
