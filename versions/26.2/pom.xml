@@ -7,7 +7,7 @@
   <parent>
     <groupId>space.nows</groupId>
     <artifactId>tube-versions</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -41,7 +41,7 @@
   </dependencies>
 
   <build>
-    <finalName>tube-26.2</finalName>
+    <finalName>tube-${project.version}-mc26.2</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>

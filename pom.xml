@@ -6,7 +6,7 @@
 
   <groupId>space.nows</groupId>
   <artifactId>tube-parent</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
   <name>Tube</name>
@@ -47,6 +47,7 @@
   </modules>
 
   <properties>
+    <revision>2026.11.1-SNAPSHOT</revision>
     <maven.compiler.release>25</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.outputTimestamp>2026-11-16T00:00:00Z</project.build.outputTimestamp>
