@@ -8,9 +8,9 @@ import java.util.TreeMap;
 
 public final class BukkitBlockData implements BlockData {
 
-    private final space.nows.tube.api.Block tube;
+    private final space.nows.tube.api.world.Block tube;
 
-    BukkitBlockData(space.nows.tube.api.Block tube) {
+    BukkitBlockData(space.nows.tube.api.world.Block tube) {
         this.tube = tube;
     }
 
@@ -34,14 +34,14 @@ public final class BukkitBlockData implements BlockData {
                 }
             }
         }
-        space.nows.tube.api.Block block = new space.nows.tube.api.Block(key, properties);
+        space.nows.tube.api.world.Block block = new space.nows.tube.api.world.Block(key, properties);
         if (Material.matchMaterial(block.key()) == null) {
             throw new IllegalArgumentException("Could not parse data: " + text);
         }
         return new BukkitBlockData(block);
     }
 
-    space.nows.tube.api.Block tube() {
+    space.nows.tube.api.world.Block tube() {
         return tube;
     }
 

@@ -1,8 +1,8 @@
 package space.nows.tube.api.event;
 
-import space.nows.tube.api.Block;
-import space.nows.tube.api.Player;
-import space.nows.tube.api.World;
+import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.world.Block;
+import space.nows.tube.api.world.World;
 
 public final class BlockBreakEvent implements Cancellable {
 

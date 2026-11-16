@@ -1,8 +1,14 @@
 package space.nows.tube.api;
 
 import net.kyori.adventure.text.Component;
+import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.event.EventBus;
+import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.api.network.Network;
+import space.nows.tube.api.plugin.PluginDescriptor;
+import space.nows.tube.api.scheduler.Scheduler;
+import space.nows.tube.api.world.WorldManager;
 
 import java.util.Collection;
 

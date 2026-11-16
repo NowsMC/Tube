@@ -1,6 +1,6 @@
 package space.nows.tube.api.event;
 
-import space.nows.tube.api.Entity;
+import space.nows.tube.api.entity.Entity;
 
 public final class EntitySpawnEvent implements Event {
 

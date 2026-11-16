@@ -3,9 +3,9 @@ package space.nows.tube.server.command;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.arguments.ArgumentType;
-import space.nows.tube.api.Command;
-import space.nows.tube.api.CommandRegistry;
-import space.nows.tube.api.CommandSender;
+import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.server.player.PlayerService;
 
 import java.util.ArrayList;

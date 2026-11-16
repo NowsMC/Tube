@@ -144,7 +144,7 @@ public final class BukkitMessenger implements Messenger {
         matches.forEach(registration -> deliver(registration, source, message));
     }
 
-    public void send(Plugin plugin, space.nows.tube.api.Player player, String channel, byte[] message) {
+    public void send(Plugin plugin, space.nows.tube.api.entity.Player player, String channel, byte[] message) {
         if (!isOutgoingChannelRegistered(plugin, channel)) {
             throw new IllegalArgumentException("Plugin " + plugin.getName() + " is not registered for the outgoing channel " + channel);
         }

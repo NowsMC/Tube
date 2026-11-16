@@ -1,22 +1,22 @@
 package space.nows.tube.bukkit;
 
 import net.kyori.adventure.text.Component;
-import space.nows.tube.api.Command;
-import space.nows.tube.api.CommandRegistry;
-import space.nows.tube.api.CommandSender;
-import space.nows.tube.api.GameMode;
-import space.nows.tube.api.Location;
 import space.nows.tube.api.PermissionManager;
-import space.nows.tube.api.Player;
-import space.nows.tube.api.ScheduledTask;
-import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
-import space.nows.tube.api.World;
-import space.nows.tube.api.WorldManager;
+import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.entity.GameMode;
+import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.event.Event;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.Subscription;
+import space.nows.tube.api.scheduler.ScheduledTask;
+import space.nows.tube.api.scheduler.Scheduler;
+import space.nows.tube.api.world.Location;
+import space.nows.tube.api.world.World;
+import space.nows.tube.api.world.WorldManager;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;

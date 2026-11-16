@@ -1,6 +1,9 @@
-package space.nows.tube.api;
+package space.nows.tube.api.entity;
 
 import net.kyori.adventure.text.Component;
+import space.nows.tube.api.ResourcePack;
+import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.inventory.Inventory;
 
 import java.net.InetSocketAddress;
 import java.util.Optional;

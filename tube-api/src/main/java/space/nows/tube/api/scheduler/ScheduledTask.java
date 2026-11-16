@@ -1,4 +1,4 @@
-package space.nows.tube.api;
+package space.nows.tube.api.scheduler;
 
 public interface ScheduledTask {
 

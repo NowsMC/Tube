@@ -2,10 +2,10 @@ package space.nows.tube.server.player;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-import space.nows.tube.api.GameMode;
-import space.nows.tube.api.Inventory;
-import space.nows.tube.api.Player;
 import space.nows.tube.api.ResourcePack;
+import space.nows.tube.api.entity.GameMode;
+import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.entity.MinestomLivingEntity;
 import space.nows.tube.server.inventory.MinestomInventory;
@@ -29,7 +29,7 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     }
 
     @Override
-    public java.util.concurrent.CompletableFuture<Void> teleport(space.nows.tube.api.Location target) {
+    public java.util.concurrent.CompletableFuture<Void> teleport(space.nows.tube.api.world.Location target) {
         var bus = service.events();
         if (bus != null) {
             var posted = bus.post(new space.nows.tube.api.event.PlayerTeleportEvent(this, location(), target));

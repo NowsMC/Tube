@@ -2,7 +2,7 @@ package space.nows.tube.api.event;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import space.nows.tube.api.Player;
+import space.nows.tube.api.entity.Player;
 
 public final class PlayerQuitEvent implements Event {
 

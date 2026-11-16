@@ -18,20 +18,20 @@ import java.util.UUID;
 
 class BukkitPlayerInventoryTest {
 
-    private final space.nows.tube.api.ItemStack[] storage = new space.nows.tube.api.ItemStack[46];
-    private final Map<space.nows.tube.api.EquipmentSlot, space.nows.tube.api.ItemStack> equipment = new EnumMap<>(space.nows.tube.api.EquipmentSlot.class);
+    private final space.nows.tube.api.inventory.ItemStack[] storage = new space.nows.tube.api.inventory.ItemStack[46];
+    private final Map<space.nows.tube.api.inventory.EquipmentSlot, space.nows.tube.api.inventory.ItemStack> equipment = new EnumMap<>(space.nows.tube.api.inventory.EquipmentSlot.class);
     private int held;
     private PlayerInventory inventory;
 
     @BeforeEach
     void setUp() {
-        java.util.Arrays.fill(storage, space.nows.tube.api.ItemStack.AIR);
-        space.nows.tube.api.Inventory backing = (space.nows.tube.api.Inventory) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] {space.nows.tube.api.Inventory.class}, (proxy, method, args) -> switch (method.getName()) {
+        java.util.Arrays.fill(storage, space.nows.tube.api.inventory.ItemStack.AIR);
+        space.nows.tube.api.inventory.Inventory backing = (space.nows.tube.api.inventory.Inventory) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.inventory.Inventory.class}, (proxy, method, args) -> switch (method.getName()) {
                     case "size" -> storage.length;
                     case "item" -> storage[(Integer) args[0]];
                     case "setItem" -> {
-                        storage[(Integer) args[0]] = (space.nows.tube.api.ItemStack) args[1];
+                        storage[(Integer) args[0]] = (space.nows.tube.api.inventory.ItemStack) args[1];
                         yield null;
                     }
                     case "hashCode" -> 1;
@@ -39,8 +39,8 @@ class BukkitPlayerInventoryTest {
                     default -> throw new UnsupportedOperationException(method.getName());
                 });
         UUID id = UUID.randomUUID();
-        space.nows.tube.api.Player player = (space.nows.tube.api.Player) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] {space.nows.tube.api.Player.class}, (proxy, method, args) -> switch (method.getName()) {
+        space.nows.tube.api.entity.Player player = (space.nows.tube.api.entity.Player) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.entity.Player.class}, (proxy, method, args) -> switch (method.getName()) {
                     case "inventory" -> backing;
                     case "uuid" -> id;
                     case "heldSlot" -> held;
@@ -48,9 +48,9 @@ class BukkitPlayerInventoryTest {
                         held = (Integer) args[0];
                         yield null;
                     }
-                    case "equipment" -> equipment.getOrDefault((space.nows.tube.api.EquipmentSlot) args[0], space.nows.tube.api.ItemStack.AIR);
+                    case "equipment" -> equipment.getOrDefault((space.nows.tube.api.inventory.EquipmentSlot) args[0], space.nows.tube.api.inventory.ItemStack.AIR);
                     case "setEquipment" -> {
-                        equipment.put((space.nows.tube.api.EquipmentSlot) args[0], (space.nows.tube.api.ItemStack) args[1]);
+                        equipment.put((space.nows.tube.api.inventory.EquipmentSlot) args[0], (space.nows.tube.api.inventory.ItemStack) args[1]);
                         yield null;
                     }
                     default -> throw new UnsupportedOperationException(method.getName());
@@ -69,7 +69,7 @@ class BukkitPlayerInventoryTest {
     void armorAndOffHandMapToEquipment() {
         inventory.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
         inventory.setItemInOffHand(new ItemStack(Material.SHIELD));
-        assertEquals("minecraft:diamond_helmet", equipment.get(space.nows.tube.api.EquipmentSlot.HEAD).type());
+        assertEquals("minecraft:diamond_helmet", equipment.get(space.nows.tube.api.inventory.EquipmentSlot.HEAD).type());
         assertEquals(Material.DIAMOND_HELMET, inventory.getItem(39).getType());
         assertEquals(Material.SHIELD, inventory.getItemInOffHand().getType());
         assertEquals(Material.DIAMOND_HELMET, inventory.getArmorContents()[3].getType());

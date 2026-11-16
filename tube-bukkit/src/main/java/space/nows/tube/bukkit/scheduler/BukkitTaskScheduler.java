@@ -5,8 +5,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.api.ScheduledTask;
-import space.nows.tube.api.Scheduler;
+import space.nows.tube.api.scheduler.ScheduledTask;
+import space.nows.tube.api.scheduler.Scheduler;
 
 import java.util.List;
 import java.util.Map;

@@ -2,7 +2,7 @@ package space.nows.tube.server.command;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import space.nows.tube.api.CommandSender;
+import space.nows.tube.api.command.CommandSender;
 
 public final class RconSender implements CommandSender {
 

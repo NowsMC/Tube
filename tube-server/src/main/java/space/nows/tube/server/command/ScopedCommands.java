@@ -1,7 +1,7 @@
 package space.nows.tube.server.command;
 
-import space.nows.tube.api.Command;
-import space.nows.tube.api.CommandRegistry;
+import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -40,7 +40,7 @@ final class BukkitBlockState implements BlockState {
 
     @Override
     public void setType(Material type) {
-        this.data = new BukkitBlockData(space.nows.tube.api.Block.of(type.getKey().toString()));
+        this.data = new BukkitBlockData(space.nows.tube.api.world.Block.of(type.getKey().toString()));
     }
 
     @Override

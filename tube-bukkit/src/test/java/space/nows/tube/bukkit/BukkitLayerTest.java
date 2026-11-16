@@ -195,11 +195,11 @@ class BukkitLayerTest {
     @Test
     void blockBreaksReachBukkitListenersAndCanBeCancelled() throws IOException {
         var player = stub.player("Steve");
-        var world = (space.nows.tube.api.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] {space.nows.tube.api.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
+        var world = (space.nows.tube.api.world.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.world.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
 
-        var allowed = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 1, 64, 2, space.nows.tube.api.Block.of("stone")));
-        var denied = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 13, 64, 2, space.nows.tube.api.Block.of("stone")));
+        var allowed = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 1, 64, 2, space.nows.tube.api.world.Block.of("stone")));
+        var denied = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 13, 64, 2, space.nows.tube.api.world.Block.of("stone")));
 
         assertTrue(!allowed.isCancelled());
         assertTrue(denied.isCancelled());
@@ -209,12 +209,12 @@ class BukkitLayerTest {
     @Test
     void playerMovesCanBeCancelled() {
         var player = stub.player("Steve");
-        var world = (space.nows.tube.api.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] {space.nows.tube.api.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
-        var from = new space.nows.tube.api.Location(world, 0, 64, 0);
+        var world = (space.nows.tube.api.world.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.world.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
+        var from = new space.nows.tube.api.world.Location(world, 0, 64, 0);
 
-        var allowed = stub.events.post(new space.nows.tube.api.event.PlayerMoveEvent(player, from, new space.nows.tube.api.Location(world, 5, 64, 0)));
-        var denied = stub.events.post(new space.nows.tube.api.event.PlayerMoveEvent(player, from, new space.nows.tube.api.Location(world, 200, 64, 0)));
+        var allowed = stub.events.post(new space.nows.tube.api.event.PlayerMoveEvent(player, from, new space.nows.tube.api.world.Location(world, 5, 64, 0)));
+        var denied = stub.events.post(new space.nows.tube.api.event.PlayerMoveEvent(player, from, new space.nows.tube.api.world.Location(world, 200, 64, 0)));
 
         assertTrue(!allowed.isCancelled());
         assertTrue(denied.isCancelled());
@@ -223,11 +223,11 @@ class BukkitLayerTest {
     @Test
     void inventoryClicksCanBeCancelled() {
         var player = stub.player("Steve");
-        var inventory = (space.nows.tube.api.Inventory) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] {space.nows.tube.api.Inventory.class}, (proxy, method, args) -> method.getName().equals("equals") ? proxy == args[0] : method.getName().equals("hashCode") ? 1 : null);
+        var inventory = (space.nows.tube.api.inventory.Inventory) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.inventory.Inventory.class}, (proxy, method, args) -> method.getName().equals("equals") ? proxy == args[0] : method.getName().equals("hashCode") ? 1 : null);
 
-        var cancelled = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.ItemStack.of("stone", 3)));
-        var kept = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.ItemStack.of("stone", 2)));
+        var cancelled = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 3)));
+        var kept = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 2)));
 
         assertTrue(cancelled.isCancelled());
         assertTrue(!kept.isCancelled());

@@ -110,7 +110,7 @@ public final class EventBridge {
     }
 
     private void entityDeath(EntityDeathEvent event) {
-        if (event.entity() instanceof space.nows.tube.api.Player tubePlayer) {
+        if (event.entity() instanceof space.nows.tube.api.entity.Player tubePlayer) {
             var player = runtime.adapters().player(tubePlayer);
             runtime.pluginManager().callEvent(new org.bukkit.event.entity.PlayerDeathEvent(player, player.getName() + " died"));
         } else {
@@ -159,7 +159,7 @@ public final class EventBridge {
         event.setCancelled(bukkit.isCancelled());
     }
 
-    private org.bukkit.inventory.Inventory inventory(space.nows.tube.api.Player owner, space.nows.tube.api.Inventory inventory) {
+    private org.bukkit.inventory.Inventory inventory(space.nows.tube.api.entity.Player owner, space.nows.tube.api.inventory.Inventory inventory) {
         if (inventory.equals(owner.inventory())) {
             return (org.bukkit.inventory.Inventory) runtime.adapters().player(owner).getInventory();
         }

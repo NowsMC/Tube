@@ -3,7 +3,7 @@ package space.nows.tube.server.inventory;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.item.Material;
-import space.nows.tube.api.ItemStack;
+import space.nows.tube.api.inventory.ItemStack;
 
 import java.util.List;
 

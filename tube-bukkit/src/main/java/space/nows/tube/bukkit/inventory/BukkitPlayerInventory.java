@@ -11,10 +11,10 @@ public final class BukkitPlayerInventory extends BukkitInventory implements Play
     private static final int STORAGE = 36;
     private static final int SIZE = 41;
 
-    private final space.nows.tube.api.Player player;
+    private final space.nows.tube.api.entity.Player player;
     private final HumanEntity holder;
 
-    public BukkitPlayerInventory(space.nows.tube.api.Player player, HumanEntity holder) {
+    public BukkitPlayerInventory(space.nows.tube.api.entity.Player player, HumanEntity holder) {
         super(player.inventory());
         this.player = player;
         this.holder = holder;
@@ -33,11 +33,11 @@ public final class BukkitPlayerInventory extends BukkitInventory implements Play
     @Override
     ItemStack read(int slot) {
         return switch (slot) {
-            case 36 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.EquipmentSlot.FEET));
-            case 37 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.EquipmentSlot.LEGS));
-            case 38 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.EquipmentSlot.CHEST));
-            case 39 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.EquipmentSlot.HEAD));
-            case 40 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.EquipmentSlot.OFF_HAND));
+            case 36 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.inventory.EquipmentSlot.FEET));
+            case 37 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.inventory.EquipmentSlot.LEGS));
+            case 38 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.inventory.EquipmentSlot.CHEST));
+            case 39 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.inventory.EquipmentSlot.HEAD));
+            case 40 -> ItemConverter.fromTube(player.equipment(space.nows.tube.api.inventory.EquipmentSlot.OFF_HAND));
             default -> {
                 if (slot < 0 || slot >= STORAGE) {
                     throw new IndexOutOfBoundsException("Slot " + slot);
@@ -49,13 +49,13 @@ public final class BukkitPlayerInventory extends BukkitInventory implements Play
 
     @Override
     void write(int slot, ItemStack item) {
-        space.nows.tube.api.ItemStack converted = ItemConverter.toTube(item);
+        space.nows.tube.api.inventory.ItemStack converted = ItemConverter.toTube(item);
         switch (slot) {
-            case 36 -> player.setEquipment(space.nows.tube.api.EquipmentSlot.FEET, converted);
-            case 37 -> player.setEquipment(space.nows.tube.api.EquipmentSlot.LEGS, converted);
-            case 38 -> player.setEquipment(space.nows.tube.api.EquipmentSlot.CHEST, converted);
-            case 39 -> player.setEquipment(space.nows.tube.api.EquipmentSlot.HEAD, converted);
-            case 40 -> player.setEquipment(space.nows.tube.api.EquipmentSlot.OFF_HAND, converted);
+            case 36 -> player.setEquipment(space.nows.tube.api.inventory.EquipmentSlot.FEET, converted);
+            case 37 -> player.setEquipment(space.nows.tube.api.inventory.EquipmentSlot.LEGS, converted);
+            case 38 -> player.setEquipment(space.nows.tube.api.inventory.EquipmentSlot.CHEST, converted);
+            case 39 -> player.setEquipment(space.nows.tube.api.inventory.EquipmentSlot.HEAD, converted);
+            case 40 -> player.setEquipment(space.nows.tube.api.inventory.EquipmentSlot.OFF_HAND, converted);
             default -> {
                 if (slot < 0 || slot >= STORAGE) {
                     throw new IndexOutOfBoundsException("Slot " + slot);

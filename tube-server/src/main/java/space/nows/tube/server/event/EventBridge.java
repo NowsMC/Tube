@@ -13,7 +13,7 @@ import net.minestom.server.event.player.PlayerHandAnimationEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.player.PlayerStartDiggingEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
-import space.nows.tube.api.LivingEntity;
+import space.nows.tube.api.entity.LivingEntity;
 import space.nows.tube.api.event.BlockBreakEvent;
 import space.nows.tube.api.event.BlockPlaceEvent;
 import space.nows.tube.api.event.EntityDamageEvent;
@@ -101,7 +101,7 @@ public final class EventBridge {
         node.addListener(net.minestom.server.event.player.PlayerMoveEvent.class, event -> {
             var player = players.wrap(event.getPlayer());
             var target = event.getNewPosition();
-            var to = new space.nows.tube.api.Location(player.world(), target.x(), target.y(), target.z(), target.yaw(), target.pitch());
+            var to = new space.nows.tube.api.world.Location(player.world(), target.x(), target.y(), target.z(), target.yaw(), target.pitch());
             var posted = bus.post(new PlayerMoveEvent(player, player.location(), to));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
@@ -136,7 +136,7 @@ public final class EventBridge {
 
         node.addListener(PlayerUseItemEvent.class, event -> {
             var player = players.wrap(event.getPlayer());
-            var posted = bus.post(new PlayerInteractEvent(player, player.world(), 0, 0, 0, space.nows.tube.api.Block.AIR,
+            var posted = bus.post(new PlayerInteractEvent(player, player.world(), 0, 0, 0, space.nows.tube.api.world.Block.AIR,
                     event.getHand() == net.minestom.server.entity.PlayerHand.MAIN, space.nows.tube.api.event.InteractAction.RIGHT_CLICK_AIR));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
@@ -145,7 +145,7 @@ public final class EventBridge {
 
         node.addListener(PlayerHandAnimationEvent.class, event -> {
             var player = players.wrap(event.getPlayer());
-            var posted = bus.post(new PlayerInteractEvent(player, player.world(), 0, 0, 0, space.nows.tube.api.Block.AIR,
+            var posted = bus.post(new PlayerInteractEvent(player, player.world(), 0, 0, 0, space.nows.tube.api.world.Block.AIR,
                     event.getHand() == net.minestom.server.entity.PlayerHand.MAIN, space.nows.tube.api.event.InteractAction.LEFT_CLICK_AIR));
             if (posted.isCancelled()) {
                 event.setCancelled(true);

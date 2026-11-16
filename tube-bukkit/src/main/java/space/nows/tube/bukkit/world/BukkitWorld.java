@@ -15,14 +15,14 @@ import java.util.UUID;
 public final class BukkitWorld implements World {
 
     private final BukkitRuntime runtime;
-    private final space.nows.tube.api.World tube;
+    private final space.nows.tube.api.world.World tube;
 
-    public BukkitWorld(BukkitRuntime runtime, space.nows.tube.api.World tube) {
+    public BukkitWorld(BukkitRuntime runtime, space.nows.tube.api.world.World tube) {
         this.runtime = runtime;
         this.tube = tube;
     }
 
-    public space.nows.tube.api.World tube() {
+    public space.nows.tube.api.world.World tube() {
         return tube;
     }
 

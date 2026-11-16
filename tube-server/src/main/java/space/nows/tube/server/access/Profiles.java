@@ -1,6 +1,6 @@
 package space.nows.tube.server.access;
 
-import space.nows.tube.api.Player;
+import space.nows.tube.api.entity.Player;
 
 import java.util.Collection;
 import java.util.Optional;

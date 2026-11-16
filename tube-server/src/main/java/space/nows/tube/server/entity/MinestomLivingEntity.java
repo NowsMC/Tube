@@ -1,9 +1,9 @@
 package space.nows.tube.server.entity;
 
 import net.minestom.server.entity.attribute.Attribute;
-import space.nows.tube.api.EquipmentSlot;
-import space.nows.tube.api.ItemStack;
-import space.nows.tube.api.LivingEntity;
+import space.nows.tube.api.entity.LivingEntity;
+import space.nows.tube.api.inventory.EquipmentSlot;
+import space.nows.tube.api.inventory.ItemStack;
 import space.nows.tube.server.inventory.ItemMapper;
 import space.nows.tube.server.world.WorldService;
 
@@ -37,15 +37,15 @@ public class MinestomLivingEntity extends MinestomEntity implements LivingEntity
     }
 
     @Override
-    public java.util.List<space.nows.tube.api.PotionEffect> effects() {
+    public java.util.List<space.nows.tube.api.entity.PotionEffect> effects() {
         return living().getActiveEffects().stream().map(timed -> {
             var potion = timed.potion();
-            return new space.nows.tube.api.PotionEffect(potion.effect().key().asString(), potion.duration(), potion.amplifier(), potion.isAmbient(), potion.hasParticles(), potion.hasIcon());
+            return new space.nows.tube.api.entity.PotionEffect(potion.effect().key().asString(), potion.duration(), potion.amplifier(), potion.isAmbient(), potion.hasParticles(), potion.hasIcon());
         }).toList();
     }
 
     @Override
-    public void addEffect(space.nows.tube.api.PotionEffect effect) {
+    public void addEffect(space.nows.tube.api.entity.PotionEffect effect) {
         var type = net.minestom.server.potion.PotionEffect.fromKey(effect.type());
         if (type == null) {
             throw new IllegalArgumentException("Unknown potion effect: " + effect.type());

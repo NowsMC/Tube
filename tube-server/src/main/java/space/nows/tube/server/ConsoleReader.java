@@ -2,7 +2,7 @@ package space.nows.tube.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.api.Scheduler;
+import space.nows.tube.api.scheduler.Scheduler;
 import space.nows.tube.server.command.CommandService;
 
 import java.io.BufferedReader;

@@ -3,7 +3,7 @@ package space.nows.tube.server.inventory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import space.nows.tube.api.ItemStack;
+import space.nows.tube.api.inventory.ItemStack;
 
 import java.util.Map;
 

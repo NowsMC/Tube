@@ -2,14 +2,14 @@ package space.nows.tube.server.plugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.api.CommandRegistry;
-import space.nows.tube.api.PluginConfig;
-import space.nows.tube.api.PluginContext;
-import space.nows.tube.api.PluginDescriptor;
-import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
+import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.network.Network;
+import space.nows.tube.api.plugin.PluginConfig;
+import space.nows.tube.api.plugin.PluginContext;
+import space.nows.tube.api.plugin.PluginDescriptor;
+import space.nows.tube.api.scheduler.Scheduler;
 import space.nows.tube.server.config.ConfigFormat;
 import space.nows.tube.server.config.FileConfig;
 

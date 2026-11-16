@@ -1,7 +1,7 @@
 package space.nows.tube.server.plugin;
 
-import space.nows.tube.api.Plugin;
-import space.nows.tube.api.PluginContext;
+import space.nows.tube.api.plugin.Plugin;
+import space.nows.tube.api.plugin.PluginContext;
 
 import java.util.ArrayList;
 import java.util.List;

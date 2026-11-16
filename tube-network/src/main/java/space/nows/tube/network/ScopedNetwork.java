@@ -1,6 +1,6 @@
 package space.nows.tube.network;
 
-import space.nows.tube.api.Player;
+import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.event.Subscription;
 import space.nows.tube.api.network.Network;
 import space.nows.tube.api.network.PluginChannels;

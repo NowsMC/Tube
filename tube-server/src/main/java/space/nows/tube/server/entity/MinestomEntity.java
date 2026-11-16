@@ -3,9 +3,9 @@ package space.nows.tube.server.entity;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.Instance;
-import space.nows.tube.api.Entity;
-import space.nows.tube.api.Location;
-import space.nows.tube.api.World;
+import space.nows.tube.api.entity.Entity;
+import space.nows.tube.api.world.Location;
+import space.nows.tube.api.world.World;
 import space.nows.tube.server.world.WorldService;
 
 import java.util.Optional;

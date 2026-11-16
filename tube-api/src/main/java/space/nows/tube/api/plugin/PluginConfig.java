@@ -1,4 +1,4 @@
-package space.nows.tube.api;
+package space.nows.tube.api.plugin;
 
 import java.util.List;
 

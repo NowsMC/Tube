@@ -14,11 +14,11 @@ public final class ItemConverter {
     private ItemConverter() {
     }
 
-    static space.nows.tube.api.ItemStack toTube(ItemStack item) {
+    static space.nows.tube.api.inventory.ItemStack toTube(ItemStack item) {
         if (item == null || item.isEmpty()) {
-            return space.nows.tube.api.ItemStack.AIR;
+            return space.nows.tube.api.inventory.ItemStack.AIR;
         }
-        space.nows.tube.api.ItemStack result = space.nows.tube.api.ItemStack.of(item.getType().getKey().toString(), item.getAmount());
+        space.nows.tube.api.inventory.ItemStack result = space.nows.tube.api.inventory.ItemStack.of(item.getType().getKey().toString(), item.getAmount());
         if (!item.getEnchantments().isEmpty()) {
             java.util.Map<String, Integer> enchantments = new java.util.HashMap<>();
             item.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment.getKey().toString(), level));
@@ -39,7 +39,7 @@ public final class ItemConverter {
         return result;
     }
 
-    public static ItemStack fromTube(space.nows.tube.api.ItemStack item) {
+    public static ItemStack fromTube(space.nows.tube.api.inventory.ItemStack item) {
         if (item == null || item.isAir()) {
             return null;
         }

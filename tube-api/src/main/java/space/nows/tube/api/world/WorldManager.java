@@ -1,4 +1,4 @@
-package space.nows.tube.api;
+package space.nows.tube.api.world;
 
 import java.util.Collection;
 import java.util.Optional;

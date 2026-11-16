@@ -8,8 +8,8 @@ import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.world.DimensionType;
-import space.nows.tube.api.World;
-import space.nows.tube.api.WorldManager;
+import space.nows.tube.api.world.World;
+import space.nows.tube.api.world.WorldManager;
 import space.nows.tube.server.config.FileConfig;
 import space.nows.tube.server.entity.MinestomEntity;
 import space.nows.tube.server.entity.MinestomLivingEntity;
@@ -83,7 +83,7 @@ public final class WorldService implements WorldManager {
         this.players = players;
     }
 
-    public space.nows.tube.api.Entity wrap(net.minestom.server.entity.Entity entity) {
+    public space.nows.tube.api.entity.Entity wrap(net.minestom.server.entity.Entity entity) {
         if (entity instanceof net.minestom.server.entity.Player player) {
             return players.wrap(player);
         }

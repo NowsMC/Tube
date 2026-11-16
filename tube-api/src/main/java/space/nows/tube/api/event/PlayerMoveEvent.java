@@ -1,7 +1,7 @@
 package space.nows.tube.api.event;
 
-import space.nows.tube.api.Location;
-import space.nows.tube.api.Player;
+import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.world.Location;
 
 import java.util.Objects;
 

@@ -3,8 +3,8 @@ package space.nows.tube.server.scheduler;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
-import space.nows.tube.api.ScheduledTask;
-import space.nows.tube.api.Scheduler;
+import space.nows.tube.api.scheduler.ScheduledTask;
+import space.nows.tube.api.scheduler.Scheduler;
 
 public final class SchedulerService implements Scheduler {
 

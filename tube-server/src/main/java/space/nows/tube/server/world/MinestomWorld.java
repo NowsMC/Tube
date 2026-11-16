@@ -5,11 +5,11 @@ import net.minestom.server.entity.EntityCreature;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.ItemEntity;
 import net.minestom.server.instance.InstanceContainer;
-import space.nows.tube.api.Block;
-import space.nows.tube.api.Entity;
-import space.nows.tube.api.ItemStack;
-import space.nows.tube.api.Location;
-import space.nows.tube.api.World;
+import space.nows.tube.api.entity.Entity;
+import space.nows.tube.api.inventory.ItemStack;
+import space.nows.tube.api.world.Block;
+import space.nows.tube.api.world.Location;
+import space.nows.tube.api.world.World;
 import space.nows.tube.server.inventory.ItemMapper;
 
 import java.util.Collection;
@@ -61,8 +61,8 @@ public final class MinestomWorld implements World {
     }
 
     @Override
-    public java.util.List<space.nows.tube.api.ChunkPos> loadedChunks() {
-        return instance.getChunks().stream().map(chunk -> new space.nows.tube.api.ChunkPos(chunk.getChunkX(), chunk.getChunkZ())).toList();
+    public java.util.List<space.nows.tube.api.world.ChunkPos> loadedChunks() {
+        return instance.getChunks().stream().map(chunk -> new space.nows.tube.api.world.ChunkPos(chunk.getChunkX(), chunk.getChunkZ())).toList();
     }
 
     @Override

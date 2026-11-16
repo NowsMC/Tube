@@ -1,13 +1,13 @@
 package space.nows.tube.server.command;
 
-import space.nows.tube.api.Command;
-import space.nows.tube.api.CommandRegistry;
-import space.nows.tube.api.CommandSender;
-import space.nows.tube.api.GameMode;
-import space.nows.tube.api.ItemStack;
-import space.nows.tube.api.Location;
-import space.nows.tube.api.Player;
 import space.nows.tube.api.Server;
+import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.entity.GameMode;
+import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.inventory.ItemStack;
+import space.nows.tube.api.world.Location;
 
 import java.util.List;
 import java.util.Locale;

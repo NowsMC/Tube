@@ -15,9 +15,9 @@ import java.util.ListIterator;
 
 public class BukkitInventory implements Inventory {
 
-    final space.nows.tube.api.Inventory tube;
+    final space.nows.tube.api.inventory.Inventory tube;
 
-    public BukkitInventory(space.nows.tube.api.Inventory tube) {
+    public BukkitInventory(space.nows.tube.api.inventory.Inventory tube) {
         this.tube = tube;
     }
 

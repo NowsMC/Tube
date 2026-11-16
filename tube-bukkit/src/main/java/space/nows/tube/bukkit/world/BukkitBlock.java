@@ -58,7 +58,7 @@ final class BukkitBlock implements Block {
 
     @Override
     public void setType(Material type) {
-        world.tube().setBlock(x, y, z, space.nows.tube.api.Block.of(type.getKey().toString()));
+        world.tube().setBlock(x, y, z, space.nows.tube.api.world.Block.of(type.getKey().toString()));
     }
 
     @Override

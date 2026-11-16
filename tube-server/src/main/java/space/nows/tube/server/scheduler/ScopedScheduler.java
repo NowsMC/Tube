@@ -1,7 +1,7 @@
 package space.nows.tube.server.scheduler;
 
-import space.nows.tube.api.ScheduledTask;
-import space.nows.tube.api.Scheduler;
+import space.nows.tube.api.scheduler.ScheduledTask;
+import space.nows.tube.api.scheduler.Scheduler;
 
 import java.util.ArrayList;
 import java.util.List;

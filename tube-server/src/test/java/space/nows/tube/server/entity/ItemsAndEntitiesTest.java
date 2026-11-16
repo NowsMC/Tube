@@ -18,16 +18,16 @@ import net.minestom.testing.Env;
 import net.minestom.testing.EnvTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import space.nows.tube.api.EquipmentSlot;
-import space.nows.tube.api.Inventory;
-import space.nows.tube.api.ItemStack;
-import space.nows.tube.api.LivingEntity;
-import space.nows.tube.api.Location;
 import space.nows.tube.api.Text;
+import space.nows.tube.api.entity.LivingEntity;
 import space.nows.tube.api.event.EntityDamageEvent;
 import space.nows.tube.api.event.EntityDeathEvent;
 import space.nows.tube.api.event.EntitySpawnEvent;
 import space.nows.tube.api.event.InventoryClickEvent;
+import space.nows.tube.api.inventory.EquipmentSlot;
+import space.nows.tube.api.inventory.Inventory;
+import space.nows.tube.api.inventory.ItemStack;
+import space.nows.tube.api.world.Location;
 import space.nows.tube.server.DedicatedServer;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.event.DefaultEventBus;
@@ -95,14 +95,14 @@ class ItemsAndEntitiesTest {
     void potionEffectsAreAppliedAndRemoved(Env env) {
         MinestomPlayer player = join(env);
 
-        player.addEffect(space.nows.tube.api.PotionEffect.of("speed", 200, 1));
+        player.addEffect(space.nows.tube.api.entity.PotionEffect.of("speed", 200, 1));
 
         assertEquals(1, player.effects().size());
         assertEquals("minecraft:speed", player.effects().getFirst().type());
         assertEquals(1, player.effects().getFirst().amplifier());
         player.removeEffect("speed");
         assertTrue(player.effects().isEmpty());
-        assertThrows(IllegalArgumentException.class, () -> player.addEffect(space.nows.tube.api.PotionEffect.of("tube:nothing", 20, 0)));
+        assertThrows(IllegalArgumentException.class, () -> player.addEffect(space.nows.tube.api.entity.PotionEffect.of("tube:nothing", 20, 0)));
     }
 
     @Test
@@ -112,7 +112,7 @@ class ItemsAndEntitiesTest {
 
         world.loadChunk(40, 41).join();
         assertTrue(world.isChunkLoaded(40, 41));
-        assertTrue(world.loadedChunks().contains(new space.nows.tube.api.ChunkPos(40, 41)));
+        assertTrue(world.loadedChunks().contains(new space.nows.tube.api.world.ChunkPos(40, 41)));
 
         world.unloadChunk(40, 41);
         assertFalse(world.isChunkLoaded(40, 41));

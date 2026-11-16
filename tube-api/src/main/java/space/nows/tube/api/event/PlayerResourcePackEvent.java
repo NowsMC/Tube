@@ -1,7 +1,7 @@
 package space.nows.tube.api.event;
 
 import net.kyori.adventure.resource.ResourcePackStatus;
-import space.nows.tube.api.Player;
+import space.nows.tube.api.entity.Player;
 
 import java.util.UUID;
 

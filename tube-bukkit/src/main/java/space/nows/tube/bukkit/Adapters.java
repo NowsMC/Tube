@@ -36,14 +36,14 @@ public final class Adapters {
         return console;
     }
 
-    public CommandSender sender(space.nows.tube.api.CommandSender sender) {
-        if (sender instanceof space.nows.tube.api.Player player) {
+    public CommandSender sender(space.nows.tube.api.command.CommandSender sender) {
+        if (sender instanceof space.nows.tube.api.entity.Player player) {
             return player(player);
         }
         return new BukkitCommandSender(runtime, sender);
     }
 
-    public Player player(space.nows.tube.api.Player tube) {
+    public Player player(space.nows.tube.api.entity.Player tube) {
         return players.computeIfAbsent(tube.uuid(), uuid -> new BukkitPlayer(runtime, tube));
     }
 
@@ -51,14 +51,14 @@ public final class Adapters {
         players.remove(uuid);
     }
 
-    public LivingEntity living(space.nows.tube.api.LivingEntity tube) {
-        if (tube instanceof space.nows.tube.api.Player player) {
+    public LivingEntity living(space.nows.tube.api.entity.LivingEntity tube) {
+        if (tube instanceof space.nows.tube.api.entity.Player player) {
             return player(player);
         }
         return new BukkitLivingEntity(runtime, tube);
     }
 
-    public World world(space.nows.tube.api.World tube) {
+    public World world(space.nows.tube.api.world.World tube) {
         return worlds.computeIfAbsent(tube.name(), name -> new BukkitWorld(runtime, tube));
     }
 
@@ -70,13 +70,13 @@ public final class Adapters {
         return new BukkitOfflinePlayer(runtime, uuid, name);
     }
 
-    public Location location(space.nows.tube.api.Location tube) {
+    public Location location(space.nows.tube.api.world.Location tube) {
         return new Location(world(tube.world()), tube.x(), tube.y(), tube.z(), tube.yaw(), tube.pitch());
     }
 
-    public space.nows.tube.api.Location tubeLocation(Location location) {
+    public space.nows.tube.api.world.Location tubeLocation(Location location) {
         BukkitWorld world = (BukkitWorld) location.getWorld();
-        return new space.nows.tube.api.Location(world.tube(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        return new space.nows.tube.api.world.Location(world.tube(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
 
     public static UUID offlineUuid(String name) {

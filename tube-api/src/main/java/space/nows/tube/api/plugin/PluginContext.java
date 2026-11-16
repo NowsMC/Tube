@@ -1,8 +1,11 @@
-package space.nows.tube.api;
+package space.nows.tube.api.plugin;
 
 import org.slf4j.Logger;
+import space.nows.tube.api.Server;
+import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.network.Network;
+import space.nows.tube.api.scheduler.Scheduler;
 
 import java.nio.file.Path;
 

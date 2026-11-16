@@ -1,8 +1,8 @@
 package space.nows.tube.api.event;
 
-import space.nows.tube.api.Inventory;
-import space.nows.tube.api.ItemStack;
-import space.nows.tube.api.Player;
+import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.inventory.Inventory;
+import space.nows.tube.api.inventory.ItemStack;
 
 public final class InventoryClickEvent implements Cancellable {
 

@@ -43,8 +43,8 @@ final class BukkitChunk implements org.bukkit.Chunk {
     public Entity[] getEntities() {
         return world.tube().entities().stream()
                 .filter(entity -> ((int) Math.floor(entity.location().x()) >> 4) == x && ((int) Math.floor(entity.location().z()) >> 4) == z)
-                .filter(entity -> entity instanceof space.nows.tube.api.LivingEntity)
-                .map(entity -> (Entity) runtime.adapters().living((space.nows.tube.api.LivingEntity) entity))
+                .filter(entity -> entity instanceof space.nows.tube.api.entity.LivingEntity)
+                .map(entity -> (Entity) runtime.adapters().living((space.nows.tube.api.entity.LivingEntity) entity))
                 .toArray(Entity[]::new);
     }
 

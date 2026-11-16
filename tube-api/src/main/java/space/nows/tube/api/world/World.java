@@ -1,4 +1,7 @@
-package space.nows.tube.api;
+package space.nows.tube.api.world;
+
+import space.nows.tube.api.entity.Entity;
+import space.nows.tube.api.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.List;

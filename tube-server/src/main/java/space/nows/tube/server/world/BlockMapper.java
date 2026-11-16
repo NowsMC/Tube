@@ -1,6 +1,6 @@
 package space.nows.tube.server.world;
 
-import space.nows.tube.api.Block;
+import space.nows.tube.api.world.Block;
 
 public final class BlockMapper {
 

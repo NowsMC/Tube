@@ -1,6 +1,8 @@
-package space.nows.tube.api;
+package space.nows.tube.api.entity;
 
 import net.kyori.adventure.text.Component;
+import space.nows.tube.api.world.Location;
+import space.nows.tube.api.world.World;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package space.nows.tube.server.config;
 
-import space.nows.tube.api.PluginConfig;
+import space.nows.tube.api.plugin.PluginConfig;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

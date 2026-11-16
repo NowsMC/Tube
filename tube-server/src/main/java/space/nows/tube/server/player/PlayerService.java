@@ -1,7 +1,7 @@
 package space.nows.tube.server.player;
 
 import ca.spottedleaf.concurrentutil.map.concurrent.objects.ConcurrentChainedObject2ObjectHashTable;
-import space.nows.tube.api.Player;
+import space.nows.tube.api.entity.Player;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.world.WorldService;
 

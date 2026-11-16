@@ -1,10 +1,10 @@
 package space.nows.tube.server.command;
 
-import space.nows.tube.api.Command;
-import space.nows.tube.api.CommandRegistry;
-import space.nows.tube.api.CommandSender;
-import space.nows.tube.api.Player;
 import space.nows.tube.api.Server;
+import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.entity.Player;
 import space.nows.tube.server.access.AccessControl;
 import space.nows.tube.server.access.BanList;
 import space.nows.tube.server.access.Profiles;

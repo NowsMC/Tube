@@ -11,9 +11,9 @@ public final class BukkitCommandSender extends BukkitPermissible implements Comm
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
-    private final space.nows.tube.api.CommandSender tube;
+    private final space.nows.tube.api.command.CommandSender tube;
 
-    public BukkitCommandSender(BukkitRuntime runtime, space.nows.tube.api.CommandSender tube) {
+    public BukkitCommandSender(BukkitRuntime runtime, space.nows.tube.api.command.CommandSender tube) {
         super(runtime);
         this.tube = tube;
     }

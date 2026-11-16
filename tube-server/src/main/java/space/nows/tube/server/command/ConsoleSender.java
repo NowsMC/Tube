@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.api.CommandSender;
+import space.nows.tube.api.command.CommandSender;
 
 final class ConsoleSender implements CommandSender {
 

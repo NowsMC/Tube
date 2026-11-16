@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import space.nows.tube.api.Command;
-import space.nows.tube.api.CommandRegistry;
-import space.nows.tube.api.PluginDescriptor;
-import space.nows.tube.api.ScheduledTask;
-import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
+import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.plugin.PluginDescriptor;
+import space.nows.tube.api.scheduler.ScheduledTask;
+import space.nows.tube.api.scheduler.Scheduler;
 import space.nows.tube.server.event.DefaultEventBus;
 
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package space.nows.tube.api.event;
 
-import space.nows.tube.api.Player;
+import space.nows.tube.api.entity.Player;
 
 import java.util.Objects;
 

@@ -1,8 +1,8 @@
 package space.nows.tube.server.inventory;
 
 import net.minestom.server.inventory.AbstractInventory;
-import space.nows.tube.api.Inventory;
-import space.nows.tube.api.ItemStack;
+import space.nows.tube.api.inventory.Inventory;
+import space.nows.tube.api.inventory.ItemStack;
 
 public final class MinestomInventory implements Inventory {
 

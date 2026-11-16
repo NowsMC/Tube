@@ -52,14 +52,14 @@ class WorldServiceTest {
         WorldService service = new WorldService(directory, "main");
         MinestomWorld world = (MinestomWorld) service.defaultWorld();
 
-        world.setBlock(2, 60, 2, space.nows.tube.api.Block.of("stone"));
+        world.setBlock(2, 60, 2, space.nows.tube.api.world.Block.of("stone"));
         assertEquals("minecraft:stone", world.block(2, 60, 2).key());
 
-        world.setBlock(3, 60, 3, new space.nows.tube.api.Block("minecraft:oak_stairs", java.util.Map.of("facing", "north")));
+        world.setBlock(3, 60, 3, new space.nows.tube.api.world.Block("minecraft:oak_stairs", java.util.Map.of("facing", "north")));
         assertEquals("north", world.block(3, 60, 3).properties().get("facing"));
 
         assertTrue(world.block(100, 100, 100).isAir());
-        assertThrows(IllegalArgumentException.class, () -> world.setBlock(0, 60, 0, space.nows.tube.api.Block.of("tube:nonexistent")));
+        assertThrows(IllegalArgumentException.class, () -> world.setBlock(0, 60, 0, space.nows.tube.api.world.Block.of("tube:nonexistent")));
         release(world);
     }
 

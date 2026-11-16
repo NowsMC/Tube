@@ -1,4 +1,7 @@
-package space.nows.tube.api;
+package space.nows.tube.api.entity;
+
+import space.nows.tube.api.inventory.EquipmentSlot;
+import space.nows.tube.api.inventory.ItemStack;
 
 public interface LivingEntity extends Entity {
 
