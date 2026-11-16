@@ -1,16 +1,10 @@
 package space.nows.tube.server;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import space.nows.tube.api.PermissionManager;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -24,7 +18,6 @@ import java.util.UUID;
 final class PermissionService implements PermissionManager {
 
     private static final int OP_LEVEL = 4;
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private final Path opsFile;
     private final Path permissionsFile;
@@ -90,7 +83,7 @@ final class PermissionService implements PermissionManager {
     }
 
     private void loadOps() {
-        for (JsonElement element : readArray(opsFile)) {
+        for (JsonElement element : JsonFiles.readArray(opsFile)) {
             JsonObject entry = element.getAsJsonObject();
             ops.put(UUID.fromString(entry.get("uuid").getAsString()), entry.has("name") ? entry.get("name").getAsString() : "");
         }
@@ -100,7 +93,7 @@ final class PermissionService implements PermissionManager {
         if (!Files.isRegularFile(permissionsFile)) {
             return;
         }
-        JsonObject root = parse(permissionsFile).getAsJsonObject();
+        JsonObject root = JsonFiles.read(permissionsFile).getAsJsonObject();
         root.entrySet().forEach(entry -> {
             Set<String> nodes = new HashSet<>();
             entry.getValue().getAsJsonArray().forEach(node -> nodes.add(node.getAsString()));
@@ -115,9 +108,10 @@ final class PermissionService implements PermissionManager {
             entry.addProperty("uuid", uuid.toString());
             entry.addProperty("name", name);
             entry.addProperty("level", OP_LEVEL);
+            entry.addProperty("bypassesPlayerLimit", false);
             array.add(entry);
         });
-        write(opsFile, array);
+        JsonFiles.write(opsFile, array);
     }
 
     private void saveGrants() {
@@ -127,28 +121,6 @@ final class PermissionService implements PermissionManager {
             new TreeSet<>(nodes).forEach(array::add);
             root.add(uuid.toString(), array);
         });
-        write(permissionsFile, root);
-    }
-
-    private static JsonArray readArray(Path file) {
-        return Files.isRegularFile(file) ? parse(file).getAsJsonArray() : new JsonArray();
-    }
-
-    private static JsonElement parse(Path file) {
-        try {
-            return JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        } catch (RuntimeException e) {
-            throw new IllegalStateException("Could not parse " + file + ": " + e.getMessage(), e);
-        }
-    }
-
-    private static void write(Path file, JsonElement content) {
-        try {
-            Files.writeString(file, GSON.toJson(content) + System.lineSeparator(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        JsonFiles.write(permissionsFile, root);
     }
 }

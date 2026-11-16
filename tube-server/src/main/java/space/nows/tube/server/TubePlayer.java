@@ -9,6 +9,8 @@ import space.nows.tube.api.Location;
 import space.nows.tube.api.Player;
 import space.nows.tube.api.World;
 
+import java.net.InetSocketAddress;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -37,6 +39,11 @@ final class TubePlayer implements Player {
     @Override
     public UUID uuid() {
         return handle.getUuid();
+    }
+
+    @Override
+    public Optional<InetSocketAddress> address() {
+        return handle.getPlayerConnection().getRemoteAddress() instanceof InetSocketAddress address ? Optional.of(address) : Optional.empty();
     }
 
     @Override

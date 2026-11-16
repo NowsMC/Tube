@@ -1,6 +1,7 @@
 package space.nows.tube.server;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -61,7 +62,8 @@ class CommandPermissionTest {
         Recorder denied = new Recorder(false);
         commands.dispatch(denied, "/secret a b");
         assertEquals(List.of(), ran);
-        assertEquals(List.of("You do not have permission to use this command"), denied.messages);
+        assertEquals(1, denied.messages.size());
+        assertTrue(denied.messages.getFirst().startsWith("I'm sorry, but you do not have permission"));
 
         commands.dispatch(new Recorder(true), "secret a b");
         assertEquals(List.of("a,b"), ran);

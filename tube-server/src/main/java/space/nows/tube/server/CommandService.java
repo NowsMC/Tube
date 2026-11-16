@@ -1,7 +1,7 @@
 package space.nows.tube.server;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import space.nows.tube.api.Command;
@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 final class CommandService implements CommandRegistry {
+
+    static final String NO_PERMISSION = "<red>I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error.";
 
     private record Entry(String name, Command handler, net.minestom.server.command.builder.Command bridge, List<String> labels) {
     }
@@ -90,7 +92,7 @@ final class CommandService implements CommandRegistry {
     private static void run(Command command, CommandSender sender, List<String> args) {
         String permission = command.permission();
         if (permission != null && !sender.hasPermission(permission)) {
-            sender.sendMessage(Component.text("You do not have permission to use this command", NamedTextColor.RED));
+            sender.sendMessage(MiniMessage.miniMessage().deserialize(NO_PERMISSION));
             return;
         }
         command.execute(sender, args);

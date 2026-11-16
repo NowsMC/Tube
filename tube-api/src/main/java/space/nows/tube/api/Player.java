@@ -2,12 +2,16 @@ package space.nows.tube.api;
 
 import net.kyori.adventure.text.Component;
 
+import java.net.InetSocketAddress;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface Player extends CommandSender {
 
     UUID uuid();
+
+    Optional<InetSocketAddress> address();
 
     World world();
 

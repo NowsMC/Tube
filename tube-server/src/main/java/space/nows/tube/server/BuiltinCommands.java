@@ -19,7 +19,7 @@ final class BuiltinCommands {
     private BuiltinCommands() {
     }
 
-    static void register(Server server, CommandRegistry registry) {
+    static void register(Server server, CommandRegistry registry, Profiles profiles) {
         registry.register("help", (sender, args) ->
                 sender.sendMessage("Commands: " + String.join(", ", registry.names())));
 
@@ -49,18 +49,18 @@ final class BuiltinCommands {
             server.stop();
         }));
 
-        registry.register("op", Command.withPermission(OP, (sender, args) -> changeOp(server, sender, args, true)));
-        registry.register("deop", Command.withPermission(OP, (sender, args) -> changeOp(server, sender, args, false)));
+        registry.register("op", Command.withPermission(OP, (sender, args) -> changeOp(server, profiles, sender, args, true)));
+        registry.register("deop", Command.withPermission(OP, (sender, args) -> changeOp(server, profiles, sender, args, false)));
     }
 
-    private static void changeOp(Server server, CommandSender sender, List<String> args, boolean op) {
+    private static void changeOp(Server server, Profiles profiles, CommandSender sender, List<String> args, boolean op) {
         if (args.size() != 1) {
             sender.sendMessage("Usage: " + (op ? "op" : "deop") + " <player>");
             return;
         }
-        Optional<Player> target = server.players().stream().filter(player -> player.name().equalsIgnoreCase(args.getFirst())).findFirst();
+        Optional<Profiles.Profile> target = profiles.find(args.getFirst());
         if (target.isEmpty()) {
-            sender.sendMessage("Player " + args.getFirst() + " must be online");
+            sender.sendMessage("Unknown player " + args.getFirst());
             return;
         }
         server.permissions().setOp(target.get().uuid(), target.get().name(), op);
