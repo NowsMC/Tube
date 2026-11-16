@@ -11,6 +11,7 @@ final class PlayerService {
 
     private final WorldService worlds;
     private final PermissionService permissions;
+    private volatile space.nows.tube.api.event.EventBus events;
     private final ConcurrentChainedObject2ObjectHashTable<UUID, TubePlayer> players = ConcurrentChainedObject2ObjectHashTable.createWithExpected(64);
 
     PlayerService(WorldService worlds, PermissionService permissions) {
@@ -19,8 +20,16 @@ final class PlayerService {
         worlds.attach(this);
     }
 
+    void attachEvents(space.nows.tube.api.event.EventBus events) {
+        this.events = events;
+    }
+
+    space.nows.tube.api.event.EventBus events() {
+        return events;
+    }
+
     TubePlayer wrap(net.minestom.server.entity.Player handle) {
-        return players.computeIfAbsent(handle.getUuid(), uuid -> new TubePlayer(handle, worlds, permissions));
+        return players.computeIfAbsent(handle.getUuid(), uuid -> new TubePlayer(handle, worlds, permissions, this));
     }
 
     void remove(net.minestom.server.entity.Player handle) {

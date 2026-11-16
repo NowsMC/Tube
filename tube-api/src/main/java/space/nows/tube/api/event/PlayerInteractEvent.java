@@ -13,9 +13,15 @@ public final class PlayerInteractEvent implements Cancellable {
     private final int z;
     private final Block block;
     private final boolean mainHand;
+    private final InteractAction action;
     private boolean cancelled;
 
     public PlayerInteractEvent(Player player, World world, int x, int y, int z, Block block, boolean mainHand) {
+        this(player, world, x, y, z, block, mainHand, InteractAction.RIGHT_CLICK_BLOCK);
+    }
+
+    public PlayerInteractEvent(Player player, World world, int x, int y, int z, Block block, boolean mainHand, InteractAction action) {
+        this.action = action;
         this.player = player;
         this.world = world;
         this.x = x;
@@ -47,6 +53,10 @@ public final class PlayerInteractEvent implements Cancellable {
 
     public Block block() {
         return block;
+    }
+
+    public InteractAction action() {
+        return action;
     }
 
     public boolean mainHand() {

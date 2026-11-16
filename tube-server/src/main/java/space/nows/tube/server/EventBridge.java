@@ -7,6 +7,9 @@ import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerBlockInteractEvent;
+import net.minestom.server.event.player.PlayerHandAnimationEvent;
+import net.minestom.server.event.player.PlayerStartDiggingEvent;
+import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
@@ -115,6 +118,35 @@ final class EventBridge {
             }
         });
 
+        node.addListener(PlayerStartDiggingEvent.class, event -> {
+            var pos = event.getBlockPosition();
+            var posted = bus.post(new PlayerInteractEvent(
+                    players.wrap(event.getPlayer()), worlds.of(event.getInstance()),
+                    pos.blockX(), pos.blockY(), pos.blockZ(), BlockMapper.fromMinestom(event.getBlock()), true,
+                    space.nows.tube.api.event.InteractAction.LEFT_CLICK_BLOCK));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            }
+        });
+
+        node.addListener(PlayerUseItemEvent.class, event -> {
+            var player = players.wrap(event.getPlayer());
+            var posted = bus.post(new PlayerInteractEvent(player, player.world(), 0, 0, 0, space.nows.tube.api.Block.AIR,
+                    event.getHand() == net.minestom.server.entity.PlayerHand.MAIN, space.nows.tube.api.event.InteractAction.RIGHT_CLICK_AIR));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            }
+        });
+
+        node.addListener(PlayerHandAnimationEvent.class, event -> {
+            var player = players.wrap(event.getPlayer());
+            var posted = bus.post(new PlayerInteractEvent(player, player.world(), 0, 0, 0, space.nows.tube.api.Block.AIR,
+                    event.getHand() == net.minestom.server.entity.PlayerHand.MAIN, space.nows.tube.api.event.InteractAction.LEFT_CLICK_AIR));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            }
+        });
+
         node.addListener(InventoryPreClickEvent.class, event -> {
             var posted = bus.post(new InventoryClickEvent(
                     players.wrap(event.getPlayer()), new TubeInventory(event.getInventory()),
@@ -128,7 +160,7 @@ final class EventBridge {
                 bus.post(new InventoryCloseEvent(players.wrap(event.getPlayer()), new TubeInventory(event.getInventory()))));
 
         node.addListener(net.minestom.server.event.entity.EntityDamageEvent.class, event -> {
-            var posted = bus.post(new EntityDamageEvent((LivingEntity) worlds.wrap(event.getEntity()), event.getDamage().getAmount()));
+            var posted = bus.post(new EntityDamageEvent((LivingEntity) worlds.wrap(event.getEntity()), event.getDamage().getAmount(), event.getDamage().getType().key().asString()));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
             }

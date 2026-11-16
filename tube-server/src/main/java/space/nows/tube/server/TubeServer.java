@@ -229,6 +229,7 @@ public final class TubeServer implements Server {
         commands = new CommandService(players);
         scheduler = new SchedulerService();
         events = new DefaultEventBus();
+        players.attachEvents(events);
         channels = new TubePluginChannels(players);
         network = new NettyNetwork(channels);
         plugins = new PluginManager(this, commands, scheduler, events, directory.resolve("plugins"));

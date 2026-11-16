@@ -14,12 +14,27 @@ final class TubePlayer extends TubeLivingEntity implements Player {
 
     private final net.minestom.server.entity.Player player;
     private final PermissionService permissions;
+    private final PlayerService service;
     private volatile String clientBrand;
 
-    TubePlayer(net.minestom.server.entity.Player player, WorldService worlds, PermissionService permissions) {
+    TubePlayer(net.minestom.server.entity.Player player, WorldService worlds, PermissionService permissions, PlayerService service) {
         super(player, worlds);
         this.player = player;
         this.permissions = permissions;
+        this.service = service;
+    }
+
+    @Override
+    public java.util.concurrent.CompletableFuture<Void> teleport(space.nows.tube.api.Location target) {
+        var bus = service.events();
+        if (bus != null) {
+            var posted = bus.post(new space.nows.tube.api.event.PlayerTeleportEvent(this, location(), target));
+            if (posted.isCancelled()) {
+                return java.util.concurrent.CompletableFuture.completedFuture(null);
+            }
+            target = posted.to();
+        }
+        return super.teleport(target);
     }
 
     @Override
