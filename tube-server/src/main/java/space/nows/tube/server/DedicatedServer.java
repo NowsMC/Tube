@@ -35,12 +35,14 @@ import space.nows.tube.server.config.ServerProperties;
 import space.nows.tube.server.config.ServerSettings;
 import space.nows.tube.server.connection.ConnectionLog;
 import space.nows.tube.server.connection.LoginHandler;
+import space.nows.tube.server.connection.PacketRateLimiter;
 import space.nows.tube.server.connection.PluginChannelService;
 import space.nows.tube.server.connection.ResourcePackHandler;
 import space.nows.tube.server.connection.StatusResponder;
 import space.nows.tube.server.event.DefaultEventBus;
 import space.nows.tube.server.event.EventBridge;
 import space.nows.tube.server.inventory.MinestomInventory;
+import space.nows.tube.server.player.IdleKicker;
 import space.nows.tube.server.player.PlayerDataStore;
 import space.nows.tube.server.player.PlayerService;
 import space.nows.tube.server.plugin.PluginManager;
@@ -83,6 +85,7 @@ public final class DedicatedServer implements Server {
     private NettyNetwork network;
     private RemoteAccess remoteAccess;
     private Autosave autosave;
+    private TickWatchdog watchdog;
 
     public DedicatedServer(VersionProfile profile, Path directory) {
         this.profile = Objects.requireNonNull(profile, "profile");
@@ -208,14 +211,14 @@ public final class DedicatedServer implements Server {
         settings = ServerProperties.load(propertiesFile);
         LOGGER.info("Starting {} {} for Minecraft {}", name(), version, minecraftVersion());
 
-        System.setProperty("minestom.chunk-view-distance", Integer.toString(settings.level().viewDistance()));
+        EngineProperties.apply(settings);
         if (!settings.level().type().equals("minecraft:flat")) {
             LOGGER.warn("server.properties: level-type {} is not supported yet, using minecraft:flat", settings.level().type());
         }
 
         MinecraftServer server = MinecraftServer.init(settings.connection().onlineMode() ? new Auth.Online() : new Auth.Offline());
         MinecraftServer.setBrandName(name());
-        int threshold = settings.connection().compressionThreshold();
+        int threshold = settings.network().compressionThreshold();
         MinecraftServer.setCompressionThreshold(threshold < 0 ? 0 : Math.max(1, threshold));
         MinecraftServer.setDifficulty(Difficulty.valueOf(settings.gameplay().difficulty().name()));
 
@@ -231,7 +234,7 @@ public final class DedicatedServer implements Server {
         events = new DefaultEventBus();
         players.attachEvents(events);
         PluginChannelService channels = new PluginChannelService(players);
-        network = new NettyNetwork(channels, Transport.choose(true));
+        network = new NettyNetwork(channels, Transport.choose(settings.network().nativeTransport()));
         LOGGER.info("Using {} for Tube network sockets", network.transport());
         plugins = new PluginManager(this, commands, scheduler, events, directory.resolve("plugins"));
 
@@ -243,6 +246,8 @@ public final class DedicatedServer implements Server {
         new EventBridge(events, players, worlds).install(handler);
         new SpawnProtection(settings.level().spawnProtection(), worlds, permissions).install(events);
         ConnectionLog.install(events, settings.connection().logIps());
+        new PacketRateLimiter(settings.network().rateLimit(), System::nanoTime).install(handler);
+        new IdleKicker(settings.gameplay().playerIdleTimeout(), System::currentTimeMillis).install(this);
         channels.install(handler);
 
         Profiles profiles = new Profiles(this::players, userCache);
@@ -260,6 +265,7 @@ public final class DedicatedServer implements Server {
                 () -> scheduler.runSync(() -> MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(this::savePlayer)));
         ConsoleReader.start(scheduler, commands);
         server.start(settings.connection().bindAddress(), settings.connection().port());
+        watchdog = TickWatchdog.start(settings.watchdog().maxTickTime(), scheduler);
     }
 
     private void savePlayer(net.minestom.server.entity.Player player) {
@@ -290,6 +296,9 @@ public final class DedicatedServer implements Server {
             return;
         }
         LOGGER.info("Stopping server");
+        if (watchdog != null) {
+            watchdog.close();
+        }
         if (autosave != null) {
             autosave.close();
         }

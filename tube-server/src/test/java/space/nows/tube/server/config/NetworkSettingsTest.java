@@ -26,7 +26,7 @@ class NetworkSettingsTest {
         assertFalse(settings.query().enabled());
         assertEquals(25575, settings.rcon().port());
         assertEquals(25565, settings.query().port());
-        assertEquals(256, settings.connection().compressionThreshold());
+        assertEquals(256, settings.network().compressionThreshold());
         assertTrue(Files.readString(file).contains("rcon.password="));
     }
 
@@ -44,7 +44,7 @@ class NetworkSettingsTest {
         assertEquals("secret", settings.rcon().password());
         assertTrue(settings.query().enabled());
         assertEquals(30002, settings.query().port());
-        assertEquals(-1, settings.connection().compressionThreshold());
+        assertEquals(-1, settings.network().compressionThreshold());
         assertEquals("https://example.com/pack.zip", settings.resourcePack().url());
         assertTrue(settings.resourcePack().required());
         assertEquals("123e4567-e89b-12d3-a456-426614174000", settings.resourcePack().id());
@@ -56,5 +56,34 @@ class NetworkSettingsTest {
         Files.writeString(file, "resource-pack-id=not-a-uuid\n");
 
         assertEquals("", ServerProperties.load(file).resourcePack().id());
+    }
+
+    @Test
+    void readsConnectionGuardKeys() throws IOException {
+        Path file = directory.resolve("server.properties");
+        Files.writeString(file, "rate-limit=200\nuse-native-transport=false\nprevent-proxy-connections=true\naccepts-transfers=true\n"
+                + "player-idle-timeout=15\nmax-tick-time=-1\n");
+
+        ServerSettings settings = ServerProperties.load(file);
+
+        assertEquals(200, settings.network().rateLimit());
+        assertFalse(settings.network().nativeTransport());
+        assertTrue(settings.connection().preventProxyConnections());
+        assertTrue(settings.connection().acceptsTransfers());
+        assertEquals(15, settings.gameplay().playerIdleTimeout());
+        assertEquals(-1, settings.watchdog().maxTickTime());
+    }
+
+    @Test
+    void writesConnectionGuardDefaults() throws IOException {
+        Path file = directory.resolve("server.properties");
+
+        ServerSettings settings = ServerProperties.load(file);
+
+        assertEquals(0, settings.network().rateLimit());
+        assertTrue(settings.network().nativeTransport());
+        assertEquals(0, settings.gameplay().playerIdleTimeout());
+        assertEquals(60000, settings.watchdog().maxTickTime());
+        assertTrue(Files.readString(file).contains("max-tick-time=60000"));
     }
 }

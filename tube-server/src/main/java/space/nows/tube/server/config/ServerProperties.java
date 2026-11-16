@@ -66,12 +66,17 @@ public final class ServerProperties {
         defaults.put("resource-pack-id", "");
         defaults.put("resource-pack-prompt", "");
         defaults.put("require-resource-pack", "false");
+        defaults.put("rate-limit", "0");
+        defaults.put("use-native-transport", "true");
+        defaults.put("prevent-proxy-connections", "false");
+        defaults.put("accepts-transfers", "false");
+        defaults.put("player-idle-timeout", "0");
+        defaults.put("max-tick-time", "60000");
         return defaults;
     }
 
     private static Map<String, String> unsupported() {
         Map<String, String> keys = new LinkedHashMap<>();
-        keys.put("accepts-transfers", "false");
         keys.put("allow-flight", "false");
         keys.put("enforce-secure-profile", "true");
         keys.put("entity-broadcast-range-percentage", "100");
@@ -79,14 +84,9 @@ public final class ServerProperties {
         keys.put("generator-settings", "{}");
         keys.put("initial-enabled-packs", "vanilla");
         keys.put("level-seed", "");
-        keys.put("max-tick-time", "60000");
         keys.put("max-world-size", "29999984");
         keys.put("pause-when-empty-seconds", "-1");
-        keys.put("player-idle-timeout", "0");
-        keys.put("prevent-proxy-connections", "false");
-        keys.put("rate-limit", "0");
         keys.put("simulation-distance", "10");
-        keys.put("use-native-transport", "true");
         return keys;
     }
 
@@ -135,8 +135,13 @@ public final class ServerProperties {
                         integer("server-port", 1, 65535),
                         bool("online-mode"),
                         integer("max-players", 1, Integer.MAX_VALUE),
+                        bool("log-ips"),
+                        bool("prevent-proxy-connections"),
+                        bool("accepts-transfers")),
+                new ServerSettings.Network(
                         integer("network-compression-threshold", -1, Integer.MAX_VALUE),
-                        bool("log-ips")),
+                        integer("rate-limit", 0, Integer.MAX_VALUE),
+                        bool("use-native-transport")),
                 new ServerSettings.Status(
                         text("motd"),
                         bool("enable-status"),
@@ -151,7 +156,8 @@ public final class ServerProperties {
                         gameMode(),
                         bool("force-gamemode"),
                         difficulty(),
-                        bool("hardcore")),
+                        bool("hardcore"),
+                        integer("player-idle-timeout", 0, Integer.MAX_VALUE)),
                 new ServerSettings.Access(
                         bool("white-list"),
                         bool("enforce-whitelist")),
@@ -168,7 +174,9 @@ public final class ServerProperties {
                         text("resource-pack-sha1"),
                         resourcePackId(),
                         text("resource-pack-prompt"),
-                        bool("require-resource-pack")));
+                        bool("require-resource-pack")),
+                new ServerSettings.Watchdog(
+                        integer("max-tick-time", -1, Integer.MAX_VALUE)));
     }
 
     private static void complete(Path file, Properties properties) throws IOException {
