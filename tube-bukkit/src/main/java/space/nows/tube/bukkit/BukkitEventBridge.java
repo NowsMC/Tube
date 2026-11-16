@@ -5,6 +5,9 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import space.nows.tube.api.event.BlockBreakEvent;
 import space.nows.tube.api.event.BlockPlaceEvent;
 import space.nows.tube.api.event.EntityDamageEvent;
+import space.nows.tube.api.event.EntityDeathEvent;
+import space.nows.tube.api.event.PlayerInteractEvent;
+import space.nows.tube.api.event.PlayerMoveEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.InventoryClickEvent;
@@ -36,6 +39,9 @@ final class BukkitEventBridge {
         subscriptions.add(bus.subscribe(InventoryClickEvent.class, EventPriority.NORMAL, false, this::inventoryClick));
         subscriptions.add(bus.subscribe(InventoryCloseEvent.class, EventPriority.NORMAL, false, this::inventoryClose));
         subscriptions.add(bus.subscribe(EntityDamageEvent.class, EventPriority.NORMAL, false, this::entityDamage));
+        subscriptions.add(bus.subscribe(EntityDeathEvent.class, EventPriority.NORMAL, false, this::entityDeath));
+        subscriptions.add(bus.subscribe(PlayerMoveEvent.class, EventPriority.NORMAL, false, this::move));
+        subscriptions.add(bus.subscribe(PlayerInteractEvent.class, EventPriority.NORMAL, false, this::interact));
     }
 
     private void join(PlayerJoinEvent event) {
@@ -94,6 +100,37 @@ final class BukkitEventBridge {
 
     private void entityDamage(EntityDamageEvent event) {
         var bukkit = new org.bukkit.event.entity.EntityDamageEvent(runtime.wrappers.living(event.entity()), event.damage());
+        runtime.pluginManager.callEvent(bukkit);
+        event.setCancelled(bukkit.isCancelled());
+    }
+
+    private void entityDeath(EntityDeathEvent event) {
+        if (event.entity() instanceof space.nows.tube.api.Player tubePlayer) {
+            var player = runtime.wrappers.player(tubePlayer);
+            runtime.pluginManager.callEvent(new org.bukkit.event.entity.PlayerDeathEvent(player, player.getName() + " died"));
+        } else {
+            runtime.pluginManager.callEvent(new org.bukkit.event.entity.EntityDeathEvent(runtime.wrappers.living(event.entity())));
+        }
+    }
+
+    private void move(PlayerMoveEvent event) {
+        var player = runtime.wrappers.player(event.player());
+        var to = runtime.wrappers.location(event.to());
+        var bukkit = new org.bukkit.event.player.PlayerMoveEvent(player, runtime.wrappers.location(event.from()), to);
+        runtime.pluginManager.callEvent(bukkit);
+        if (bukkit.isCancelled()) {
+            event.setCancelled(true);
+        } else if (bukkit.getTo() != to) {
+            event.setTo(runtime.wrappers.tubeLocation(bukkit.getTo()));
+        }
+    }
+
+    private void interact(PlayerInteractEvent event) {
+        var player = runtime.wrappers.player(event.player());
+        var block = runtime.wrappers.world(event.world()).getBlockAt(event.x(), event.y(), event.z());
+        var hand = event.mainHand() ? org.bukkit.inventory.EquipmentSlot.HAND : org.bukkit.inventory.EquipmentSlot.OFF_HAND;
+        var item = event.mainHand() ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+        var bukkit = new org.bukkit.event.player.PlayerInteractEvent(player, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, item, block, org.bukkit.block.BlockFace.SELF, hand);
         runtime.pluginManager.callEvent(bukkit);
         event.setCancelled(bukkit.isCancelled());
     }

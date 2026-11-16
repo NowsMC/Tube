@@ -30,6 +30,7 @@ class BukkitLayerTest {
             import org.bukkit.event.block.BlockBreakEvent;
             import org.bukkit.event.inventory.InventoryClickEvent;
             import org.bukkit.event.player.AsyncPlayerChatEvent;
+            import org.bukkit.event.player.PlayerMoveEvent;
             import org.bukkit.event.player.PlayerJoinEvent;
             import org.bukkit.plugin.java.JavaPlugin;
 
@@ -83,6 +84,11 @@ class BukkitLayerTest {
                     if (event.getBlock().getX() == 13) {
                         event.setCancelled(true);
                     }
+                }
+
+                @EventHandler
+                public void onMove(PlayerMoveEvent event) {
+                    event.setCancelled(event.getTo().getX() > 100);
                 }
 
                 @EventHandler
@@ -198,6 +204,20 @@ class BukkitLayerTest {
         assertTrue(!allowed.isCancelled());
         assertTrue(denied.isCancelled());
         assertEquals("break:13,64,2:Steve", log().getLast());
+    }
+
+    @Test
+    void playerMovesCanBeCancelled() {
+        var player = stub.player("Steve");
+        var world = (space.nows.tube.api.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
+        var from = new space.nows.tube.api.Location(world, 0, 64, 0);
+
+        var allowed = stub.events.post(new space.nows.tube.api.event.PlayerMoveEvent(player, from, new space.nows.tube.api.Location(world, 5, 64, 0)));
+        var denied = stub.events.post(new space.nows.tube.api.event.PlayerMoveEvent(player, from, new space.nows.tube.api.Location(world, 200, 64, 0)));
+
+        assertTrue(!allowed.isCancelled());
+        assertTrue(denied.isCancelled());
     }
 
     @Test
