@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.plugin;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -6,6 +6,7 @@ import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.plugin.messaging.PluginMessageListenerRegistration;
 import space.nows.tube.api.event.Subscription;
+import space.nows.tube.bukkit.BukkitRuntime;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-final class BukkitMessenger implements Messenger {
+public final class BukkitMessenger implements Messenger {
 
     private record Incoming(PluginMessageListenerRegistration registration, Subscription subscription) {
     }
@@ -26,7 +27,7 @@ final class BukkitMessenger implements Messenger {
     private record Outgoing(Plugin plugin, String channel) {
     }
 
-    BukkitMessenger(BukkitRuntime runtime) {
+    public BukkitMessenger(BukkitRuntime runtime) {
         this.runtime = runtime;
     }
 
@@ -65,7 +66,7 @@ final class BukkitMessenger implements Messenger {
             throw new IllegalArgumentException("This registration already exists");
         }
         PluginMessageListenerRegistration registration = new PluginMessageListenerRegistration(this, plugin, channel, listener);
-        Subscription subscription = runtime.tube.network().channels().register(wire(channel), (player, ignored, data) -> deliver(registration, runtime.wrappers.player(player), data));
+        Subscription subscription = runtime.tube().network().channels().register(wire(channel), (player, ignored, data) -> deliver(registration, runtime.adapters().player(player), data));
         incoming.add(new Incoming(registration, subscription));
         return registration;
     }
@@ -77,7 +78,7 @@ final class BukkitMessenger implements Messenger {
         try {
             registration.getListener().onPluginMessageReceived(registration.getChannel(), player, data);
         } catch (Throwable e) {
-            runtime.julLogger.log(Level.SEVERE, "Could not pass plugin message on " + registration.getChannel() + " to " + registration.getPlugin().getName(), e);
+            runtime.julLogger().log(Level.SEVERE, "Could not pass plugin message on " + registration.getChannel() + " to " + registration.getPlugin().getName(), e);
         }
     }
 
@@ -143,14 +144,14 @@ final class BukkitMessenger implements Messenger {
         matches.forEach(registration -> deliver(registration, source, message));
     }
 
-    void send(Plugin plugin, space.nows.tube.api.Player player, String channel, byte[] message) {
+    public void send(Plugin plugin, space.nows.tube.api.Player player, String channel, byte[] message) {
         if (!isOutgoingChannelRegistered(plugin, channel)) {
             throw new IllegalArgumentException("Plugin " + plugin.getName() + " is not registered for the outgoing channel " + channel);
         }
-        runtime.tube.network().channels().send(player, wire(channel), message);
+        runtime.tube().network().channels().send(player, wire(channel), message);
     }
 
-    synchronized Set<String> listening() {
+    public synchronized Set<String> listening() {
         return getIncomingChannels();
     }
 

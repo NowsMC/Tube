@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import space.nows.tube.bukkit.boss.BukkitBossBar;
+import space.nows.tube.bukkit.world.BukkitBlockData;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,37 +31,37 @@ final class BukkitServer implements Server {
 
     @Override
     public String getName() {
-        return runtime.tube.name();
+        return runtime.tube().name();
     }
 
     @Override
     public String getVersion() {
-        return runtime.tube.name() + " " + runtime.tube.version() + " (MC: " + runtime.tube.minecraftVersion() + ")";
+        return runtime.tube().name() + " " + runtime.tube().version() + " (MC: " + runtime.tube().minecraftVersion() + ")";
     }
 
     @Override
     public String getBukkitVersion() {
-        return runtime.tube.minecraftVersion() + "-R0.1-SNAPSHOT";
+        return runtime.tube().minecraftVersion() + "-R0.1-SNAPSHOT";
     }
 
     @Override
     public Logger getLogger() {
-        return runtime.julLogger;
+        return runtime.julLogger();
     }
 
     @Override
     public PluginManager getPluginManager() {
-        return runtime.pluginManager;
+        return runtime.pluginManager();
     }
 
     @Override
     public BukkitScheduler getScheduler() {
-        return runtime.scheduler;
+        return runtime.scheduler();
     }
 
     @Override
     public ServicesManager getServicesManager() {
-        return runtime.services;
+        return runtime.services();
     }
 
     @Override
@@ -74,47 +76,47 @@ final class BukkitServer implements Server {
 
     @Override
     public org.bukkit.plugin.messaging.Messenger getMessenger() {
-        return runtime.messenger;
+        return runtime.messenger();
     }
 
     @Override
     public PluginCommand getPluginCommand(String name) {
-        return runtime.commands.get(name);
+        return runtime.commands().get(name);
     }
 
     @Override
     public ConsoleCommandSender getConsoleSender() {
-        return runtime.wrappers.console();
+        return runtime.adapters().console();
     }
 
     @Override
     public Collection<? extends Player> getOnlinePlayers() {
-        return runtime.wrappers.onlinePlayers();
+        return runtime.adapters().onlinePlayers();
     }
 
     @Override
     public int getMaxPlayers() {
-        return runtime.tube.maxPlayers();
+        return runtime.tube().maxPlayers();
     }
 
     @Override
     public int getPort() {
-        return runtime.tube.port();
+        return runtime.tube().port();
     }
 
     @Override
     public String getIp() {
-        return runtime.tube.bindAddress().equals("0.0.0.0") ? "" : runtime.tube.bindAddress();
+        return runtime.tube().bindAddress().equals("0.0.0.0") ? "" : runtime.tube().bindAddress();
     }
 
     @Override
     public String getMotd() {
-        return runtime.tube.motd();
+        return runtime.tube().motd();
     }
 
     @Override
     public boolean getOnlineMode() {
-        return runtime.tube.onlineMode();
+        return runtime.tube().onlineMode();
     }
 
     @Override
@@ -126,7 +128,7 @@ final class BukkitServer implements Server {
         String wanted = name.toLowerCase(Locale.ROOT);
         Player best = null;
         int delta = Integer.MAX_VALUE;
-        for (Player player : runtime.wrappers.onlinePlayers()) {
+        for (Player player : runtime.adapters().onlinePlayers()) {
             String lowered = player.getName().toLowerCase(Locale.ROOT);
             if (lowered.startsWith(wanted) && lowered.length() - wanted.length() < delta) {
                 delta = lowered.length() - wanted.length();
@@ -138,19 +140,19 @@ final class BukkitServer implements Server {
 
     @Override
     public Player getPlayer(UUID id) {
-        return runtime.wrappers.onlinePlayers().stream().filter(player -> player.getUniqueId().equals(id)).findFirst().orElse(null);
+        return runtime.adapters().onlinePlayers().stream().filter(player -> player.getUniqueId().equals(id)).findFirst().orElse(null);
     }
 
     @Override
     public Player getPlayerExact(String name) {
-        return runtime.wrappers.onlinePlayers().stream().filter(player -> player.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return runtime.adapters().onlinePlayers().stream().filter(player -> player.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     @Override
     public List<Player> matchPlayer(String name) {
         String wanted = name.toLowerCase(Locale.ROOT);
         List<Player> matches = new ArrayList<>();
-        for (Player player : runtime.wrappers.onlinePlayers()) {
+        for (Player player : runtime.adapters().onlinePlayers()) {
             if (player.getName().equalsIgnoreCase(name)) {
                 return List.of(player);
             }
@@ -164,23 +166,23 @@ final class BukkitServer implements Server {
     @Override
     public OfflinePlayer getOfflinePlayer(String name) {
         Player online = getPlayerExact(name);
-        return online != null ? online : runtime.wrappers.offline(Wrappers.offlineUuid(name), name);
+        return online != null ? online : runtime.adapters().offline(Adapters.offlineUuid(name), name);
     }
 
     @Override
     public OfflinePlayer getOfflinePlayer(UUID id) {
         Player online = getPlayer(id);
-        return online != null ? online : runtime.wrappers.offline(id, null);
+        return online != null ? online : runtime.adapters().offline(id, null);
     }
 
     @Override
     public List<World> getWorlds() {
-        return runtime.tube.worlds().all().stream().map(runtime.wrappers::world).toList();
+        return runtime.tube().worlds().all().stream().map(runtime.adapters()::world).toList();
     }
 
     @Override
     public World getWorld(String name) {
-        return runtime.tube.worlds().get(name).map(runtime.wrappers::world).orElse(null);
+        return runtime.tube().worlds().get(name).map(runtime.adapters()::world).orElse(null);
     }
 
     @Override
@@ -195,19 +197,19 @@ final class BukkitServer implements Server {
 
     @Override
     public boolean dispatchCommand(CommandSender sender, String commandLine) {
-        return runtime.commands.dispatch(sender, commandLine);
+        return runtime.commands().dispatch(sender, commandLine);
     }
 
     @Override
     public int broadcastMessage(String message) {
-        runtime.tube.broadcast(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message));
-        return runtime.tube.players().size();
+        runtime.tube().broadcast(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(message));
+        return runtime.tube().players().size();
     }
 
     @Override
     public int broadcast(String message, String permission) {
         int delivered = 0;
-        for (Player player : runtime.wrappers.onlinePlayers()) {
+        for (Player player : runtime.adapters().onlinePlayers()) {
             if (player.hasPermission(permission)) {
                 player.sendMessage(message);
                 delivered++;
@@ -228,7 +230,7 @@ final class BukkitServer implements Server {
 
     @Override
     public void shutdown() {
-        runtime.tube.stop();
+        runtime.tube().stop();
     }
 
     @Override
@@ -238,11 +240,11 @@ final class BukkitServer implements Server {
 
     @Override
     public File getUpdateFolderFile() {
-        return new File(runtime.pluginsDirectory, "update");
+        return new File(runtime.pluginsDirectory(), "update");
     }
 
     @Override
     public String toString() {
-        return "TubeServer{name=" + runtime.tube.name() + ",version=" + runtime.tube.version() + "}";
+        return "TubeServer{name=" + runtime.tube().name() + ",version=" + runtime.tube().version() + "}";
     }
 }

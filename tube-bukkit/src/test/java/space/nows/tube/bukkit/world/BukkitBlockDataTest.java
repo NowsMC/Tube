@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.world;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
 
-class BlockDataTest {
+class BukkitBlockDataTest {
 
     @Test
     void parsesAndPrintsProperties() {

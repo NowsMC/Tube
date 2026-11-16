@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.boss;
 
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -6,6 +6,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
+import space.nows.tube.bukkit.BukkitRuntime;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-final class BukkitBossBar implements org.bukkit.boss.BossBar {
+public final class BukkitBossBar implements org.bukkit.boss.BossBar {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
@@ -25,7 +26,7 @@ final class BukkitBossBar implements org.bukkit.boss.BossBar {
     private BarStyle style;
     private boolean visible = true;
 
-    BukkitBossBar(BukkitRuntime runtime, String title, BarColor color, BarStyle style, BarFlag... flags) {
+    public BukkitBossBar(BukkitRuntime runtime, String title, BarColor color, BarStyle style, BarFlag... flags) {
         this.runtime = runtime;
         this.title = title == null ? "" : title;
         this.color = color;
@@ -59,7 +60,7 @@ final class BukkitBossBar implements org.bukkit.boss.BossBar {
     }
 
     private space.nows.tube.api.Player tube(UUID uuid) {
-        return runtime.tube.players().stream().filter(player -> player.uuid().equals(uuid)).findFirst().orElse(null);
+        return runtime.tube().players().stream().filter(player -> player.uuid().equals(uuid)).findFirst().orElse(null);
     }
 
     @Override
@@ -160,7 +161,7 @@ final class BukkitBossBar implements org.bukkit.boss.BossBar {
         for (UUID uuid : viewers) {
             var tube = tube(uuid);
             if (tube != null) {
-                result.add(runtime.wrappers.player(tube));
+                result.add(runtime.adapters().player(tube));
             }
         }
         return result;

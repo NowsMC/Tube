@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.scheduler;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
-final class TubeBukkitScheduler implements BukkitScheduler {
+public final class BukkitTaskScheduler implements BukkitScheduler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube-bukkit");
     private static final long TICK_MILLIS = 50;
@@ -72,7 +72,7 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     private final Map<Integer, Task> tasks = new java.util.concurrent.ConcurrentHashMap<>();
     private final ScheduledExecutorService asyncPool;
 
-    TubeBukkitScheduler(Scheduler tube) {
+    public BukkitTaskScheduler(Scheduler tube) {
         this.tube = tube;
         AtomicLong threads = new AtomicLong();
         this.asyncPool = Executors.newScheduledThreadPool(2, runnable -> {
@@ -82,7 +82,7 @@ final class TubeBukkitScheduler implements BukkitScheduler {
         });
     }
 
-    void shutdown() {
+    public void shutdown() {
         tasks.values().forEach(Task::cancel);
         asyncPool.shutdownNow();
     }

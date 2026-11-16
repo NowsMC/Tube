@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.inventory;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
@@ -7,11 +7,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
-final class Items {
+public final class ItemConverter {
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
-    private Items() {
+    private ItemConverter() {
     }
 
     static space.nows.tube.api.ItemStack toTube(ItemStack item) {
@@ -39,7 +39,7 @@ final class Items {
         return result;
     }
 
-    static ItemStack fromTube(space.nows.tube.api.ItemStack item) {
+    public static ItemStack fromTube(space.nows.tube.api.ItemStack item) {
         if (item == null || item.isAir()) {
             return null;
         }

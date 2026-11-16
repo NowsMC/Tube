@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.command;
 
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
@@ -6,6 +6,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import space.nows.tube.bukkit.BukkitRuntime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-final class BukkitCommands {
+public final class CommandBridge {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube-bukkit");
 
@@ -22,15 +23,15 @@ final class BukkitCommands {
     private final Map<String, PluginCommand> commands = new ConcurrentHashMap<>();
     private final List<String> exposed = new ArrayList<>();
 
-    BukkitCommands(BukkitRuntime runtime) {
+    public CommandBridge(BukkitRuntime runtime) {
         this.runtime = runtime;
     }
 
-    PluginCommand get(String name) {
+    public PluginCommand get(String name) {
         return commands.get(name.toLowerCase(Locale.ROOT));
     }
 
-    void register(Plugin plugin) {
+    public void register(Plugin plugin) {
         for (Map.Entry<String, Map<String, Object>> entry : plugin.getDescription().getCommands().entrySet()) {
             PluginCommand command = new PluginCommand(entry.getKey(), plugin);
             Map<String, Object> attributes = entry.getValue();
@@ -73,8 +74,8 @@ final class BukkitCommands {
 
     private void expose(Plugin plugin, String label) {
         try {
-            runtime.tube.commands().register(label, (sender, args) -> {
-                CommandSender bukkitSender = runtime.wrappers.sender(sender);
+            runtime.tube().commands().register(label, (sender, args) -> {
+                CommandSender bukkitSender = runtime.adapters().sender(sender);
                 if (!dispatch(bukkitSender, args.isEmpty() ? label : label + " " + String.join(" ", args))) {
                     bukkitSender.sendMessage("Unknown command: " + label);
                 }
@@ -87,7 +88,7 @@ final class BukkitCommands {
         }
     }
 
-    boolean dispatch(CommandSender sender, String line) {
+    public boolean dispatch(CommandSender sender, String line) {
         String trimmed = line.strip();
         if (trimmed.startsWith("/")) {
             trimmed = trimmed.substring(1);
@@ -102,12 +103,12 @@ final class BukkitCommands {
             command.execute(sender, parts[0], arguments);
         } catch (CommandException e) {
             sender.sendMessage("An internal error occurred while attempting to perform this command");
-            runtime.julLogger.log(Level.SEVERE, e.getMessage(), e.getCause() == null ? e : e.getCause());
+            runtime.julLogger().log(Level.SEVERE, e.getMessage(), e.getCause() == null ? e : e.getCause());
         }
         return true;
     }
 
-    void unregister(Plugin plugin) {
+    public void unregister(Plugin plugin) {
         List<String> removed = new ArrayList<>();
         commands.entrySet().removeIf(entry -> {
             boolean ours = entry.getValue().getPlugin() == plugin;
@@ -119,15 +120,15 @@ final class BukkitCommands {
         synchronized (exposed) {
             for (String label : removed) {
                 if (exposed.remove(label)) {
-                    runtime.tube.commands().unregister(label);
+                    runtime.tube().commands().unregister(label);
                 }
             }
         }
     }
 
-    void unregisterAll() {
+    public void unregisterAll() {
         synchronized (exposed) {
-            exposed.forEach(runtime.tube.commands()::unregister);
+            exposed.forEach(runtime.tube().commands()::unregister);
             exposed.clear();
         }
         commands.clear();

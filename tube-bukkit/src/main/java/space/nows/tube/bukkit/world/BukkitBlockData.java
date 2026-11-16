@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.world;
 
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -6,7 +6,7 @@ import org.bukkit.block.data.BlockData;
 import java.util.Map;
 import java.util.TreeMap;
 
-final class BukkitBlockData implements BlockData {
+public final class BukkitBlockData implements BlockData {
 
     private final space.nows.tube.api.Block tube;
 
@@ -14,7 +14,7 @@ final class BukkitBlockData implements BlockData {
         this.tube = tube;
     }
 
-    static BukkitBlockData parse(String text) {
+    public static BukkitBlockData parse(String text) {
         String trimmed = text.strip();
         int bracket = trimmed.indexOf('[');
         String key = bracket < 0 ? trimmed : trimmed.substring(0, bracket);

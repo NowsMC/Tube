@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.inventory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -16,7 +16,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 
-class InventoryTest {
+class BukkitPlayerInventoryTest {
 
     private final space.nows.tube.api.ItemStack[] storage = new space.nows.tube.api.ItemStack[46];
     private final Map<space.nows.tube.api.EquipmentSlot, space.nows.tube.api.ItemStack> equipment = new EnumMap<>(space.nows.tube.api.EquipmentSlot.class);
@@ -55,7 +55,7 @@ class InventoryTest {
                     }
                     default -> throw new UnsupportedOperationException(method.getName());
                 });
-        inventory = new BukkitInventory.OfPlayer(player, null);
+        inventory = new BukkitPlayerInventory(player, null);
     }
 
     @Test

@@ -7,7 +7,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
-final class TubeLogHandler extends Handler {
+final class Slf4jLogHandler extends Handler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube");
     private static final String UNSUPPORTED_LIBRARIES = "Could not initialize LibraryLoader";
@@ -19,7 +19,7 @@ final class TubeLogHandler extends Handler {
         for (Handler existing : root.getHandlers()) {
             root.removeHandler(existing);
         }
-        root.addHandler(new TubeLogHandler());
+        root.addHandler(new Slf4jLogHandler());
     }
 
     @Override

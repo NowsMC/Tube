@@ -149,9 +149,9 @@ class BukkitLayerTest {
     @Test
     void loadsAndEnablesPluginsWithTheirConfig() throws IOException {
         assertEquals(List.of("load", "enable:hello:Tube"), log());
-        assertEquals(1, runtime.pluginManager.getPlugins().length);
-        assertTrue(runtime.pluginManager.getPlugin("Demo").isEnabled());
-        assertEquals("1.2.3", runtime.pluginManager.getPlugin("Demo").getDescription().getVersion());
+        assertEquals(1, runtime.pluginManager().getPlugins().length);
+        assertTrue(runtime.pluginManager().getPlugin("Demo").isEnabled());
+        assertEquals("1.2.3", runtime.pluginManager().getPlugin("Demo").getDescription().getVersion());
     }
 
     @Test
@@ -239,7 +239,7 @@ class BukkitLayerTest {
         stub.channelHandlers.get("demo:chan").received(player, "demo:chan", "hi".getBytes());
         assertEquals("message:demo:chan:Steve:hi", log().getLast());
 
-        runtime.messenger.send(runtime.pluginManager.getPlugin("Demo"), player, "BungeeCord", "go".getBytes());
+        runtime.messenger().send(runtime.pluginManager().getPlugin("Demo"), player, "BungeeCord", "go".getBytes());
         assertEquals("bungeecord:main:go", stub.sentMessages.getLast());
     }
 

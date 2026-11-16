@@ -9,6 +9,12 @@ import org.bukkit.plugin.java.PluginClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.event.Subscription;
+import space.nows.tube.bukkit.command.CommandBridge;
+import space.nows.tube.bukkit.event.EventBridge;
+import space.nows.tube.bukkit.plugin.BukkitMessenger;
+import space.nows.tube.bukkit.plugin.BukkitPluginManager;
+import space.nows.tube.bukkit.plugin.BukkitServicesManager;
+import space.nows.tube.bukkit.scheduler.BukkitTaskScheduler;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -18,20 +24,20 @@ import java.util.List;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-final class BukkitRuntime {
+public final class BukkitRuntime {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube-bukkit");
 
-    final space.nows.tube.api.Server tube;
-    final File pluginsDirectory;
-    final java.util.logging.Logger julLogger = java.util.logging.Logger.getLogger("Minecraft");
-    final TubeBukkitScheduler scheduler;
-    final BukkitServices services = new BukkitServices();
-    final BukkitMessenger messenger = new BukkitMessenger(this);
-    final Wrappers wrappers;
-    final BukkitCommands commands;
-    final BukkitPluginManager pluginManager;
-    final Server server;
+    private final space.nows.tube.api.Server tube;
+    private final File pluginsDirectory;
+    private final java.util.logging.Logger julLogger = java.util.logging.Logger.getLogger("Minecraft");
+    private final BukkitTaskScheduler scheduler;
+    private final BukkitServicesManager services = new BukkitServicesManager();
+    private final BukkitMessenger messenger = new BukkitMessenger(this);
+    private final Adapters adapters;
+    private final CommandBridge commands;
+    private final BukkitPluginManager pluginManager;
+    private final Server server;
 
     private final List<Subscription> subscriptions = new ArrayList<>();
     private volatile Thread tickThread;
@@ -39,17 +45,17 @@ final class BukkitRuntime {
     private BukkitRuntime(space.nows.tube.api.Server tube, Path pluginsDirectory) {
         this.tube = tube;
         this.pluginsDirectory = pluginsDirectory.toFile();
-        this.scheduler = new TubeBukkitScheduler(tube.scheduler());
-        this.wrappers = new Wrappers(this);
-        this.commands = new BukkitCommands(this);
+        this.scheduler = new BukkitTaskScheduler(tube.scheduler());
+        this.adapters = new Adapters(this);
+        this.commands = new CommandBridge(this);
         this.pluginManager = new BukkitPluginManager(this);
         this.server = new BukkitServer(this);
     }
 
     static BukkitRuntime install(space.nows.tube.api.Server tube, Path pluginsDirectory) {
-        TubeLogHandler.install();
+        Slf4jLogHandler.install();
         BukkitRuntime runtime = new BukkitRuntime(tube, pluginsDirectory);
-        Bukkit.setServer(runtime.server);
+        Bukkit.setServer(runtime.server());
         tube.scheduler().runSync(() -> runtime.tickThread = Thread.currentThread());
         return runtime;
     }
@@ -72,7 +78,47 @@ final class BukkitRuntime {
         }
     }
 
-    boolean isPrimaryThread() {
+    public space.nows.tube.api.Server tube() {
+        return tube;
+    }
+
+    public File pluginsDirectory() {
+        return pluginsDirectory;
+    }
+
+    public java.util.logging.Logger julLogger() {
+        return julLogger;
+    }
+
+    public BukkitTaskScheduler scheduler() {
+        return scheduler;
+    }
+
+    public BukkitServicesManager services() {
+        return services;
+    }
+
+    public BukkitMessenger messenger() {
+        return messenger;
+    }
+
+    public Adapters adapters() {
+        return adapters;
+    }
+
+    public CommandBridge commands() {
+        return commands;
+    }
+
+    public BukkitPluginManager pluginManager() {
+        return pluginManager;
+    }
+
+    public Server server() {
+        return server;
+    }
+
+    public boolean isPrimaryThread() {
         Thread current = Thread.currentThread();
         return current == tickThread || current.getName().startsWith("Ms-Tick");
     }
@@ -98,7 +144,7 @@ final class BukkitRuntime {
         }
         enablePlugins(PluginLoadOrder.STARTUP);
         enablePlugins(PluginLoadOrder.POSTWORLD);
-        new BukkitEventBridge(this).install(tube.events(), subscriptions);
+        new EventBridge(this).install(tube.events(), subscriptions);
     }
 
     private void enablePlugins(PluginLoadOrder order) {

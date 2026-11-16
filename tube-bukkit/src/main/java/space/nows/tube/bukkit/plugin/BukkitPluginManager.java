@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.plugin;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -19,6 +19,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.PluginClassLoader;
+import space.nows.tube.bukkit.BukkitRuntime;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +39,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-final class BukkitPluginManager implements PluginManager {
+public final class BukkitPluginManager implements PluginManager {
 
     private final BukkitRuntime runtime;
     private final List<Plugin> plugins = new ArrayList<>();
@@ -46,7 +47,7 @@ final class BukkitPluginManager implements PluginManager {
     private final Map<String, Permission> permissions = new HashMap<>();
     private final Map<Boolean, Set<Permission>> defaultPermissions = new LinkedHashMap<>();
 
-    BukkitPluginManager(BukkitRuntime runtime) {
+    public BukkitPluginManager(BukkitRuntime runtime) {
         this.runtime = runtime;
         defaultPermissions.put(true, new LinkedHashSet<>());
         defaultPermissions.put(false, new LinkedHashSet<>());
@@ -66,7 +67,7 @@ final class BukkitPluginManager implements PluginManager {
         }
     }
 
-    Plugin[] loadPlugins(File[] files) {
+    public Plugin[] loadPlugins(File[] files) {
         Arrays.sort(files);
         Map<String, File> candidates = new LinkedHashMap<>();
         Map<String, PluginDescriptionFile> descriptions = new LinkedHashMap<>();
@@ -75,13 +76,13 @@ final class BukkitPluginManager implements PluginManager {
                 PluginDescriptionFile description = describe(file);
                 String key = description.getName().toLowerCase(Locale.ROOT);
                 if (candidates.containsKey(key)) {
-                    runtime.julLogger.severe("Ambiguous plugin name `" + description.getName() + "' for files `" + file + "' and `" + candidates.get(key) + "'");
+                    runtime.julLogger().severe("Ambiguous plugin name `" + description.getName() + "' for files `" + file + "' and `" + candidates.get(key) + "'");
                     continue;
                 }
                 candidates.put(key, file);
                 descriptions.put(key, description);
             } catch (InvalidDescriptionException e) {
-                runtime.julLogger.log(Level.SEVERE, "Could not load '" + file.getPath() + "'", e);
+                runtime.julLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "'", e);
             }
         }
 
@@ -111,14 +112,14 @@ final class BukkitPluginManager implements PluginManager {
         }
         PluginDescriptionFile description = descriptions.get(key);
         if (!visiting.add(key)) {
-            runtime.julLogger.severe("Could not load '" + files.get(key) + "': circular dependency involving " + description.getName());
+            runtime.julLogger().severe("Could not load '" + files.get(key) + "': circular dependency involving " + description.getName());
             failed.add(key);
             return;
         }
         for (String dependency : after.getOrDefault(key, Set.of())) {
             if (!descriptions.containsKey(dependency)) {
                 if (!lookup.containsKey(dependency)) {
-                    runtime.julLogger.severe("Could not load '" + files.get(key) + "': unknown/missing dependency plugin " + dependency);
+                    runtime.julLogger().severe("Could not load '" + files.get(key) + "': unknown/missing dependency plugin " + dependency);
                     failed.add(key);
                     visiting.remove(key);
                     return;
@@ -136,7 +137,7 @@ final class BukkitPluginManager implements PluginManager {
             loaded.add(instantiate(files.get(key), description));
             done.add(key);
         } catch (InvalidPluginException e) {
-            runtime.julLogger.log(Level.SEVERE, "Could not load '" + files.get(key) + "'", e);
+            runtime.julLogger().log(Level.SEVERE, "Could not load '" + files.get(key) + "'", e);
             failed.add(key);
         }
         visiting.remove(key);
@@ -208,12 +209,12 @@ final class BukkitPluginManager implements PluginManager {
         if (plugin.isEnabled() || !(plugin instanceof JavaPlugin java)) {
             return;
         }
-        runtime.commands.register(plugin);
+        runtime.commands().register(plugin);
         plugin.getLogger().info("Enabling " + plugin.getDescription().getFullName());
         try {
             java.setEnabled(true);
         } catch (Throwable e) {
-            runtime.julLogger.log(Level.SEVERE, "Error occurred while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", e);
+            runtime.julLogger().log(Level.SEVERE, "Error occurred while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", e);
             teardown(plugin);
             return;
         }
@@ -230,17 +231,17 @@ final class BukkitPluginManager implements PluginManager {
         try {
             java.setEnabled(false);
         } catch (Throwable e) {
-            runtime.julLogger.log(Level.SEVERE, "Error occurred while disabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", e);
+            runtime.julLogger().log(Level.SEVERE, "Error occurred while disabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", e);
         }
         teardown(plugin);
     }
 
     private void teardown(Plugin plugin) {
-        runtime.scheduler.cancelTasks(plugin);
-        runtime.services.unregisterAll(plugin);
-        runtime.messenger.unregisterAll(plugin);
+        runtime.scheduler().cancelTasks(plugin);
+        runtime.services().unregisterAll(plugin);
+        runtime.messenger().unregisterAll(plugin);
         HandlerList.unregisterAll(plugin);
-        runtime.commands.unregister(plugin);
+        runtime.commands().unregister(plugin);
         if (plugin.getClass().getClassLoader() instanceof PluginClassLoader loader) {
             closeQuietly(loader);
         }
@@ -253,7 +254,7 @@ final class BukkitPluginManager implements PluginManager {
             try {
                 disablePlugin(snapshot[i]);
             } catch (Throwable e) {
-                runtime.julLogger.log(Level.SEVERE, "Error occurred (in the plugin loader) while disabling " + snapshot[i].getName(), e);
+                runtime.julLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while disabling " + snapshot[i].getName(), e);
             }
         }
     }
@@ -267,7 +268,7 @@ final class BukkitPluginManager implements PluginManager {
             try {
                 registration.callEvent(event);
             } catch (Throwable e) {
-                runtime.julLogger.log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), e);
+                runtime.julLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName(), e);
             }
         }
     }

@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.world;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;

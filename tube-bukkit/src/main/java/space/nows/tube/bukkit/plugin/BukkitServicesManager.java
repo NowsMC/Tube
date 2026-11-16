@@ -1,4 +1,4 @@
-package space.nows.tube.bukkit;
+package space.nows.tube.bukkit.plugin;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-final class BukkitServices implements ServicesManager {
+public final class BukkitServicesManager implements ServicesManager {
 
     private final Map<Class<?>, List<RegisteredServiceProvider<?>>> providers = new HashMap<>();
 
