@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -85,8 +84,6 @@ class RealPluginsTest {
         }
         report.add("== warnings and errors");
         report.addAll(problems);
-        report.add("== Bukkit API reached but not implemented (" + Proxies.MISSING.size() + ")");
-        report.addAll(new TreeSet<>(Proxies.MISSING));
 
         Path output = Path.of("target", "real-plugins-report.txt");
         Files.createDirectories(output.getParent());

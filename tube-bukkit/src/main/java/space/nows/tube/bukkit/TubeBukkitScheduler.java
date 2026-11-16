@@ -1,10 +1,8 @@
 package space.nows.tube.bukkit;
 
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scheduler.BukkitWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.ScheduledTask;
@@ -89,7 +87,7 @@ final class TubeBukkitScheduler implements BukkitScheduler {
         asyncPool.shutdownNow();
     }
 
-    private Task schedule(Plugin plugin, Consumer<? super BukkitTask> body, long delay, long period, boolean async) {
+    private Task schedule(Plugin plugin, Consumer<BukkitTask> body, long delay, long period, boolean async) {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null");
         }
@@ -142,49 +140,13 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     }
 
     @Override
-    @Deprecated
-    public int scheduleSyncDelayedTask(Plugin plugin, BukkitRunnable task, long delay) {
-        return scheduleSyncDelayedTask(plugin, (Runnable) task, delay);
-    }
-
-    @Override
     public int scheduleSyncDelayedTask(Plugin plugin, Runnable task) {
         return schedule(plugin, run(task), 0, -1, false).id;
     }
 
     @Override
-    @Deprecated
-    public int scheduleSyncDelayedTask(Plugin plugin, BukkitRunnable task) {
-        return scheduleSyncDelayedTask(plugin, (Runnable) task);
-    }
-
-    @Override
     public int scheduleSyncRepeatingTask(Plugin plugin, Runnable task, long delay, long period) {
         return schedule(plugin, run(task), delay, period, false).id;
-    }
-
-    @Override
-    @Deprecated
-    public int scheduleSyncRepeatingTask(Plugin plugin, BukkitRunnable task, long delay, long period) {
-        return scheduleSyncRepeatingTask(plugin, (Runnable) task, delay, period);
-    }
-
-    @Override
-    @Deprecated
-    public int scheduleAsyncDelayedTask(Plugin plugin, Runnable task, long delay) {
-        return schedule(plugin, run(task), delay, -1, true).id;
-    }
-
-    @Override
-    @Deprecated
-    public int scheduleAsyncDelayedTask(Plugin plugin, Runnable task) {
-        return schedule(plugin, run(task), 0, -1, true).id;
-    }
-
-    @Override
-    @Deprecated
-    public int scheduleAsyncRepeatingTask(Plugin plugin, Runnable task, long delay, long period) {
-        return schedule(plugin, run(task), delay, period, true).id;
     }
 
     @Override
@@ -225,11 +187,6 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     }
 
     @Override
-    public List<BukkitWorker> getActiveWorkers() {
-        return List.of();
-    }
-
-    @Override
     public List<BukkitTask> getPendingTasks() {
         return List.copyOf(tasks.values());
     }
@@ -240,14 +197,8 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTask(Plugin plugin, Consumer<? super BukkitTask> task) {
+    public void runTask(Plugin plugin, Consumer<BukkitTask> task) {
         schedule(plugin, task, 0, -1, false);
-    }
-
-    @Override
-    @Deprecated
-    public BukkitTask runTask(Plugin plugin, BukkitRunnable task) {
-        return runTask(plugin, (Runnable) task);
     }
 
     @Override
@@ -256,14 +207,8 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskAsynchronously(Plugin plugin, Consumer<? super BukkitTask> task) {
+    public void runTaskAsynchronously(Plugin plugin, Consumer<BukkitTask> task) {
         schedule(plugin, task, 0, -1, true);
-    }
-
-    @Override
-    @Deprecated
-    public BukkitTask runTaskAsynchronously(Plugin plugin, BukkitRunnable task) {
-        return runTaskAsynchronously(plugin, (Runnable) task);
     }
 
     @Override
@@ -272,14 +217,8 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskLater(Plugin plugin, Consumer<? super BukkitTask> task, long delay) {
+    public void runTaskLater(Plugin plugin, Consumer<BukkitTask> task, long delay) {
         schedule(plugin, task, delay, -1, false);
-    }
-
-    @Override
-    @Deprecated
-    public BukkitTask runTaskLater(Plugin plugin, BukkitRunnable task, long delay) {
-        return runTaskLater(plugin, (Runnable) task, delay);
     }
 
     @Override
@@ -288,14 +227,8 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskLaterAsynchronously(Plugin plugin, Consumer<? super BukkitTask> task, long delay) {
+    public void runTaskLaterAsynchronously(Plugin plugin, Consumer<BukkitTask> task, long delay) {
         schedule(plugin, task, delay, -1, true);
-    }
-
-    @Override
-    @Deprecated
-    public BukkitTask runTaskLaterAsynchronously(Plugin plugin, BukkitRunnable task, long delay) {
-        return runTaskLaterAsynchronously(plugin, (Runnable) task, delay);
     }
 
     @Override
@@ -304,14 +237,8 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskTimer(Plugin plugin, Consumer<? super BukkitTask> task, long delay, long period) {
+    public void runTaskTimer(Plugin plugin, Consumer<BukkitTask> task, long delay, long period) {
         schedule(plugin, task, delay, period, false);
-    }
-
-    @Override
-    @Deprecated
-    public BukkitTask runTaskTimer(Plugin plugin, BukkitRunnable task, long delay, long period) {
-        return runTaskTimer(plugin, (Runnable) task, delay, period);
     }
 
     @Override
@@ -320,13 +247,7 @@ final class TubeBukkitScheduler implements BukkitScheduler {
     }
 
     @Override
-    public void runTaskTimerAsynchronously(Plugin plugin, Consumer<? super BukkitTask> task, long delay, long period) {
+    public void runTaskTimerAsynchronously(Plugin plugin, Consumer<BukkitTask> task, long delay, long period) {
         schedule(plugin, task, delay, period, true);
-    }
-
-    @Override
-    @Deprecated
-    public BukkitTask runTaskTimerAsynchronously(Plugin plugin, BukkitRunnable task, long delay, long period) {
-        return runTaskTimerAsynchronously(plugin, (Runnable) task, delay, period);
     }
 }

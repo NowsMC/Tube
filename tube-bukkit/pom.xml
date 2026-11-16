@@ -20,9 +20,8 @@
       <artifactId>tube-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>${bukkit-api.version}</version>
+      <groupId>space.nows</groupId>
+      <artifactId>tube-bukkit-api</artifactId>
     </dependency>
     <dependency>
       <groupId>net.kyori</groupId>
@@ -33,11 +32,6 @@
       <artifactId>adventure-text-serializer-plain</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${commons-lang3.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
@@ -45,48 +39,7 @@
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>META-INF/tube/pins-bukkit.txt</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <excludes>
-          <exclude>META-INF/tube/pins-bukkit.txt</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <compilerArgs combine.self="override">
-            <arg>-Xlint:all,-removal,-deprecation</arg>
-          </compilerArgs>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>list-bukkit-libraries</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>list</goal>
-            </goals>
-            <configuration>
-              <includeScope>runtime</includeScope>
-              <excludeGroupIds>space.nows</excludeGroupIds>
-              <outputFile>${project.build.outputDirectory}/META-INF/tube/libraries-bukkit.txt</outputFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
