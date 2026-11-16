@@ -9,8 +9,8 @@ import java.nio.file.Path;
 class VersionTest {
 
     @Test
-    void usesTheYearMonthCounterScheme() {
+    void usesTheMajorYearMonthPatchScheme() {
         String version = new DedicatedServer(() -> "26.2", Path.of("")).version();
-        assertTrue(version.matches("\\d{4}\\.(0?[1-9]|1[0-2])\\.\\d+(-SNAPSHOT)?"), version);
+        assertTrue(version.matches("\\d+\\.\\d{2}(0[1-9]|1[0-2])\\.\\d+(-SNAPSHOT)?"), version);
     }
 }

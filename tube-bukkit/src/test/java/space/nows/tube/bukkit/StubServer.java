@@ -158,7 +158,7 @@ final class StubServer {
         });
         server = (Server) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {Server.class}, (proxy, method, args) -> switch (method.getName()) {
             case "name" -> "Tube";
-            case "version" -> "2026.11.1-test";
+            case "version" -> "0.2611.0-test";
             case "minecraftVersion" -> "26.2";
             case "dataVersion" -> 4700;
             case "maxPlayers" -> 20;
