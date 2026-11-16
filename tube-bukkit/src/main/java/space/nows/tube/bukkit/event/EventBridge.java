@@ -16,6 +16,7 @@ import space.nows.tube.api.event.PlayerDropItemEvent;
 import space.nows.tube.api.event.PlayerInteractEvent;
 import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerMoveEvent;
+import space.nows.tube.api.event.PlayerPreLoginEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
 import space.nows.tube.api.event.PlayerRespawnEvent;
 import space.nows.tube.api.event.PlayerTeleportEvent;
@@ -53,6 +54,7 @@ public final class EventBridge {
         subscriptions.add(bus.subscribe(PlayerDropItemEvent.class, EventPriority.NORMAL, false, this::dropItem));
         subscriptions.add(bus.subscribe(EntityPickupItemEvent.class, EventPriority.NORMAL, false, this::pickupItem));
         subscriptions.add(bus.subscribe(PlayerRespawnEvent.class, EventPriority.NORMAL, false, this::respawn));
+        subscriptions.add(bus.subscribe(PlayerPreLoginEvent.class, EventPriority.NORMAL, false, this::preLogin));
     }
 
     private void join(PlayerJoinEvent event) {
@@ -184,6 +186,16 @@ public final class EventBridge {
         bukkit.setCancelled(cancelled);
         runtime.pluginManager().callEvent(bukkit);
         event.setCancelled(bukkit.isCancelled());
+    }
+
+    private void preLogin(PlayerPreLoginEvent event) {
+        var address = event.address() instanceof java.net.InetSocketAddress inet ? inet.getAddress() : null;
+        var bukkit = new org.bukkit.event.player.AsyncPlayerPreLoginEvent(event.name(), address, event.uuid());
+        runtime.pluginManager().callEvent(bukkit);
+        if (bukkit.getLoginResult() != org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result.ALLOWED) {
+            String message = bukkit.getKickMessage();
+            event.deny(message == null || message.isEmpty() ? Component.text("You are not allowed to join") : LEGACY.deserialize(message));
+        }
     }
 
     private void respawn(PlayerRespawnEvent event) {

@@ -35,4 +35,48 @@ public interface Player extends HumanEntity, OfflinePlayer {
 
     @Override
     Player getPlayer();
+
+    void sendTitle(String title, String subtitle);
+
+    void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut);
+
+    void resetTitle();
+
+    String getPlayerListHeader();
+
+    String getPlayerListFooter();
+
+    void setPlayerListHeader(String header);
+
+    void setPlayerListFooter(String footer);
+
+    void setPlayerListHeaderFooter(String header, String footer);
+
+    void playSound(org.bukkit.Location location, String sound, float volume, float pitch);
+
+    void playSound(org.bukkit.Location location, String sound, org.bukkit.SoundCategory category, float volume, float pitch);
+
+    void stopSound(String sound);
+
+    void stopSound(String sound, org.bukkit.SoundCategory category);
+
+    void stopAllSounds();
+
+    @Override
+    default Spigot spigot() {
+        Player player = this;
+        return new Spigot() {
+            @Override
+            public int getPing() {
+                return player.getPing();
+            }
+        };
+    }
+
+    class Spigot extends Entity.Spigot {
+
+        public int getPing() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
 }

@@ -12,4 +12,11 @@ public interface CommandSender extends Permissible {
     Server getServer();
 
     String getName();
+
+    default Spigot spigot() {
+        return new Spigot();
+    }
+
+    class Spigot {
+    }
 }

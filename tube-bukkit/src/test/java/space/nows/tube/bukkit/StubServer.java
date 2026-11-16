@@ -123,6 +123,7 @@ final class StubServer {
     }
 
     final Registry commands = new Registry();
+    final List<String> playerMessages = new java.util.concurrent.CopyOnWriteArrayList<>();
     final Events events = new Events();
     final ManualScheduler scheduler = new ManualScheduler();
     final List<Player> players = new ArrayList<>();
@@ -180,7 +181,14 @@ final class StubServer {
 
     Player player(String name) {
         UUID uuid = UUID.nameUUIDFromBytes(name.getBytes());
+        java.util.Set<String> tags = new java.util.LinkedHashSet<>();
         Player player = (Player) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {Player.class}, (proxy, method, args) -> switch (method.getName()) {
+            case "tags" -> java.util.Set.copyOf(tags);
+            case "addTag" -> tags.add((String) args[0]);
+            case "removeTag" -> tags.remove((String) args[0]);
+            case "loginMode" -> space.nows.tube.api.entity.LoginMode.OFFLINE;
+            case "skin", "clientBrand" -> Optional.empty();
+            case "latency", "protocolVersion", "heldSlot" -> 0;
             case "name" -> name;
             case "uuid" -> uuid;
             case "hasPermission" -> ops.contains(uuid);
@@ -190,7 +198,14 @@ final class StubServer {
             case "level" -> 0;
             case "address" -> Optional.empty();
             case "isRemoved" -> false;
-            case "sendMessage" -> null;
+            case "sendMessage" -> {
+                playerMessages.add(name + " <- " + (args[0] instanceof Component component ? net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(component) : String.valueOf(args[0])));
+                yield null;
+            }
+            case "showTitle" -> {
+                playerMessages.add(name + " title " + net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize((Component) args[0]));
+                yield null;
+            }
             case "equals" -> proxy == args[0];
             case "hashCode" -> uuid.hashCode();
             case "toString" -> "StubPlayer(" + name + ")";

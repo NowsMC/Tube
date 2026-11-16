@@ -32,6 +32,8 @@ public interface Server {
 
     org.bukkit.plugin.messaging.Messenger getMessenger();
 
+    org.bukkit.packs.DataPackManager getDataPackManager();
+
     org.bukkit.boss.BossBar createBossBar(String title, org.bukkit.boss.BarColor color, org.bukkit.boss.BarStyle style, org.bukkit.boss.BarFlag... flags);
 
     org.bukkit.block.data.BlockData createBlockData(String data);

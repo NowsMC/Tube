@@ -32,6 +32,11 @@ public final class BukkitWorld implements World {
     }
 
     @Override
+    public java.io.File getWorldFolder() {
+        return tube.folder().toFile();
+    }
+
+    @Override
     public UUID getUID() {
         return UUID.nameUUIDFromBytes(("tube:world:" + tube.name()).getBytes(StandardCharsets.UTF_8));
     }

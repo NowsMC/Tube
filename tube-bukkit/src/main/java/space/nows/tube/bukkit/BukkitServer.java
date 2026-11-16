@@ -23,6 +23,23 @@ import java.util.logging.Logger;
 
 final class BukkitServer implements Server {
 
+    private static final org.bukkit.packs.DataPackManager NO_DATA_PACKS = new org.bukkit.packs.DataPackManager() {
+        @Override
+        public java.util.Collection<org.bukkit.packs.DataPack> getDataPacks() {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.Collection<org.bukkit.packs.DataPack> getEnabledDataPacks(org.bukkit.World world) {
+            return java.util.List.of();
+        }
+
+        @Override
+        public java.util.Collection<org.bukkit.packs.DataPack> getDisabledDataPacks(org.bukkit.World world) {
+            return java.util.List.of();
+        }
+    };
+
     private final BukkitRuntime runtime;
 
     BukkitServer(BukkitRuntime runtime) {
@@ -77,6 +94,11 @@ final class BukkitServer implements Server {
     @Override
     public org.bukkit.plugin.messaging.Messenger getMessenger() {
         return runtime.messenger();
+    }
+
+    @Override
+    public org.bukkit.packs.DataPackManager getDataPackManager() {
+        return NO_DATA_PACKS;
     }
 
     @Override

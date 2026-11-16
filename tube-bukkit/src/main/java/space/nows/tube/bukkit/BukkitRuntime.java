@@ -47,9 +47,9 @@ public final class BukkitRuntime {
         this.pluginsDirectory = pluginsDirectory.toFile();
         this.scheduler = new BukkitTaskScheduler(tube.scheduler());
         this.adapters = new Adapters(this);
+        this.server = new BukkitServer(this);
         this.commands = new CommandBridge(this);
         this.pluginManager = new BukkitPluginManager(this);
-        this.server = new BukkitServer(this);
     }
 
     static BukkitRuntime install(space.nows.tube.api.Server tube, Path pluginsDirectory) {

@@ -33,4 +33,18 @@ public interface Entity extends CommandSender {
 
     @Override
     Server getServer();
+
+    java.util.Set<String> getScoreboardTags();
+
+    boolean addScoreboardTag(String tag);
+
+    boolean removeScoreboardTag(String tag);
+
+    @Override
+    default Spigot spigot() {
+        return new Spigot();
+    }
+
+    class Spigot extends CommandSender.Spigot {
+    }
 }

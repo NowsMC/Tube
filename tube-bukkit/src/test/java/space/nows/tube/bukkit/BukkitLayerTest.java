@@ -31,6 +31,7 @@ class BukkitLayerTest {
             import org.bukkit.event.entity.EntityPickupItemEvent;
             import org.bukkit.event.inventory.InventoryClickEvent;
             import org.bukkit.event.player.AsyncPlayerChatEvent;
+            import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
             import org.bukkit.event.player.PlayerDropItemEvent;
             import org.bukkit.event.player.PlayerMoveEvent;
             import org.bukkit.event.player.PlayerJoinEvent;
@@ -99,6 +100,13 @@ class BukkitLayerTest {
                 @EventHandler
                 public void onClick(InventoryClickEvent event) {
                     event.setCancelled(event.getSlot() == 5 && event.getCurrentItem() != null && event.getCurrentItem().getAmount() == 3);
+                }
+
+                @EventHandler
+                public void onPreLogin(AsyncPlayerPreLoginEvent event) {
+                    if (event.getName().startsWith("Bad")) {
+                        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Go away " + event.getName());
+                    }
                 }
 
                 @EventHandler
@@ -253,6 +261,46 @@ class BukkitLayerTest {
         assertTrue(cancelledDrop.isCancelled());
         assertTrue(!keptPickup.isCancelled());
         assertTrue(cancelledPickup.isCancelled());
+    }
+
+    @Test
+    void preLoginCanBeDeniedByPlugins() {
+        var allowed = stub.events.post(new space.nows.tube.api.event.PlayerPreLoginEvent("Steve", java.util.UUID.randomUUID(), null, space.nows.tube.api.entity.LoginMode.ONLINE));
+        var denied = stub.events.post(new space.nows.tube.api.event.PlayerPreLoginEvent("BadGuy", java.util.UUID.randomUUID(), null, space.nows.tube.api.entity.LoginMode.OFFLINE));
+
+        assertTrue(allowed.denyReason().isEmpty());
+        assertEquals("Go away BadGuy", net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(denied.denyReason().orElseThrow()));
+    }
+
+    @Test
+    void commandsAddedThroughTheCommandMapReachTube() throws ReflectiveOperationException {
+        java.lang.reflect.Field field = org.bukkit.plugin.SimplePluginManager.class.getDeclaredField("commandMap");
+        field.setAccessible(true);
+        var commandMap = (org.bukkit.command.CommandMap) field.get(org.bukkit.Bukkit.getServer().getPluginManager());
+        commandMap.register("demo", new org.bukkit.command.Command("dyn") {
+            @Override
+            public boolean execute(org.bukkit.command.CommandSender sender, String label, String[] args) {
+                sender.sendMessage("dyn " + String.join(",", args));
+                return true;
+            }
+        });
+        List<String> replies = new java.util.ArrayList<>();
+
+        stub.commands.commands.get("dyn").execute(StubServer.consoleLike(replies), List.of("x", "y"));
+
+        assertEquals(List.of("dyn x,y"), replies);
+    }
+
+    @Test
+    void playersGetTagsAndTitles() {
+        var player = runtime.adapters().player(stub.player("Steve"));
+
+        assertTrue(player.addScoreboardTag("guest"));
+        player.sendTitle("Hello", "there", 10, 40, 10);
+
+        assertEquals(java.util.Set.of("guest"), player.getScoreboardTags());
+        assertTrue(stub.playerMessages.contains("Steve title Hello"));
+        assertEquals(0, player.spigot().getPing());
     }
 
     @Test

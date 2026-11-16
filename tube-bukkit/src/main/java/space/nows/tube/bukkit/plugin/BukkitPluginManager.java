@@ -15,8 +15,8 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.PluginClassLoader;
 import space.nows.tube.bukkit.BukkitRuntime;
@@ -39,7 +39,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-public final class BukkitPluginManager implements PluginManager {
+public final class BukkitPluginManager extends SimplePluginManager {
 
     private final BukkitRuntime runtime;
     private final List<Plugin> plugins = new ArrayList<>();
@@ -48,6 +48,7 @@ public final class BukkitPluginManager implements PluginManager {
     private final Map<Boolean, Set<Permission>> defaultPermissions = new LinkedHashMap<>();
 
     public BukkitPluginManager(BukkitRuntime runtime) {
+        super(runtime.server(), runtime.commands().commandMap());
         this.runtime = runtime;
         defaultPermissions.put(true, new LinkedHashSet<>());
         defaultPermissions.put(false, new LinkedHashSet<>());

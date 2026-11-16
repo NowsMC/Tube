@@ -9,6 +9,8 @@ import org.bukkit.entity.EntityType;
 import space.nows.tube.bukkit.BukkitRuntime;
 import space.nows.tube.bukkit.permission.BukkitPermissible;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class BukkitEntity extends BukkitPermissible implements Entity {
@@ -109,6 +111,21 @@ public class BukkitEntity extends BukkitPermissible implements Entity {
     @Override
     public void remove() {
         tube.remove();
+    }
+
+    @Override
+    public Set<String> getScoreboardTags() {
+        return new HashSet<>(tube.tags());
+    }
+
+    @Override
+    public boolean addScoreboardTag(String tag) {
+        return tube.addTag(tag);
+    }
+
+    @Override
+    public boolean removeScoreboardTag(String tag) {
+        return tube.removeTag(tag);
     }
 
     @Override

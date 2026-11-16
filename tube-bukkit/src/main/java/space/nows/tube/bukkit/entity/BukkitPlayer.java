@@ -1,6 +1,12 @@
 package space.nows.tube.bukkit.entity;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.SoundStop;
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +21,8 @@ import java.util.Set;
 public final class BukkitPlayer extends BukkitLivingEntity implements Player {
 
     private final space.nows.tube.api.entity.Player tube;
+    private String playerListHeader;
+    private String playerListFooter;
 
     public BukkitPlayer(BukkitRuntime runtime, space.nows.tube.api.entity.Player tube) {
         super(runtime, tube);
@@ -180,6 +188,96 @@ public final class BukkitPlayer extends BukkitLivingEntity implements Player {
         for (String message : messages) {
             sendMessage(message);
         }
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle) {
+        sendTitle(title, subtitle, 10, 70, 20);
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        tube.showTitle(legacy(title), legacy(subtitle), fadeIn < 0 ? 10 : fadeIn, stay < 0 ? 70 : stay, fadeOut < 0 ? 20 : fadeOut);
+    }
+
+    @Override
+    public void resetTitle() {
+        tube.resetTitle();
+    }
+
+    @Override
+    public String getPlayerListHeader() {
+        return playerListHeader;
+    }
+
+    @Override
+    public String getPlayerListFooter() {
+        return playerListFooter;
+    }
+
+    @Override
+    public void setPlayerListHeader(String header) {
+        setPlayerListHeaderFooter(header, playerListFooter);
+    }
+
+    @Override
+    public void setPlayerListFooter(String footer) {
+        setPlayerListHeaderFooter(playerListHeader, footer);
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(String header, String footer) {
+        this.playerListHeader = header;
+        this.playerListFooter = footer;
+        tube.setPlayerListHeaderAndFooter(legacy(header), legacy(footer));
+    }
+
+    @Override
+    public void playSound(Location location, String sound, float volume, float pitch) {
+        playSound(location, sound, SoundCategory.MASTER, volume, pitch);
+    }
+
+    @Override
+    public void playSound(Location location, String sound, SoundCategory category, float volume, float pitch) {
+        if (location == null || sound == null || category == null) {
+            return;
+        }
+        tube.playSound(Sound.sound(Key.key(sound), source(category), volume, pitch), location.getX(), location.getY(), location.getZ());
+    }
+
+    @Override
+    public void stopSound(String sound) {
+        tube.stopSound(SoundStop.named(Key.key(sound)));
+    }
+
+    @Override
+    public void stopSound(String sound, SoundCategory category) {
+        tube.stopSound(SoundStop.namedOnSource(Key.key(sound), source(category)));
+    }
+
+    @Override
+    public void stopAllSounds() {
+        tube.stopSound(SoundStop.all());
+    }
+
+    private static Sound.Source source(SoundCategory category) {
+        return switch (category) {
+            case MASTER -> Sound.Source.MASTER;
+            case MUSIC -> Sound.Source.MUSIC;
+            case RECORDS -> Sound.Source.RECORD;
+            case WEATHER -> Sound.Source.WEATHER;
+            case BLOCKS -> Sound.Source.BLOCK;
+            case HOSTILE -> Sound.Source.HOSTILE;
+            case NEUTRAL -> Sound.Source.NEUTRAL;
+            case PLAYERS -> Sound.Source.PLAYER;
+            case AMBIENT -> Sound.Source.AMBIENT;
+            case VOICE -> Sound.Source.VOICE;
+            case UI -> Sound.Source.UI;
+        };
+    }
+
+    private static Component legacy(String text) {
+        return text == null || text.isEmpty() ? Component.empty() : LEGACY.deserialize(text);
     }
 
     @Override

@@ -11,6 +11,8 @@ public interface World {
 
     String getName();
 
+    java.io.File getWorldFolder();
+
     UUID getUID();
 
     NamespacedKey getKey();
