@@ -1,13 +1,9 @@
 package space.nows.tube.server;
 
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 import space.nows.tube.api.PluginConfig;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,17 +12,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class YamlConfig implements PluginConfig {
+public final class FileConfig implements PluginConfig {
 
     private final Path file;
+    private final ConfigFormat format;
     private Map<String, Object> root = new LinkedHashMap<>();
 
-    private YamlConfig(Path file) {
+    private FileConfig(Path file, ConfigFormat format) {
         this.file = file;
+        this.format = format;
     }
 
-    public static YamlConfig load(Path file) {
-        YamlConfig config = new YamlConfig(file);
+    public static FileConfig load(Path file) {
+        ConfigFormat format = ConfigFormat.ofFileName(file.getFileName().toString())
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported config format: " + file.getFileName()));
+        FileConfig config = new FileConfig(file, format);
         config.reload();
         return config;
     }
@@ -37,32 +37,23 @@ public final class YamlConfig implements PluginConfig {
             root = new LinkedHashMap<>();
             return;
         }
-        try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
-            Object loaded = new Yaml().load(reader);
-            if (loaded == null) {
-                root = new LinkedHashMap<>();
-            } else if (loaded instanceof Map<?, ?> map) {
-                root = copy(map);
-            } else {
-                throw new IllegalStateException(file + " must contain a mapping at the top level");
-            }
+        try {
+            root = format.parse(Files.readString(file, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        } catch (RuntimeException e) {
+            throw new IllegalStateException("Could not parse " + file + ": " + e.getMessage(), e);
         }
     }
 
     @Override
     public void save() {
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         try {
             Path parent = file.toAbsolutePath().getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            try (Writer writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-                new Yaml(options).dump(root, writer);
-            }
+            Files.writeString(file, format.render(root), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -136,7 +127,7 @@ public final class YamlConfig implements PluginConfig {
         return node;
     }
 
-    private static Map<String, Object> copy(Map<?, ?> source) {
+    static Map<String, Object> copy(Map<?, ?> source) {
         Map<String, Object> result = new LinkedHashMap<>();
         source.forEach((key, value) -> result.put(String.valueOf(key), copyValue(value)));
         return result;

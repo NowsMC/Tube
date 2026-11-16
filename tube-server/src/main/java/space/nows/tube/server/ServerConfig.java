@@ -7,7 +7,7 @@ import java.nio.file.Path;
 public record ServerConfig(String host, int port, boolean onlineMode, String defaultWorld, int autosaveSeconds) {
 
     public static ServerConfig load(Path file) {
-        YamlConfig config = YamlConfig.load(file);
+        FileConfig config = FileConfig.load(file);
         boolean changed = false;
         changed |= defaultTo(config, "host", "0.0.0.0");
         changed |= defaultTo(config, "port", 25565);

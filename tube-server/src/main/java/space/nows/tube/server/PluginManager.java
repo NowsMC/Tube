@@ -2,7 +2,6 @@ package space.nows.tube.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 import space.nows.tube.api.CommandRegistry;
 import space.nows.tube.api.Plugin;
 import space.nows.tube.api.PluginDescriptor;
@@ -26,7 +25,7 @@ import java.util.stream.Stream;
 
 public final class PluginManager {
 
-    static final String DESCRIPTOR_FILE = "tube-plugin.yml";
+    static final String DESCRIPTOR_NAME = "tube-plugin";
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube");
     private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z0-9_.-]+");
@@ -109,16 +108,14 @@ public final class PluginManager {
 
     static PluginDescriptor readDescriptor(Path jar) throws IOException {
         try (JarFile file = new JarFile(jar.toFile())) {
-            var entry = file.getEntry(DESCRIPTOR_FILE);
+            var entry = Jars.findByBaseName(file, DESCRIPTOR_NAME);
             if (entry == null) {
-                throw new IllegalArgumentException("missing " + DESCRIPTOR_FILE);
+                throw new IllegalArgumentException("missing " + DESCRIPTOR_NAME + ".yml, .json or .toml");
             }
-            Object loaded;
+            Map<String, Object> map;
             try (InputStream in = file.getInputStream(entry)) {
-                loaded = new Yaml().load(in);
-            }
-            if (!(loaded instanceof Map<?, ?> map)) {
-                throw new IllegalArgumentException(DESCRIPTOR_FILE + " must contain a mapping");
+                String text = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                map = ConfigFormat.ofFileName(entry.getName()).orElseThrow().parse(text);
             }
             String name = required(map, "name");
             if (!VALID_NAME.matcher(name).matches()) {
@@ -132,7 +129,7 @@ public final class PluginManager {
     private static String required(Map<?, ?> map, String key) {
         Object value = map.get(key);
         if (value == null || String.valueOf(value).isBlank()) {
-            throw new IllegalArgumentException(DESCRIPTOR_FILE + " is missing " + key);
+            throw new IllegalArgumentException(DESCRIPTOR_NAME + " is missing " + key);
         }
         return String.valueOf(value);
     }

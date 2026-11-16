@@ -13,11 +13,12 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 final class DefaultPluginContext implements PluginContext {
 
-    private static final String CONFIG_FILE = "config.yml";
+    private static final String CONFIG_NAME = "config";
 
     private final Server server;
     private final PluginDescriptor descriptor;
@@ -64,25 +65,31 @@ final class DefaultPluginContext implements PluginContext {
     @Override
     public synchronized PluginConfig config() {
         if (config == null) {
-            Path file = dataFolder.resolve(CONFIG_FILE);
-            if (!Files.exists(file)) {
-                copyDefault(file);
-            }
-            config = YamlConfig.load(file);
+            config = FileConfig.load(configFile());
         }
         return config;
     }
 
-    private void copyDefault(Path target) {
-        try (JarFile file = new JarFile(jar.toFile())) {
-            var entry = file.getEntry(CONFIG_FILE);
-            if (entry == null) {
-                return;
+    private Path configFile() {
+        for (ConfigFormat format : ConfigFormat.values()) {
+            for (String extension : format.extensions()) {
+                Path existing = dataFolder.resolve(CONFIG_NAME + "." + extension);
+                if (Files.exists(existing)) {
+                    return existing;
+                }
             }
+        }
+        try (JarFile file = new JarFile(jar.toFile())) {
+            JarEntry entry = Jars.findByBaseName(file, CONFIG_NAME);
+            if (entry == null) {
+                return dataFolder.resolve(CONFIG_NAME + ".yml");
+            }
+            Path target = dataFolder.resolve(entry.getName());
             Files.createDirectories(dataFolder);
             try (InputStream in = file.getInputStream(entry)) {
                 Files.copy(in, target);
             }
+            return target;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

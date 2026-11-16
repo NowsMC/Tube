@@ -86,7 +86,7 @@ final class WorldService implements WorldManager {
             throw new UncheckedIOException(e);
         }
 
-        YamlConfig settings = YamlConfig.load(directory.resolve("tube-world.yml"));
+        FileConfig settings = FileConfig.load(directory.resolve("tube-world.yml"));
         if (!settings.contains("spawn.x")) {
             settings.set("spawn.x", 0.5);
             settings.set("spawn.y", 41.0);

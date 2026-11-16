@@ -88,6 +88,15 @@ class PluginManagerTest {
     }
 
     @Test
+    void readsDescriptorAndConfigInJsonAndToml() throws IOException {
+        writePlugin("json.jar", "j", List.of(), "{\"greeting\": \"from-json\"}", "config.json", "json");
+        writePlugin("toml.jar", "t", List.of("j"), "greeting = \"from-toml\"\n", "config.toml", "toml");
+        new PluginManager(server, registry, directory).loadAll();
+        assertEquals(List.of("enable:j:from-json", "enable:t:from-toml"), RecordingPlugin.EVENTS);
+        assertTrue(Files.isRegularFile(directory.resolve("t").resolve("config.toml")));
+    }
+
+    @Test
     void skipsPluginWithMissingDependency() throws IOException {
         writePlugin("b.jar", "b", List.of("missing"), null);
         PluginManager manager = new PluginManager(server, registry, directory);
@@ -107,13 +116,23 @@ class PluginManagerTest {
     }
 
     private void writePlugin(String fileName, String name, List<String> depends, String config) throws IOException {
-        String descriptor = "name: " + name + "\nversion: 1.0\nmain: " + RecordingPlugin.class.getName() + "\ndepends: " + depends + "\n";
+        writePlugin(fileName, name, depends, config, "config.yml", "yml");
+    }
+
+    private void writePlugin(String fileName, String name, List<String> depends, String config, String configName, String descriptorExtension) throws IOException {
+        String main = RecordingPlugin.class.getName();
+        String quoted = depends.stream().map(item -> "\"" + item + "\"").collect(java.util.stream.Collectors.joining(", "));
+        String descriptor = switch (descriptorExtension) {
+            case "json" -> "{\"name\": \"" + name + "\", \"version\": \"1.0\", \"main\": \"" + main + "\", \"depends\": [" + quoted + "]}";
+            case "toml" -> "name = \"" + name + "\"\nversion = \"1.0\"\nmain = \"" + main + "\"\ndepends = [" + quoted + "]\n";
+            default -> "name: " + name + "\nversion: 1.0\nmain: " + main + "\ndepends: [" + quoted + "]\n";
+        };
         try (OutputStream out = Files.newOutputStream(directory.resolve(fileName)); JarOutputStream jar = new JarOutputStream(out)) {
-            jar.putNextEntry(new JarEntry(PluginManager.DESCRIPTOR_FILE));
+            jar.putNextEntry(new JarEntry("tube-plugin." + descriptorExtension));
             jar.write(descriptor.getBytes(StandardCharsets.UTF_8));
             jar.closeEntry();
             if (config != null) {
-                jar.putNextEntry(new JarEntry("config.yml"));
+                jar.putNextEntry(new JarEntry(configName));
                 jar.write(config.getBytes(StandardCharsets.UTF_8));
                 jar.closeEntry();
             }
