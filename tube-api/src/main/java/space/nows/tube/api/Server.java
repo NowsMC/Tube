@@ -13,6 +13,16 @@ public interface Server {
 
     String minecraftVersion();
 
+    int maxPlayers();
+
+    boolean onlineMode();
+
+    String motd();
+
+    int port();
+
+    String bindAddress();
+
     CommandRegistry commands();
 
     PermissionManager permissions();

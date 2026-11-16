@@ -22,6 +22,7 @@ import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Player;
 import space.nows.tube.api.PluginDescriptor;
 import space.nows.tube.api.Scheduler;
+import space.nows.tube.api.ServerExtension;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.WorldManager;
 import space.nows.tube.api.event.BlockBreakEvent;
@@ -70,6 +71,7 @@ public final class TubeServer implements Server {
     private DefaultEventBus events;
     private PluginManager plugins;
     private ScheduledExecutorService autosave;
+    private final java.util.List<ServerExtension> extensions = new java.util.ArrayList<>();
 
     public TubeServer(VersionProfile profile, Path directory) {
         this.profile = Objects.requireNonNull(profile, "profile");
@@ -89,6 +91,31 @@ public final class TubeServer implements Server {
     @Override
     public String minecraftVersion() {
         return profile.minecraftVersion();
+    }
+
+    @Override
+    public int maxPlayers() {
+        return settings.maxPlayers();
+    }
+
+    @Override
+    public boolean onlineMode() {
+        return settings.onlineMode();
+    }
+
+    @Override
+    public String motd() {
+        return settings.motd();
+    }
+
+    @Override
+    public int port() {
+        return settings.serverPort();
+    }
+
+    @Override
+    public String bindAddress() {
+        return settings.bindAddress();
     }
 
     @Override
@@ -196,6 +223,7 @@ public final class TubeServer implements Server {
         new AccessCommands(this, profiles, bans, whitelist, directory.resolve("server.properties"), settings.enforceWhitelist()).register(commands);
         worlds.defaultWorld();
         plugins.loadAll();
+        enableExtensions();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "tube-shutdown"));
         startAutosave();
@@ -304,6 +332,18 @@ public final class TubeServer implements Server {
         }
     }
 
+    private void enableExtensions() {
+        for (ServerExtension extension : java.util.ServiceLoader.load(ServerExtension.class, ServerExtension.class.getClassLoader())) {
+            try {
+                extension.enable(this, directory.resolve("plugins"));
+                extensions.add(extension);
+                LOGGER.info("Enabled extension {}", extension.name());
+            } catch (Exception | LinkageError e) {
+                LOGGER.error("Extension {} failed to enable", extension.name(), e);
+            }
+        }
+    }
+
     private void shutdown() {
         if (!stopped.compareAndSet(false, true)) {
             return;
@@ -312,6 +352,13 @@ public final class TubeServer implements Server {
         if (autosave != null) {
             autosave.shutdownNow();
         }
+        extensions.reversed().forEach(extension -> {
+            try {
+                extension.disable();
+            } catch (RuntimeException e) {
+                LOGGER.error("Extension {} failed to disable", extension.name(), e);
+            }
+        });
         plugins.disableAll();
         try {
             saveAll();

@@ -108,10 +108,20 @@ public final class PluginManager {
                 }
                 found.put(descriptor.name(), new Candidate(jar, descriptor));
             } catch (Exception e) {
-                LOGGER.error("Skipping {}: {}", jar.getFileName(), e.getMessage());
+                if (!hasBukkitDescriptor(jar)) {
+                    LOGGER.error("Skipping {}: {}", jar.getFileName(), e.getMessage());
+                }
             }
         }
         return found;
+    }
+
+    private static boolean hasBukkitDescriptor(Path jar) {
+        try (JarFile file = new JarFile(jar.toFile())) {
+            return file.getEntry("plugin.yml") != null || file.getEntry("paper-plugin.yml") != null;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     static PluginDescriptor readDescriptor(Path jar) throws IOException {
