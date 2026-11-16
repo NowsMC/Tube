@@ -6,15 +6,18 @@ import space.nows.tube.api.event.BlockBreakEvent;
 import space.nows.tube.api.event.BlockPlaceEvent;
 import space.nows.tube.api.event.EntityDamageEvent;
 import space.nows.tube.api.event.EntityDeathEvent;
+import space.nows.tube.api.event.EntityPickupItemEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.InventoryClickEvent;
 import space.nows.tube.api.event.InventoryCloseEvent;
 import space.nows.tube.api.event.PlayerChatEvent;
+import space.nows.tube.api.event.PlayerDropItemEvent;
 import space.nows.tube.api.event.PlayerInteractEvent;
 import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerMoveEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
+import space.nows.tube.api.event.PlayerRespawnEvent;
 import space.nows.tube.api.event.PlayerTeleportEvent;
 import space.nows.tube.api.event.Subscription;
 import space.nows.tube.bukkit.BukkitRuntime;
@@ -47,6 +50,9 @@ public final class EventBridge {
         subscriptions.add(bus.subscribe(PlayerTeleportEvent.class, EventPriority.NORMAL, false, this::teleport));
         subscriptions.add(bus.subscribe(PlayerMoveEvent.class, EventPriority.NORMAL, false, this::move));
         subscriptions.add(bus.subscribe(PlayerInteractEvent.class, EventPriority.NORMAL, false, this::interact));
+        subscriptions.add(bus.subscribe(PlayerDropItemEvent.class, EventPriority.NORMAL, false, this::dropItem));
+        subscriptions.add(bus.subscribe(EntityPickupItemEvent.class, EventPriority.NORMAL, false, this::pickupItem));
+        subscriptions.add(bus.subscribe(PlayerRespawnEvent.class, EventPriority.NORMAL, false, this::respawn));
     }
 
     private void join(PlayerJoinEvent event) {
@@ -157,6 +163,36 @@ public final class EventBridge {
         var bukkit = new org.bukkit.event.player.PlayerInteractEvent(player, action, item, air ? null : block, air ? null : org.bukkit.block.BlockFace.SELF, hand);
         runtime.pluginManager().callEvent(bukkit);
         event.setCancelled(bukkit.isCancelled());
+    }
+
+    private void dropItem(PlayerDropItemEvent event) {
+        var bukkit = new org.bukkit.event.player.PlayerDropItemEvent(runtime.adapters().player(event.player()), runtime.adapters().item(event.item()));
+        runtime.pluginManager().callEvent(bukkit);
+        event.setCancelled(bukkit.isCancelled());
+    }
+
+    private void pickupItem(EntityPickupItemEvent event) {
+        var item = runtime.adapters().item(event.item());
+        var entity = runtime.adapters().living(event.entity());
+        boolean cancelled = false;
+        if (entity instanceof org.bukkit.entity.Player player) {
+            var legacy = new org.bukkit.event.player.PlayerPickupItemEvent(player, item, 0);
+            runtime.pluginManager().callEvent(legacy);
+            cancelled = legacy.isCancelled();
+        }
+        var bukkit = new org.bukkit.event.entity.EntityPickupItemEvent(entity, item, 0);
+        bukkit.setCancelled(cancelled);
+        runtime.pluginManager().callEvent(bukkit);
+        event.setCancelled(bukkit.isCancelled());
+    }
+
+    private void respawn(PlayerRespawnEvent event) {
+        var location = runtime.adapters().location(event.location());
+        var bukkit = new org.bukkit.event.player.PlayerRespawnEvent(runtime.adapters().player(event.player()), location, false);
+        runtime.pluginManager().callEvent(bukkit);
+        if (bukkit.getRespawnLocation() != location) {
+            event.setLocation(runtime.adapters().tubeLocation(bukkit.getRespawnLocation()));
+        }
     }
 
     private org.bukkit.inventory.Inventory inventory(space.nows.tube.api.entity.Player owner, space.nows.tube.api.inventory.Inventory inventory) {

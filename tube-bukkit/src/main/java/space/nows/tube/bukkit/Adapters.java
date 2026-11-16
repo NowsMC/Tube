@@ -5,10 +5,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import space.nows.tube.bukkit.command.BukkitCommandSender;
 import space.nows.tube.bukkit.command.BukkitConsoleSender;
+import space.nows.tube.bukkit.entity.BukkitItem;
 import space.nows.tube.bukkit.entity.BukkitLivingEntity;
 import space.nows.tube.bukkit.entity.BukkitOfflinePlayer;
 import space.nows.tube.bukkit.entity.BukkitPlayer;
@@ -56,6 +58,10 @@ public final class Adapters {
             return player(player);
         }
         return new BukkitLivingEntity(runtime, tube);
+    }
+
+    public Item item(space.nows.tube.api.entity.ItemEntity tube) {
+        return new BukkitItem(runtime, tube);
     }
 
     public World world(space.nows.tube.api.world.World tube) {

@@ -1,12 +1,6 @@
 package org.bukkit.entity;
 
-public interface LivingEntity extends Entity {
-
-    double getHealth();
-
-    void setHealth(double health);
-
-    double getMaxHealth();
+public interface LivingEntity extends Damageable {
 
     boolean addPotionEffect(org.bukkit.potion.PotionEffect effect);
 

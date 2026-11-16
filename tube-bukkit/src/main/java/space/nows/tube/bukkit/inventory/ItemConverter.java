@@ -14,7 +14,7 @@ public final class ItemConverter {
     private ItemConverter() {
     }
 
-    static space.nows.tube.api.inventory.ItemStack toTube(ItemStack item) {
+    public static space.nows.tube.api.inventory.ItemStack toTube(ItemStack item) {
         if (item == null || item.isEmpty()) {
             return space.nows.tube.api.inventory.ItemStack.AIR;
         }
@@ -65,7 +65,7 @@ public final class ItemConverter {
         return result;
     }
 
-    static ItemStack nonNull(ItemStack item) {
+    public static ItemStack nonNull(ItemStack item) {
         return item == null ? new ItemStack(Material.AIR, 0) : item;
     }
 

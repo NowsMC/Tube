@@ -28,10 +28,15 @@ class BukkitLayerTest {
             import org.bukkit.event.EventPriority;
             import org.bukkit.event.Listener;
             import org.bukkit.event.block.BlockBreakEvent;
+            import org.bukkit.event.entity.EntityPickupItemEvent;
             import org.bukkit.event.inventory.InventoryClickEvent;
             import org.bukkit.event.player.AsyncPlayerChatEvent;
+            import org.bukkit.event.player.PlayerDropItemEvent;
             import org.bukkit.event.player.PlayerMoveEvent;
             import org.bukkit.event.player.PlayerJoinEvent;
+            import org.bukkit.event.player.PlayerRespawnEvent;
+            import org.bukkit.Location;
+            import org.bukkit.Material;
             import org.bukkit.plugin.java.JavaPlugin;
 
             import java.io.IOException;
@@ -94,6 +99,21 @@ class BukkitLayerTest {
                 @EventHandler
                 public void onClick(InventoryClickEvent event) {
                     event.setCancelled(event.getSlot() == 5 && event.getCurrentItem() != null && event.getCurrentItem().getAmount() == 3);
+                }
+
+                @EventHandler
+                public void onDrop(PlayerDropItemEvent event) {
+                    event.setCancelled(event.getItemDrop().getItemStack().getAmount() == 64);
+                }
+
+                @EventHandler
+                public void onPickup(EntityPickupItemEvent event) {
+                    event.setCancelled(event.getItem().getItemStack().getType() == Material.DIAMOND);
+                }
+
+                @EventHandler
+                public void onRespawn(PlayerRespawnEvent event) {
+                    event.setRespawnLocation(new Location(event.getRespawnLocation().getWorld(), 10, 70, 10));
                 }
 
                 @EventHandler(priority = EventPriority.HIGH)
@@ -218,6 +238,45 @@ class BukkitLayerTest {
 
         assertTrue(!allowed.isCancelled());
         assertTrue(denied.isCancelled());
+    }
+
+    @Test
+    void itemDropsAndPickupsCanBeCancelled() {
+        var player = stub.player("Steve");
+
+        var keptDrop = stub.events.post(new space.nows.tube.api.event.PlayerDropItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 3))));
+        var cancelledDrop = stub.events.post(new space.nows.tube.api.event.PlayerDropItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 64))));
+        var keptPickup = stub.events.post(new space.nows.tube.api.event.EntityPickupItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 1))));
+        var cancelledPickup = stub.events.post(new space.nows.tube.api.event.EntityPickupItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("diamond", 1))));
+
+        assertTrue(!keptDrop.isCancelled());
+        assertTrue(cancelledDrop.isCancelled());
+        assertTrue(!keptPickup.isCancelled());
+        assertTrue(cancelledPickup.isCancelled());
+    }
+
+    @Test
+    void pluginsCanMoveTheRespawnLocation() {
+        var player = stub.player("Steve");
+        var world = (space.nows.tube.api.world.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.world.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
+
+        var respawn = stub.events.post(new space.nows.tube.api.event.PlayerRespawnEvent(player, new space.nows.tube.api.world.Location(world, 0, 64, 0)));
+
+        assertEquals(10, respawn.location().x());
+        assertEquals(70, respawn.location().y());
+        assertEquals("world", respawn.location().world().name());
+    }
+
+    private static space.nows.tube.api.entity.ItemEntity droppedItem(space.nows.tube.api.inventory.ItemStack stack) {
+        var uuid = java.util.UUID.randomUUID();
+        return (space.nows.tube.api.entity.ItemEntity) java.lang.reflect.Proxy.newProxyInstance(BukkitLayerTest.class.getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.entity.ItemEntity.class}, (proxy, method, args) -> switch (method.getName()) {
+                    case "item" -> stack;
+                    case "uuid" -> uuid;
+                    case "type" -> "minecraft:item";
+                    default -> null;
+                });
     }
 
     @Test
