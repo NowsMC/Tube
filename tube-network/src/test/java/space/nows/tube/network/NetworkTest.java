@@ -34,7 +34,7 @@ class NetworkTest {
 
     @BeforeEach
     void start() {
-        network = new NettyNetwork(null);
+        network = new NettyNetwork(null, Transport.NIO);
     }
 
     @AfterEach

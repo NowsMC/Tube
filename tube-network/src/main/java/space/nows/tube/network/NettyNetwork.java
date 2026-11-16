@@ -12,11 +12,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +32,19 @@ public final class NettyNetwork implements Network, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube-network");
 
-    private final EventLoopGroup group = new MultiThreadIoEventLoopGroup(2, new DefaultThreadFactory("tube-network", true), NioIoHandler.newFactory());
+    private final Transport transport;
+    private final EventLoopGroup group;
     private final PluginChannels channels;
     private final AtomicLong connectionIds = new AtomicLong();
 
-    public NettyNetwork(PluginChannels channels) {
+    public NettyNetwork(PluginChannels channels, Transport transport) {
         this.channels = channels;
+        this.transport = transport;
+        this.group = new MultiThreadIoEventLoopGroup(2, new DefaultThreadFactory("tube-network", true), transport.ioHandlerFactory());
+    }
+
+    public Transport transport() {
+        return transport;
     }
 
     EventLoopGroup group() {
@@ -51,7 +55,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
     public TcpServer listenTcp(InetSocketAddress address, TcpHandler handler) {
         Channel channel = new ServerBootstrap()
                 .group(group)
-                .channel(NioServerSocketChannel.class)
+                .channel(transport.serverChannel())
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel child) {
@@ -69,7 +73,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
         BoundUdp[] holder = new BoundUdp[1];
         Channel channel = new Bootstrap()
                 .group(group)
-                .channel(NioDatagramChannel.class)
+                .channel(transport.datagramChannel())
                 .handler(new SimpleChannelInboundHandler<DatagramPacket>() {
                     @Override
                     protected void channelRead0(ChannelHandlerContext context, DatagramPacket packet) {

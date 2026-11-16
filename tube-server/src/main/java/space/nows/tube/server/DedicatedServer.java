@@ -20,6 +20,7 @@ import space.nows.tube.api.plugin.PluginDescriptor;
 import space.nows.tube.api.scheduler.Scheduler;
 import space.nows.tube.api.world.WorldManager;
 import space.nows.tube.network.NettyNetwork;
+import space.nows.tube.network.Transport;
 import space.nows.tube.server.access.AccessControl;
 import space.nows.tube.server.access.BanList;
 import space.nows.tube.server.access.PermissionService;
@@ -230,7 +231,8 @@ public final class DedicatedServer implements Server {
         events = new DefaultEventBus();
         players.attachEvents(events);
         PluginChannelService channels = new PluginChannelService(players);
-        network = new NettyNetwork(channels);
+        network = new NettyNetwork(channels, Transport.choose(true));
+        LOGGER.info("Using {} for Tube network sockets", network.transport());
         plugins = new PluginManager(this, commands, scheduler, events, directory.resolve("plugins"));
 
         var handler = MinecraftServer.getGlobalEventHandler();

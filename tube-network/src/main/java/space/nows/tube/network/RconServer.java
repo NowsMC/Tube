@@ -8,7 +8,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public final class RconServer implements AutoCloseable {
         byte[] expected = password.getBytes(StandardCharsets.UTF_8);
         this.channel = new ServerBootstrap()
                 .group(network.group())
-                .channel(NioServerSocketChannel.class)
+                .channel(network.transport().serverChannel())
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel child) {
