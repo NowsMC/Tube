@@ -14,6 +14,6 @@ public final class Main {
         VersionProfile profile = ServiceLoader.load(VersionProfile.class, VersionProfile.class.getClassLoader())
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No version profile found on the classpath"));
-        new TubeServer(profile, Path.of("")).start();
+        new DedicatedServer(profile, Path.of("")).start();
     }
 }

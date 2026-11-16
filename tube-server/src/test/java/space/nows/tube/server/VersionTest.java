@@ -10,7 +10,7 @@ class VersionTest {
 
     @Test
     void usesTheYearMonthCounterScheme() {
-        String version = new TubeServer(() -> "26.2", Path.of("")).version();
+        String version = new DedicatedServer(() -> "26.2", Path.of("")).version();
         assertTrue(version.matches("\\d{4}\\.(0?[1-9]|1[0-2])\\.\\d+(-SNAPSHOT)?"), version);
     }
 }
