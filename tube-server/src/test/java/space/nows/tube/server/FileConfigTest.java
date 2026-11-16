@@ -68,14 +68,4 @@ class FileConfigTest {
         assertEquals(7, config.getInt("other", 7));
         assertEquals(3, config.getInt("name", 3));
     }
-
-    @Test
-    void serverConfigWritesDefaultsOnFirstLoad() {
-        Path file = directory.resolve("tube.yml");
-        ServerConfig config = ServerConfig.load(file);
-        assertEquals(25565, config.port());
-        assertTrue(config.onlineMode());
-        assertTrue(java.nio.file.Files.exists(file));
-        assertEquals(config, ServerConfig.load(file));
-    }
 }

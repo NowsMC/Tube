@@ -1,15 +1,21 @@
 package space.nows.tube.server;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
+import net.minestom.server.event.player.PlayerSpawnEvent;
+import net.minestom.server.event.server.ServerListPingEvent;
+import net.minestom.server.ping.Status;
+import net.minestom.server.world.Difficulty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.CommandRegistry;
 import space.nows.tube.api.Location;
+import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Player;
 import space.nows.tube.api.PluginDescriptor;
 import space.nows.tube.api.Scheduler;
@@ -19,11 +25,14 @@ import space.nows.tube.api.event.EventBus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,9 +44,11 @@ public final class TubeServer implements Server {
 
     private final VersionProfile profile;
     private final Path directory;
+    private final String version = readVersion();
     private final AtomicBoolean stopped = new AtomicBoolean();
 
-    private ServerConfig config;
+    private ServerSettings settings;
+    private PermissionService permissions;
     private WorldService worlds;
     private PlayerService players;
     private CommandService commands;
@@ -57,6 +68,11 @@ public final class TubeServer implements Server {
     }
 
     @Override
+    public String version() {
+        return version;
+    }
+
+    @Override
     public String minecraftVersion() {
         return profile.minecraftVersion();
     }
@@ -64,6 +80,11 @@ public final class TubeServer implements Server {
     @Override
     public CommandRegistry commands() {
         return commands;
+    }
+
+    @Override
+    public PermissionManager permissions() {
+        return permissions;
     }
 
     @Override
@@ -107,24 +128,27 @@ public final class TubeServer implements Server {
     }
 
     public void start() {
-        config = ServerConfig.load(directory.resolve("tube.yml"));
+        if (!Eula.isAccepted(directory)) {
+            LOGGER.error("You need to agree to the EULA in order to run the server. Go to {} for more info.", Eula.FILE_NAME);
+            Runtime.getRuntime().exit(1);
+            return;
+        }
+        settings = ServerSettings.load(directory.resolve("server.properties"));
+        LOGGER.info("Starting {} {} for Minecraft {}", name(), version, minecraftVersion());
 
-        MinecraftServer server = MinecraftServer.init(config.onlineMode() ? new Auth.Online() : new Auth.Offline());
+        MinecraftServer server = MinecraftServer.init(settings.onlineMode() ? new Auth.Online() : new Auth.Offline());
         MinecraftServer.setBrandName(name());
+        MinecraftServer.setDifficulty(Difficulty.valueOf(settings.difficulty().name()));
 
-        worlds = new WorldService(directory.resolve("worlds"), config.defaultWorld());
-        players = new PlayerService(worlds);
+        permissions = new PermissionService(directory);
+        worlds = new WorldService(directory.resolve("worlds"), settings.levelName());
+        players = new PlayerService(worlds, permissions);
         commands = new CommandService(players);
         scheduler = new SchedulerService();
         events = new DefaultEventBus();
         plugins = new PluginManager(this, commands, scheduler, events, directory.resolve("plugins"));
 
-        MinecraftServer.getGlobalEventHandler().addListener(AsyncPlayerConfigurationEvent.class, event -> {
-            players.wrap(event.getPlayer());
-            Location location = worlds.defaultWorld().spawn();
-            event.setSpawningInstance(worlds.instanceOf(location.world()));
-            event.getPlayer().setRespawnPoint(new Pos(location.x(), location.y(), location.z()));
-        });
+        installConnectionHandlers();
         new EventBridge(events, players, worlds).install(MinecraftServer.getGlobalEventHandler());
 
         BuiltinCommands.register(this, commands);
@@ -134,7 +158,38 @@ public final class TubeServer implements Server {
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "tube-shutdown"));
         startAutosave();
         startConsole();
-        server.start(config.host(), config.port());
+        server.start(settings.bindAddress(), settings.serverPort());
+    }
+
+    private void installConnectionHandlers() {
+        var handler = MinecraftServer.getGlobalEventHandler();
+        Component motd = MiniMessage.miniMessage().deserialize(settings.motd());
+
+        handler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
+            if (MinecraftServer.getConnectionManager().getOnlinePlayers().size() >= settings.maxPlayers()) {
+                event.getPlayer().kick(Component.text("The server is full!"));
+                return;
+            }
+            players.wrap(event.getPlayer());
+            Location location = worlds.defaultWorld().spawn();
+            event.setSpawningInstance(worlds.instanceOf(location.world()));
+            event.getPlayer().setRespawnPoint(new Pos(location.x(), location.y(), location.z()));
+        });
+
+        handler.addListener(PlayerSpawnEvent.class, event -> {
+            if (event.isFirstSpawn()) {
+                event.getPlayer().setGameMode(net.minestom.server.entity.GameMode.valueOf(settings.gamemode().name()));
+            }
+        });
+
+        handler.addListener(ServerListPingEvent.class, event -> {
+            Status status = event.getStatus();
+            event.setStatus(Status.builder(status)
+                    .description(motd)
+                    .playerInfo(MinecraftServer.getConnectionManager().getOnlinePlayers().size(), settings.maxPlayers())
+                    .versionInfo(new Status.VersionInfo(name() + " " + minecraftVersion(), status.versionInfo().protocolVersion()))
+                    .build());
+        });
     }
 
     private void shutdown() {
@@ -155,7 +210,7 @@ public final class TubeServer implements Server {
     }
 
     private void startAutosave() {
-        if (config.autosaveSeconds() <= 0) {
+        if (settings.autosaveSeconds() <= 0) {
             return;
         }
         autosave = Executors.newSingleThreadScheduledExecutor(task -> {
@@ -169,7 +224,7 @@ public final class TubeServer implements Server {
             } catch (RuntimeException e) {
                 LOGGER.error("Autosave failed", e);
             }
-        }, config.autosaveSeconds(), config.autosaveSeconds(), TimeUnit.SECONDS);
+        }, settings.autosaveSeconds(), settings.autosaveSeconds(), TimeUnit.SECONDS);
     }
 
     private void dispatchConsole(String line) {
@@ -194,5 +249,18 @@ public final class TubeServer implements Server {
         }, "tube-console");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private static String readVersion() {
+        try (InputStream in = TubeServer.class.getResourceAsStream("/tube-server.properties")) {
+            if (in == null) {
+                throw new IllegalStateException("tube-server.properties is missing from the classpath");
+            }
+            Properties properties = new Properties();
+            properties.load(in);
+            return properties.getProperty("version");
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
