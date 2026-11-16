@@ -5,20 +5,9 @@ import java.util.List;
 
 record Library(String group, String artifact, String version, String classifier) {
 
-    private static final java.util.regex.Pattern TIMESTAMPED = java.util.regex.Pattern.compile("(.+)-\\d{8}\\.\\d{6}-\\d+");
-
     String path() {
         String file = artifact + "-" + version + (classifier.isEmpty() ? "" : "-" + classifier) + ".jar";
-        return group.replace('.', '/') + "/" + artifact + "/" + directoryVersion() + "/" + file;
-    }
-
-    String key() {
-        return group + ":" + artifact;
-    }
-
-    private String directoryVersion() {
-        var matcher = TIMESTAMPED.matcher(version);
-        return matcher.matches() ? matcher.group(1) + "-SNAPSHOT" : version;
+        return group.replace('.', '/') + "/" + artifact + "/" + version + "/" + file;
     }
 
     String coordinates() {

@@ -1,1 +1,0 @@
-org.spigotmc:spigot-api:jar:${bukkit-api.version}:compile

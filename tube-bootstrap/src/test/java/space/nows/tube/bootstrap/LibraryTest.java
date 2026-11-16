@@ -23,12 +23,6 @@ class LibraryTest {
     }
 
     @Test
-    void timestampedSnapshotsLiveInTheirSnapshotDirectory() {
-        assertEquals("org/spigotmc/spigot-api/26.2-R0.1-SNAPSHOT/spigot-api-26.2-R0.1-20260915.151451-13.jar",
-                new Library("org.spigotmc", "spigot-api", "26.2-R0.1-20260915.151451-13", "").path());
-    }
-
-    @Test
     void buildsMavenRepositoryPath() {
         assertEquals("net/kyori/adventure-api/5.2.0/adventure-api-5.2.0.jar",
                 new Library("net.kyori", "adventure-api", "5.2.0", "").path());

@@ -36,12 +36,6 @@
     <dependency>
       <groupId>space.nows</groupId>
       <artifactId>tube-bukkit</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
