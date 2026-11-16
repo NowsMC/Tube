@@ -8,6 +8,7 @@ import space.nows.tube.api.event.EntityDamageEvent;
 import space.nows.tube.api.event.EntityDeathEvent;
 import space.nows.tube.api.event.PlayerInteractEvent;
 import space.nows.tube.api.event.PlayerMoveEvent;
+import space.nows.tube.api.event.PlayerTeleportEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.InventoryClickEvent;
@@ -40,6 +41,7 @@ final class BukkitEventBridge {
         subscriptions.add(bus.subscribe(InventoryCloseEvent.class, EventPriority.NORMAL, false, this::inventoryClose));
         subscriptions.add(bus.subscribe(EntityDamageEvent.class, EventPriority.NORMAL, false, this::entityDamage));
         subscriptions.add(bus.subscribe(EntityDeathEvent.class, EventPriority.NORMAL, false, this::entityDeath));
+        subscriptions.add(bus.subscribe(PlayerTeleportEvent.class, EventPriority.NORMAL, false, this::teleport));
         subscriptions.add(bus.subscribe(PlayerMoveEvent.class, EventPriority.NORMAL, false, this::move));
         subscriptions.add(bus.subscribe(PlayerInteractEvent.class, EventPriority.NORMAL, false, this::interact));
     }
@@ -99,7 +101,7 @@ final class BukkitEventBridge {
     }
 
     private void entityDamage(EntityDamageEvent event) {
-        var bukkit = new org.bukkit.event.entity.EntityDamageEvent(runtime.wrappers.living(event.entity()), event.damage());
+        var bukkit = new org.bukkit.event.entity.EntityDamageEvent(runtime.wrappers.living(event.entity()), cause(event.cause()), event.damage());
         runtime.pluginManager.callEvent(bukkit);
         event.setCancelled(bukkit.isCancelled());
     }
@@ -125,12 +127,63 @@ final class BukkitEventBridge {
         }
     }
 
+    private void teleport(PlayerTeleportEvent event) {
+        var player = runtime.wrappers.player(event.player());
+        var to = runtime.wrappers.location(event.to());
+        var bukkit = new org.bukkit.event.player.PlayerTeleportEvent(player, runtime.wrappers.location(event.from()), to, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.PLUGIN);
+        runtime.pluginManager.callEvent(bukkit);
+        if (bukkit.isCancelled()) {
+            event.setCancelled(true);
+        } else if (bukkit.getTo() != to) {
+            event.setTo(runtime.wrappers.tubeLocation(bukkit.getTo()));
+        }
+    }
+
+    static org.bukkit.event.entity.EntityDamageEvent.DamageCause cause(String key) {
+        String name = key == null ? "" : key.replaceFirst("^minecraft:", "");
+        return switch (name) {
+            case "player_attack", "mob_attack", "mob_attack_no_aggro" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK;
+            case "arrow", "trident", "thrown", "fireball", "unattributed_fireball", "wither_skull", "mob_projectile" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.PROJECTILE;
+            case "in_wall" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.SUFFOCATION;
+            case "fall", "ender_pearl" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.FALL;
+            case "in_fire", "campfire" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.FIRE;
+            case "on_fire" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.FIRE_TICK;
+            case "lava" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.LAVA;
+            case "drown" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.DROWNING;
+            case "explosion", "player_explosion" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_EXPLOSION;
+            case "out_of_world" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.VOID;
+            case "lightning_bolt" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.LIGHTNING;
+            case "generic_kill" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.SUICIDE;
+            case "starve" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.STARVATION;
+            case "magic", "indirect_magic" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.MAGIC;
+            case "wither" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.WITHER;
+            case "falling_block", "falling_anvil", "falling_stalactite" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.FALLING_BLOCK;
+            case "thorns" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.THORNS;
+            case "dragon_breath" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.DRAGON_BREATH;
+            case "fly_into_wall" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.FLY_INTO_WALL;
+            case "hot_floor" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.HOT_FLOOR;
+            case "cactus", "sweet_berry_bush", "stalagmite" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.CONTACT;
+            case "cramming" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.CRAMMING;
+            case "dry_out" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.DRYOUT;
+            case "freeze" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.FREEZE;
+            case "sonic_boom" -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.SONIC_BOOM;
+            default -> org.bukkit.event.entity.EntityDamageEvent.DamageCause.CUSTOM;
+        };
+    }
+
     private void interact(PlayerInteractEvent event) {
         var player = runtime.wrappers.player(event.player());
         var block = runtime.wrappers.world(event.world()).getBlockAt(event.x(), event.y(), event.z());
         var hand = event.mainHand() ? org.bukkit.inventory.EquipmentSlot.HAND : org.bukkit.inventory.EquipmentSlot.OFF_HAND;
         var item = event.mainHand() ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
-        var bukkit = new org.bukkit.event.player.PlayerInteractEvent(player, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, item, block, org.bukkit.block.BlockFace.SELF, hand);
+        var action = switch (event.action()) {
+            case LEFT_CLICK_BLOCK -> org.bukkit.event.block.Action.LEFT_CLICK_BLOCK;
+            case LEFT_CLICK_AIR -> org.bukkit.event.block.Action.LEFT_CLICK_AIR;
+            case RIGHT_CLICK_BLOCK -> org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
+            case RIGHT_CLICK_AIR -> org.bukkit.event.block.Action.RIGHT_CLICK_AIR;
+        };
+        boolean air = action == org.bukkit.event.block.Action.LEFT_CLICK_AIR || action == org.bukkit.event.block.Action.RIGHT_CLICK_AIR;
+        var bukkit = new org.bukkit.event.player.PlayerInteractEvent(player, action, item, air ? null : block, air ? null : org.bukkit.block.BlockFace.SELF, hand);
         runtime.pluginManager.callEvent(bukkit);
         event.setCancelled(bukkit.isCancelled());
     }
