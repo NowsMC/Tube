@@ -124,6 +124,7 @@ final class StubServer {
 
     final Registry commands = new Registry();
     final List<String> playerMessages = new java.util.concurrent.CopyOnWriteArrayList<>();
+    final List<String> createdWorlds = new java.util.concurrent.CopyOnWriteArrayList<>();
     final Events events = new Events();
     final ManualScheduler scheduler = new ManualScheduler();
     final List<Player> players = new ArrayList<>();
@@ -154,6 +155,11 @@ final class StubServer {
             case "all" -> List.of(world);
             case "get" -> "world".equals(args[0]) ? Optional.of(world) : Optional.empty();
             case "defaultWorld" -> world;
+            case "generators" -> java.util.Set.of(space.nows.tube.api.world.WorldOptions.FLAT, space.nows.tube.api.world.WorldOptions.NORMAL);
+            case "create" -> {
+                createdWorlds.add((String) args[0] + " " + args[1]);
+                yield world;
+            }
             default -> null;
         });
         server = (Server) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {Server.class}, (proxy, method, args) -> switch (method.getName()) {

@@ -73,6 +73,18 @@ public final class Bukkit {
         return server.getMessenger();
     }
 
+    public static World createWorld(WorldCreator creator) {
+        return server.createWorld(creator);
+    }
+
+    public static boolean unloadWorld(World world, boolean save) {
+        return server.unloadWorld(world, save);
+    }
+
+    public static boolean unloadWorld(String name, boolean save) {
+        return server.unloadWorld(name, save);
+    }
+
     public static UnsafeValues getUnsafe() {
         return server.getUnsafe();
     }

@@ -74,7 +74,16 @@ public final class BukkitWorld implements World {
 
     @Override
     public Environment getEnvironment() {
-        return Environment.NORMAL;
+        return switch (tube.options().environment()) {
+            case OVERWORLD -> Environment.NORMAL;
+            case NETHER -> Environment.NETHER;
+            case END -> Environment.THE_END;
+        };
+    }
+
+    @Override
+    public long getSeed() {
+        return tube.options().seed();
     }
 
     @Override

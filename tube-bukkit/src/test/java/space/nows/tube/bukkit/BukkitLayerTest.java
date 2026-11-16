@@ -292,6 +292,15 @@ class BukkitLayerTest {
     }
 
     @Test
+    void worldCreatorsBecomeTubeWorldOptions() {
+        org.bukkit.Bukkit.createWorld(new org.bukkit.WorldCreator("nether").environment(org.bukkit.World.Environment.NETHER).type(org.bukkit.WorldType.FLAT).seed(5));
+        org.bukkit.Bukkit.createWorld(new org.bukkit.WorldCreator("custom").generator("SomePlugin:caves").seed(6));
+
+        assertEquals(List.of("nether WorldOptions[generator=tube:flat, seed=5, environment=NETHER]",
+                "custom WorldOptions[generator=tube:normal, seed=6, environment=OVERWORLD]"), stub.createdWorlds);
+    }
+
+    @Test
     void playersGetTagsAndTitles() {
         var player = runtime.adapters().player(stub.player("Steve"));
 

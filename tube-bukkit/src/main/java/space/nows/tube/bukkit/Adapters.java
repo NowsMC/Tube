@@ -73,6 +73,10 @@ public final class Adapters {
         return new BukkitItem(runtime, tube);
     }
 
+    public void forgetWorld(String name) {
+        worlds.remove(name);
+    }
+
     public World world(space.nows.tube.api.world.World tube) {
         return worlds.computeIfAbsent(tube.name(), name -> new BukkitWorld(runtime, tube));
     }

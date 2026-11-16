@@ -218,6 +218,54 @@ final class BukkitServer implements Server {
     }
 
     @Override
+    public World createWorld(org.bukkit.WorldCreator creator) {
+        var worlds = runtime.tube().worlds();
+        boolean loaded = worlds.get(creator.name()).isPresent();
+        var tubeWorld = worlds.create(creator.name(), worldOptions(creator));
+        World world = runtime.adapters().world(tubeWorld);
+        if (!loaded) {
+            runtime.pluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(world));
+        }
+        return world;
+    }
+
+    private space.nows.tube.api.world.WorldOptions worldOptions(org.bukkit.WorldCreator creator) {
+        String generator = creator.generator();
+        if (generator == null || !runtime.tube().worlds().generators().contains(generator)) {
+            if (generator != null) {
+                runtime.julLogger().warning("World " + creator.name() + " asks for the generator " + generator + ", which Tube does not know; using the world type instead");
+            }
+            generator = creator.type() == org.bukkit.WorldType.FLAT ? space.nows.tube.api.world.WorldOptions.FLAT : space.nows.tube.api.world.WorldOptions.NORMAL;
+        }
+        var environment = switch (creator.environment()) {
+            case NETHER -> space.nows.tube.api.world.Environment.NETHER;
+            case THE_END -> space.nows.tube.api.world.Environment.END;
+            default -> space.nows.tube.api.world.Environment.OVERWORLD;
+        };
+        return new space.nows.tube.api.world.WorldOptions(generator, creator.seed(), environment);
+    }
+
+    @Override
+    public boolean unloadWorld(World world, boolean save) {
+        return world != null && unloadWorld(world.getName(), save);
+    }
+
+    @Override
+    public boolean unloadWorld(String name, boolean save) {
+        World world = getWorld(name);
+        if (world == null) {
+            return false;
+        }
+        var event = new org.bukkit.event.world.WorldUnloadEvent(world);
+        runtime.pluginManager().callEvent(event);
+        if (event.isCancelled() || !runtime.tube().worlds().unload(name, save)) {
+            return false;
+        }
+        runtime.adapters().forgetWorld(name);
+        return true;
+    }
+
+    @Override
     public World getWorld(UUID uid) {
         return getWorlds().stream().filter(world -> world.getUID().equals(uid)).findFirst().orElse(null);
     }

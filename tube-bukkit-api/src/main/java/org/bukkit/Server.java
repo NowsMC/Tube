@@ -34,6 +34,12 @@ public interface Server {
 
     UnsafeValues getUnsafe();
 
+    World createWorld(WorldCreator creator);
+
+    boolean unloadWorld(World world, boolean save);
+
+    boolean unloadWorld(String name, boolean save);
+
     org.bukkit.help.HelpMap getHelpMap();
 
     org.bukkit.packs.DataPackManager getDataPackManager();

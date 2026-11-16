@@ -15,6 +15,8 @@ public interface World {
 
     WorldBorder getWorldBorder();
 
+    long getSeed();
+
     <T extends org.bukkit.entity.Entity> java.util.Collection<T> getEntitiesByClass(Class<T> type);
 
     org.bukkit.entity.Item dropItem(Location location, org.bukkit.inventory.ItemStack item);
