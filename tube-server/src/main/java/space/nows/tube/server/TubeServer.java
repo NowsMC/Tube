@@ -182,6 +182,7 @@ public final class TubeServer implements Server {
 
         Profiles profiles = new Profiles(this::players, userCache);
         BuiltinCommands.register(this, commands, profiles);
+        new VanillaCommands(this).register(commands);
         new AccessCommands(this, profiles, bans, whitelist, directory.resolve("server.properties"), settings.enforceWhitelist()).register(commands);
         worlds.defaultWorld();
         plugins.loadAll();
