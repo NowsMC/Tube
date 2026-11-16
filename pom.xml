@@ -38,6 +38,7 @@
   </developers>
 
   <modules>
+    <module>tube-bootstrap</module>
     <module>tube-api</module>
     <module>tube-server</module>
     <module>versions</module>
@@ -63,6 +64,7 @@
     <picocli.version>4.7.7</picocli.version>
     <junit.version>5.13.4</junit.version>
 
+    <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
     <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <maven-enforcer-plugin.version>3.6.1</maven-enforcer-plugin.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
@@ -133,6 +135,11 @@
       </dependency>
       <dependency>
         <groupId>space.nows</groupId>
+        <artifactId>tube-bootstrap</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>space.nows</groupId>
         <artifactId>tube-api</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -169,6 +176,10 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
