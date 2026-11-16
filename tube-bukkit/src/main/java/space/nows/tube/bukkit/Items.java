@@ -19,6 +19,14 @@ final class Items {
             return space.nows.tube.api.ItemStack.AIR;
         }
         space.nows.tube.api.ItemStack result = space.nows.tube.api.ItemStack.of(item.getType().getKey().toString(), item.getAmount());
+        if (!item.getEnchantments().isEmpty()) {
+            java.util.Map<String, Integer> enchantments = new java.util.HashMap<>();
+            item.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment.getKey().toString(), level));
+            result = result.withEnchantments(enchantments);
+        }
+        if (item.getDurability() > 0) {
+            result = result.withDamage(item.getDurability());
+        }
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             if (meta.hasDisplayName()) {
@@ -37,6 +45,13 @@ final class Items {
         }
         Material material = Material.matchMaterial(item.type());
         ItemStack result = new ItemStack(material == null ? Material.AIR : material, item.amount());
+        item.enchantments().forEach((key, level) -> {
+            org.bukkit.enchantments.Enchantment enchantment = org.bukkit.enchantments.Enchantment.getByKey(org.bukkit.NamespacedKey.minecraft(key.replaceFirst("^minecraft:", "")));
+            if (enchantment != null) {
+                result.addUnsafeEnchantment(enchantment, level);
+            }
+        });
+        result.setDurability((short) Math.min(Short.MAX_VALUE, item.damage()));
         if (item.name() != null || !item.lore().isEmpty()) {
             ItemMeta meta = result.getItemMeta();
             if (item.name() != null) {

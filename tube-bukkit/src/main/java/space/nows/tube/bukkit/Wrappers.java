@@ -382,6 +382,39 @@ final class Wrappers {
         }
 
         @Override
+        public boolean addPotionEffect(org.bukkit.potion.PotionEffect effect) {
+            tube.addEffect(new space.nows.tube.api.PotionEffect(effect.getType().getKey().toString(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles(), effect.hasIcon()));
+            return true;
+        }
+
+        @Override
+        public boolean hasPotionEffect(org.bukkit.potion.PotionEffectType type) {
+            return getPotionEffect(type) != null;
+        }
+
+        @Override
+        public org.bukkit.potion.PotionEffect getPotionEffect(org.bukkit.potion.PotionEffectType type) {
+            return getActivePotionEffects().stream().filter(effect -> effect.getType() == type).findFirst().orElse(null);
+        }
+
+        @Override
+        public void removePotionEffect(org.bukkit.potion.PotionEffectType type) {
+            tube.removeEffect(type.getKey().toString());
+        }
+
+        @Override
+        public java.util.Collection<org.bukkit.potion.PotionEffect> getActivePotionEffects() {
+            java.util.List<org.bukkit.potion.PotionEffect> result = new java.util.ArrayList<>();
+            for (space.nows.tube.api.PotionEffect effect : tube.effects()) {
+                org.bukkit.potion.PotionEffectType type = org.bukkit.potion.PotionEffectType.getByKey(NamespacedKey.minecraft(effect.type().replaceFirst("^minecraft:", "")));
+                if (type != null) {
+                    result.add(new org.bukkit.potion.PotionEffect(type, effect.duration(), effect.amplifier(), effect.ambient(), effect.particles(), effect.icon()));
+                }
+            }
+            return result;
+        }
+
+        @Override
         public GameMode getGameMode() {
             return GameMode.valueOf(tube.gameMode().name());
         }
@@ -637,6 +670,39 @@ final class Wrappers {
         }
 
         @Override
+        public boolean addPotionEffect(org.bukkit.potion.PotionEffect effect) {
+            tube.addEffect(new space.nows.tube.api.PotionEffect(effect.getType().getKey().toString(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles(), effect.hasIcon()));
+            return true;
+        }
+
+        @Override
+        public boolean hasPotionEffect(org.bukkit.potion.PotionEffectType type) {
+            return getPotionEffect(type) != null;
+        }
+
+        @Override
+        public org.bukkit.potion.PotionEffect getPotionEffect(org.bukkit.potion.PotionEffectType type) {
+            return getActivePotionEffects().stream().filter(effect -> effect.getType() == type).findFirst().orElse(null);
+        }
+
+        @Override
+        public void removePotionEffect(org.bukkit.potion.PotionEffectType type) {
+            tube.removeEffect(type.getKey().toString());
+        }
+
+        @Override
+        public java.util.Collection<org.bukkit.potion.PotionEffect> getActivePotionEffects() {
+            java.util.List<org.bukkit.potion.PotionEffect> result = new java.util.ArrayList<>();
+            for (space.nows.tube.api.PotionEffect effect : tube.effects()) {
+                org.bukkit.potion.PotionEffectType type = org.bukkit.potion.PotionEffectType.getByKey(NamespacedKey.minecraft(effect.type().replaceFirst("^minecraft:", "")));
+                if (type != null) {
+                    result.add(new org.bukkit.potion.PotionEffect(type, effect.duration(), effect.amplifier(), effect.ambient(), effect.particles(), effect.icon()));
+                }
+            }
+            return result;
+        }
+
+        @Override
         public boolean equals(Object other) {
             return other instanceof org.bukkit.entity.Entity entity && entity.getUniqueId().equals(tube.uuid());
         }
@@ -721,6 +787,88 @@ final class Wrappers {
         }
 
         @Override
+        public org.bukkit.Chunk getChunkAt(int x, int z) {
+            return new BukkitChunk(runtime, this, x, z);
+        }
+
+        @Override
+        public org.bukkit.Chunk getChunkAt(int x, int z, boolean generate) {
+            return getChunkAt(x, z);
+        }
+
+        @Override
+        public org.bukkit.Chunk getChunkAt(Location location) {
+            return getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        }
+
+        @Override
+        public org.bukkit.Chunk getChunkAt(Block block) {
+            return getChunkAt(block.getX() >> 4, block.getZ() >> 4);
+        }
+
+        @Override
+        public boolean isChunkLoaded(int x, int z) {
+            return tube.isChunkLoaded(x, z);
+        }
+
+        @Override
+        public boolean isChunkLoaded(org.bukkit.Chunk chunk) {
+            return tube.isChunkLoaded(chunk.getX(), chunk.getZ());
+        }
+
+        @Override
+        public boolean isChunkGenerated(int x, int z) {
+            return true;
+        }
+
+        @Override
+        public boolean loadChunk(int x, int z, boolean generate) {
+            tube.loadChunk(x, z).join();
+            return true;
+        }
+
+        @Override
+        public void loadChunk(int x, int z) {
+            tube.loadChunk(x, z).join();
+        }
+
+        @Override
+        public boolean unloadChunk(int x, int z) {
+            tube.unloadChunk(x, z);
+            return true;
+        }
+
+        @Override
+        public org.bukkit.Chunk[] getLoadedChunks() {
+            return tube.loadedChunks().stream().map(pos -> (org.bukkit.Chunk) new BukkitChunk(runtime, this, pos.x(), pos.z())).toArray(org.bukkit.Chunk[]::new);
+        }
+
+        @Override
+        public int getChunkCount() {
+            return tube.loadedChunks().size();
+        }
+
+        @Override
+        public java.util.concurrent.CompletableFuture<org.bukkit.Chunk> getChunkAtAsync(int x, int z) {
+            return tube.loadChunk(x, z).thenApply(ignored -> getChunkAt(x, z));
+        }
+
+        @Override
+        public java.util.concurrent.CompletableFuture<org.bukkit.Chunk> getChunkAtAsync(int x, int z, boolean generate) {
+            return getChunkAtAsync(x, z);
+        }
+
+        @Override
+        public java.util.concurrent.CompletableFuture<org.bukkit.Chunk> getChunkAtAsync(int x, int z, boolean generate, boolean urgent) {
+            return getChunkAtAsync(x, z);
+        }
+
+        @Override
+        public java.util.concurrent.CompletableFuture<org.bukkit.Chunk> getChunkAtAsync(Location location) {
+            return getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        }
+
+        @Override
         public void save() {
             tube.save();
         }
@@ -738,6 +886,112 @@ final class Wrappers {
         @Override
         public String toString() {
             return "CraftWorld{name=" + tube.name() + "}";
+        }
+    }
+
+    private static final class BukkitChunk implements org.bukkit.Chunk {
+
+        private final BukkitRuntime runtime;
+        private final BukkitWorld world;
+        private final int x;
+        private final int z;
+
+        BukkitChunk(BukkitRuntime runtime, BukkitWorld world, int x, int z) {
+            this.runtime = runtime;
+            this.world = world;
+            this.x = x;
+            this.z = z;
+        }
+
+        @Override
+        public int getX() {
+            return x;
+        }
+
+        @Override
+        public int getZ() {
+            return z;
+        }
+
+        @Override
+        public World getWorld() {
+            return world;
+        }
+
+        @Override
+        public Block getBlock(int blockX, int y, int blockZ) {
+            return world.getBlockAt((x << 4) + (blockX & 15), y, (z << 4) + (blockZ & 15));
+        }
+
+        @Override
+        public Entity[] getEntities() {
+            return world.tube.entities().stream()
+                    .filter(entity -> ((int) Math.floor(entity.location().x()) >> 4) == x && ((int) Math.floor(entity.location().z()) >> 4) == z)
+                    .filter(entity -> entity instanceof space.nows.tube.api.LivingEntity)
+                    .map(entity -> (Entity) runtime.wrappers.living((space.nows.tube.api.LivingEntity) entity))
+                    .toArray(Entity[]::new);
+        }
+
+        @Override
+        public org.bukkit.block.BlockState[] getTileEntities() {
+            return new org.bukkit.block.BlockState[0];
+        }
+
+        @Override
+        public org.bukkit.block.BlockState[] getTileEntities(boolean useSnapshot) {
+            return new org.bukkit.block.BlockState[0];
+        }
+
+        @Override
+        public boolean isLoaded() {
+            return world.tube.isChunkLoaded(x, z);
+        }
+
+        @Override
+        public boolean load() {
+            world.tube.loadChunk(x, z).join();
+            return true;
+        }
+
+        @Override
+        public boolean load(boolean generate) {
+            return load();
+        }
+
+        @Override
+        public boolean unload() {
+            world.tube.unloadChunk(x, z);
+            return true;
+        }
+
+        @Override
+        public boolean isGenerated() {
+            return true;
+        }
+
+        @Override
+        public boolean isLocalChunk() {
+            return true;
+        }
+
+        @Override
+        public boolean isExternalChunk() {
+            return false;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof BukkitChunk chunk && chunk.x == x && chunk.z == z && chunk.world.equals(world);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(x, z, world.tube.name());
+        }
+
+        @Override
+        public String toString() {
+            return "CraftChunk{x=" + x + ",z=" + z + "}";
         }
     }
 
@@ -811,6 +1065,36 @@ final class Wrappers {
         @Override
         public boolean isEmpty() {
             return world.tube.block(x, y, z).isAir();
+        }
+
+        @Override
+        public org.bukkit.block.data.BlockData getBlockData() {
+            return new BukkitBlockData(world.tube.block(x, y, z));
+        }
+
+        @Override
+        public void setBlockData(org.bukkit.block.data.BlockData data) {
+            world.tube.setBlock(x, y, z, ((BukkitBlockData) data).tube());
+        }
+
+        @Override
+        public void setBlockData(org.bukkit.block.data.BlockData data, boolean applyPhysics) {
+            setBlockData(data);
+        }
+
+        @Override
+        public org.bukkit.block.BlockState getState() {
+            return new BukkitBlockState(this);
+        }
+
+        @Override
+        public org.bukkit.block.BlockState getState(boolean useSnapshot) {
+            return getState();
+        }
+
+        @Override
+        public org.bukkit.Chunk getChunk() {
+            return world.getChunkAt(x >> 4, z >> 4);
         }
 
         @Override

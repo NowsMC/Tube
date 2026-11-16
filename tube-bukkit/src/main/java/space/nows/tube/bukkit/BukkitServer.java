@@ -63,6 +63,16 @@ final class BukkitServer implements Server {
     }
 
     @Override
+    public org.bukkit.boss.BossBar createBossBar(String title, org.bukkit.boss.BarColor color, org.bukkit.boss.BarStyle style, org.bukkit.boss.BarFlag... flags) {
+        return new BukkitBossBar(runtime, title, color, style, flags);
+    }
+
+    @Override
+    public org.bukkit.block.data.BlockData createBlockData(String data) {
+        return BukkitBlockData.parse(data);
+    }
+
+    @Override
     public org.bukkit.plugin.messaging.Messenger getMessenger() {
         return runtime.messenger;
     }
