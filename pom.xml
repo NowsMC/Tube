@@ -38,6 +38,9 @@
   </developers>
 
   <modules>
+    <module>tube-api</module>
+    <module>tube-server</module>
+    <module>versions</module>
     <module>tube-core</module>
     <module>tube-cli</module>
   </modules>
@@ -73,6 +76,16 @@
         <groupId>info.picocli</groupId>
         <artifactId>picocli</artifactId>
         <version>${picocli.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>space.nows</groupId>
+        <artifactId>tube-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>space.nows</groupId>
+        <artifactId>tube-server</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>space.nows</groupId>
