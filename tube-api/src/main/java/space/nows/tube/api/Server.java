@@ -27,6 +27,8 @@ public interface Server {
 
     Collection<PluginDescriptor> plugins();
 
+    Inventory createInventory(Component title, int rows);
+
     void broadcast(Component message);
 
     default void broadcast(String message) {

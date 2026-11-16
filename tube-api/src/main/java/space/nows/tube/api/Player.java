@@ -4,28 +4,24 @@ import net.kyori.adventure.text.Component;
 
 import java.net.InetSocketAddress;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
-public interface Player extends CommandSender {
-
-    UUID uuid();
+public interface Player extends LivingEntity, CommandSender {
 
     Optional<InetSocketAddress> address();
-
-    World world();
-
-    Location location();
-
-    CompletableFuture<Void> teleport(Location location);
 
     GameMode gameMode();
 
     void setGameMode(GameMode gameMode);
 
-    double health();
+    Inventory inventory();
 
-    void setHealth(double health);
+    int heldSlot();
+
+    void setHeldSlot(int slot);
+
+    void openInventory(Inventory inventory);
+
+    void closeInventory();
 
     void sendActionBar(Component message);
 
