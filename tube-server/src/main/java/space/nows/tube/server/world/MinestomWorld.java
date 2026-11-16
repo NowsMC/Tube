@@ -11,6 +11,7 @@ import space.nows.tube.api.world.Block;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.api.world.World;
 import space.nows.tube.api.world.WorldBorder;
+import space.nows.tube.api.world.WorldOptions;
 import space.nows.tube.server.inventory.ItemMapper;
 
 import java.nio.file.Path;
@@ -21,9 +22,11 @@ public final class MinestomWorld implements World {
     private final String name;
     private final InstanceContainer instance;
     private final double[] spawn;
+    private final WorldOptions options;
     private final WorldService owner;
 
-    MinestomWorld(String name, InstanceContainer instance, double[] spawn, WorldService owner) {
+    MinestomWorld(String name, InstanceContainer instance, double[] spawn, WorldOptions options, WorldService owner) {
+        this.options = options;
         this.name = name;
         this.instance = instance;
         this.spawn = spawn;
@@ -42,6 +45,11 @@ public final class MinestomWorld implements World {
     @Override
     public Path folder() {
         return owner.folderOf(name);
+    }
+
+    @Override
+    public WorldOptions options() {
+        return options;
     }
 
     @Override

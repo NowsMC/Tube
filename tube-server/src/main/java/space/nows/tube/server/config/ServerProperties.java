@@ -41,7 +41,8 @@ public final class ServerProperties {
         defaults.put("motd", "A Tube Server");
         defaults.put("max-players", "20");
         defaults.put("level-name", "world");
-        defaults.put("level-type", "minecraft:flat");
+        defaults.put("level-type", "minecraft:normal");
+        defaults.put("level-seed", "");
         defaults.put("gamemode", "survival");
         defaults.put("difficulty", "easy");
         defaults.put("hardcore", "false");
@@ -83,7 +84,6 @@ public final class ServerProperties {
         keys.put("generate-structures", "true");
         keys.put("generator-settings", "{}");
         keys.put("initial-enabled-packs", "vanilla");
-        keys.put("level-seed", "");
         keys.put("max-world-size", "29999984");
         keys.put("pause-when-empty-seconds", "-1");
         keys.put("simulation-distance", "10");
@@ -149,6 +149,7 @@ public final class ServerProperties {
                 new ServerSettings.Level(
                         levelName(),
                         text("level-type"),
+                        text("level-seed"),
                         integer("view-distance", 2, 32),
                         integer("spawn-protection", 0, Integer.MAX_VALUE),
                         integer("autosave-seconds", 0, Integer.MAX_VALUE)),

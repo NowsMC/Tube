@@ -27,7 +27,7 @@ public record ServerSettings(
     public record Status(String motd, boolean enabled, boolean hideOnlinePlayers) {
     }
 
-    public record Level(String name, String type, int viewDistance, int spawnProtection, int autosaveSeconds) {
+    public record Level(String name, String type, String seed, int viewDistance, int spawnProtection, int autosaveSeconds) {
     }
 
     public record Gameplay(GameMode gamemode, boolean forceGamemode, Difficulty difficulty, boolean hardcore, int playerIdleTimeout) {

@@ -16,6 +16,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>de.articdive</groupId>
+      <artifactId>jnoise-generators</artifactId>
+    </dependency>
+    <dependency>
       <groupId>space.nows</groupId>
       <artifactId>tube-api</artifactId>
     </dependency>

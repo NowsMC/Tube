@@ -14,6 +14,8 @@ public interface World {
 
     Path folder();
 
+    WorldOptions options();
+
     WorldBorder border();
 
     void setBorder(WorldBorder border);

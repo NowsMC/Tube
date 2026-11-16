@@ -19,6 +19,7 @@ import space.nows.tube.api.network.Network;
 import space.nows.tube.api.plugin.PluginDescriptor;
 import space.nows.tube.api.scheduler.Scheduler;
 import space.nows.tube.api.world.WorldManager;
+import space.nows.tube.api.world.WorldOptions;
 import space.nows.tube.network.NettyNetwork;
 import space.nows.tube.network.Transport;
 import space.nows.tube.server.access.AccessControl;
@@ -219,9 +220,6 @@ public final class DedicatedServer implements Server {
         LOGGER.info("Starting {} {} for Minecraft {}", name(), version, minecraftVersion());
 
         EngineProperties.apply(settings);
-        if (!settings.level().type().equals("minecraft:flat")) {
-            LOGGER.warn("server.properties: level-type {} is not supported yet, using minecraft:flat", settings.level().type());
-        }
 
         MinecraftServer server = MinecraftServer.init(settings.connection().onlineMode() ? new Auth.Online() : new Auth.Offline());
         MinecraftServer.setBrandName(name());
@@ -233,7 +231,7 @@ public final class DedicatedServer implements Server {
         UserCache userCache = new UserCache(directory);
         Whitelist whitelist = new Whitelist(directory, settings.access().whitelist());
         BanList bans = new BanList(directory);
-        worlds = new WorldService(directory.resolve("worlds"), settings.level().name());
+        worlds = new WorldService(directory.resolve("worlds"), settings.level().name(), defaultWorldOptions(settings.level()));
         playerData = new PlayerDataStore(directory.resolve("worlds").resolve(settings.level().name()).resolve("playerdata"));
         players = new PlayerService(worlds, permissions);
         commands = new CommandService(players);
@@ -276,6 +274,30 @@ public final class DedicatedServer implements Server {
         ConsoleReader.start(scheduler, commands);
         server.start(settings.connection().bindAddress(), settings.connection().port());
         watchdog = TickWatchdog.start(settings.watchdog().maxTickTime(), scheduler);
+    }
+
+    static WorldOptions defaultWorldOptions(ServerSettings.Level level) {
+        String generator = switch (level.type().toLowerCase(java.util.Locale.ROOT)) {
+            case "minecraft:normal", "normal", "minecraft:default", "default" -> WorldOptions.NORMAL;
+            case "minecraft:flat", "flat" -> WorldOptions.FLAT;
+            case "minecraft:void", "void" -> WorldOptions.VOID;
+            default -> {
+                LOGGER.warn("server.properties: level-type {} is not supported, using minecraft:normal", level.type());
+                yield WorldOptions.NORMAL;
+            }
+        };
+        String seed = level.seed();
+        long value;
+        if (seed.isBlank()) {
+            value = new java.util.Random().nextLong();
+        } else {
+            try {
+                value = Long.parseLong(seed);
+            } catch (NumberFormatException e) {
+                value = seed.hashCode();
+            }
+        }
+        return WorldOptions.of(generator, value);
     }
 
     private void savePlayer(net.minestom.server.entity.Player player) {

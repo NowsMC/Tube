@@ -12,7 +12,7 @@ What Tube does:
 - Provides its own systems for worlds, player data, permissions, commands, RCON and Query, resource packs, item drops and pickups, skins, and a login API that can let chosen players join an online-mode server offline.
 - Watches the tick and the connection: a tick watchdog, a packet rate limit and an idle timeout.
 
-New worlds are flat; Tube does not generate terrain yet.
+New worlds get simple terrain with hills, beaches and seas. Caves, ores, biomes, trees and structures are not generated yet.
 
 Supported Minecraft versions: 26.1.2, 26.2
 

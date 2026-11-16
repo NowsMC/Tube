@@ -66,6 +66,7 @@
     <guava.version>33.6.0-jre</guava.version>
     <log4j.version>2.26.1</log4j.version>
     <sqlite-jdbc.version>3.51.2.0</sqlite-jdbc.version>
+    <jnoise.version>4.1.0</jnoise.version>
     <jtoml.version>1.8.3</jtoml.version>
     <netty.version>4.2.19.Final</netty.version>
     <agrona.version>2.7.1</agrona.version>
@@ -146,6 +147,11 @@
         <groupId>org.xerial</groupId>
         <artifactId>sqlite-jdbc</artifactId>
         <version>${sqlite-jdbc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.articdive</groupId>
+        <artifactId>jnoise-generators</artifactId>
+        <version>${jnoise.version}</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
