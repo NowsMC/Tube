@@ -405,6 +405,21 @@ final class Wrappers {
         }
 
         @Override
+        public org.bukkit.inventory.PlayerInventory getInventory() {
+            return new BukkitInventory.OfPlayer(tube, this);
+        }
+
+        @Override
+        public org.bukkit.inventory.ItemStack getItemInHand() {
+            return getInventory().getItemInMainHand();
+        }
+
+        @Override
+        public void setItemInHand(org.bukkit.inventory.ItemStack item) {
+            getInventory().setItemInMainHand(item);
+        }
+
+        @Override
         public InetSocketAddress getAddress() {
             return tube.address().orElse(null);
         }
