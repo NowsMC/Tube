@@ -6,6 +6,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
+import net.minestom.server.event.player.PlayerBlockInteractEvent;
 import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
@@ -18,7 +19,9 @@ import space.nows.tube.api.event.EntitySpawnEvent;
 import space.nows.tube.api.event.InventoryClickEvent;
 import space.nows.tube.api.event.InventoryCloseEvent;
 import space.nows.tube.api.event.EventBus;
+import space.nows.tube.api.event.PlayerInteractEvent;
 import space.nows.tube.api.event.PlayerJoinEvent;
+import space.nows.tube.api.event.PlayerMoveEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
 
 final class EventBridge {
@@ -84,6 +87,31 @@ final class EventBridge {
                 event.setCancelled(true);
             } else if (!posted.block().equals(BlockMapper.fromMinestom(event.getBlock()))) {
                 event.setBlock(BlockMapper.toMinestom(posted.block()));
+            }
+        });
+
+        node.addListener(net.minestom.server.event.player.PlayerMoveEvent.class, event -> {
+            var player = players.wrap(event.getPlayer());
+            var target = event.getNewPosition();
+            var to = new space.nows.tube.api.Location(player.world(), target.x(), target.y(), target.z(), target.yaw(), target.pitch());
+            var posted = bus.post(new PlayerMoveEvent(player, player.location(), to));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            } else if (!posted.to().equals(to)) {
+                var changed = posted.to();
+                event.setNewPosition(new net.minestom.server.coordinate.Pos(changed.x(), changed.y(), changed.z(), changed.yaw(), changed.pitch()));
+            }
+        });
+
+        node.addListener(PlayerBlockInteractEvent.class, event -> {
+            var pos = event.getBlockPosition();
+            var posted = bus.post(new PlayerInteractEvent(
+                    players.wrap(event.getPlayer()), worlds.of(event.getInstance()),
+                    pos.blockX(), pos.blockY(), pos.blockZ(), BlockMapper.fromMinestom(event.getBlock()),
+                    event.getHand() == net.minestom.server.entity.PlayerHand.MAIN));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+                event.setBlockingItemUse(true);
             }
         });
 
