@@ -15,6 +15,14 @@ public interface Player extends LivingEntity, CommandSender {
 
     Inventory inventory();
 
+    int food();
+
+    void setFood(int food);
+
+    int level();
+
+    void setLevel(int level);
+
     int heldSlot();
 
     void setHeldSlot(int slot);

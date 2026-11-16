@@ -35,5 +35,7 @@ public interface Server {
         broadcast(Component.text(message));
     }
 
+    void saveAll();
+
     void stop();
 }
