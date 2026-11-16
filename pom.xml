@@ -63,6 +63,7 @@
     <adventure.version>5.2.0</adventure.version>
     <snakeyaml.version>2.7</snakeyaml.version>
     <gson.version>2.15.0</gson.version>
+    <guava.version>33.6.0-jre</guava.version>
     <jtoml.version>1.8.3</jtoml.version>
     <netty.version>4.2.19.Final</netty.version>
     <agrona.version>2.7.1</agrona.version>
@@ -123,6 +124,11 @@
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>${gson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
