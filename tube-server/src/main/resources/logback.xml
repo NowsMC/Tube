@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property name="tube.log.file" value="${tube.log.file:-logs/latest.log}"/>
+  <property name="tube.log.pattern" value="[%d{HH:mm:ss}] [%thread/%level]: %replace([%logger{0}] ){'^\[(tube|ServerProcessImpl)\] $',''}%msg%n"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${tube.log.pattern}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>${tube.log.file}</file>
+    <append>false</append>
+    <encoder>
+      <pattern>${tube.log.pattern}</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+</configuration>

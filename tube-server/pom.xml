@@ -57,9 +57,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>${slf4j.version}</version>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -67,6 +67,16 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
+        <includes>
+          <include>tube-server.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>tube-server.properties</exclude>
+        </excludes>
       </resource>
     </resources>
     <plugins>
@@ -75,6 +85,7 @@
         <configuration>
           <systemPropertyVariables>
             <minestom.inside-test>true</minestom.inside-test>
+            <tube.log.file>target/test-logs/latest.log</tube.log.file>
           </systemPropertyVariables>
         </configuration>
       </plugin>
