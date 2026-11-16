@@ -15,7 +15,16 @@
   <name>Tube Minecraft 26.1.2</name>
   <description>Tube server for Minecraft 26.1.2</description>
 
+  <properties>
+    <minestom.version>2026.07.01-26.1.2</minestom.version>
+  </properties>
+
   <dependencies>
+    <dependency>
+      <groupId>net.minestom</groupId>
+      <artifactId>minestom</artifactId>
+      <version>${minestom.version}</version>
+    </dependency>
     <dependency>
       <groupId>space.nows</groupId>
       <artifactId>tube-server</artifactId>

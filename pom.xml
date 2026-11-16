@@ -52,6 +52,8 @@
 
     <tube.minecraft.versions>26.1.2,26.2</tube.minecraft.versions>
 
+    <minestom.version>2026.10.07-26.2</minestom.version>
+    <slf4j.version>2.0.17</slf4j.version>
     <picocli.version>4.7.7</picocli.version>
     <junit.version>5.13.4</junit.version>
 
