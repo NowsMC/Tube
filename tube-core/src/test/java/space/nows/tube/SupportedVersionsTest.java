@@ -23,7 +23,7 @@ class SupportedVersionsTest {
 
     @Test
     void buildsLaunchCommand() {
-        LaunchSpec spec = new LaunchSpec(Path.of("java"), Path.of("/srv/server.jar"), Path.of("/srv"), List.of("-Xmx2G"));
-        assertEquals(List.of("java", "-Xmx2G", "-jar", "/srv/server.jar", "nogui"), spec.command());
+        LaunchSpec spec = new LaunchSpec(Path.of("java"), Path.of("server.jar"), Path.of("srv"), List.of("-Xmx2G"));
+        assertEquals(List.of("java", "-Xmx2G", "-jar", Path.of("server.jar").toAbsolutePath().toString(), "nogui"), spec.command());
     }
 }
