@@ -164,7 +164,8 @@ public enum EntityType {
     ZOMBIE_HORSE("zombie_horse"),
     ZOMBIE_NAUTILUS("zombie_nautilus"),
     ZOMBIE_VILLAGER("zombie_villager"),
-    ZOMBIFIED_PIGLIN("zombified_piglin");
+    ZOMBIFIED_PIGLIN("zombified_piglin"),
+    UNKNOWN("unknown");
 
     private static final Map<String, EntityType> BY_KEY = new HashMap<>();
 
@@ -189,6 +190,6 @@ public enum EntityType {
     }
 
     public static EntityType fromName(String name) {
-        return name == null ? null : BY_KEY.get(name.toLowerCase(Locale.ROOT));
+        return name == null ? null : BY_KEY.get(name.toLowerCase(Locale.ROOT).replaceFirst("^minecraft:", ""));
     }
 }
