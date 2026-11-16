@@ -19,4 +19,52 @@
     <module>26.1.2</module>
     <module>26.2</module>
   </modules>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>list-libraries</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>list</goal>
+              </goals>
+              <configuration>
+                <includeScope>runtime</includeScope>
+                <excludeGroupIds>space.nows</excludeGroupIds>
+                <outputFile>${project.build.outputDirectory}/META-INF/tube/libraries.txt</outputFile>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-shade-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+                <createDependencyReducedPom>false</createDependencyReducedPom>
+                <artifactSet>
+                  <includes>
+                    <include>space.nows:*</include>
+                  </includes>
+                </artifactSet>
+                <transformers>
+                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                    <mainClass>space.nows.tube.bootstrap.Bootstrap</mainClass>
+                  </transformer>
+                </transformers>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>

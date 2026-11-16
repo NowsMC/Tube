@@ -6,9 +6,9 @@
 
   <parent>
     <groupId>space.nows</groupId>
-    <artifactId>tube-parent</artifactId>
+    <artifactId>tube-versions</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>tube-mc-26.1.2</artifactId>
@@ -27,6 +27,10 @@
     </dependency>
     <dependency>
       <groupId>space.nows</groupId>
+      <artifactId>tube-bootstrap</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>space.nows</groupId>
       <artifactId>tube-server</artifactId>
     </dependency>
     <dependency>
@@ -40,23 +44,10 @@
     <finalName>tube-26.1.2</finalName>
     <plugins>
       <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>space.nows.tube.server.Main</mainClass>
-                </transformer>
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

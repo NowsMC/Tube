@@ -9,7 +9,7 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        VersionProfile profile = ServiceLoader.load(VersionProfile.class)
+        VersionProfile profile = ServiceLoader.load(VersionProfile.class, VersionProfile.class.getClassLoader())
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No version profile found on the classpath"));
         new TubeServer(profile, Path.of("")).start();
