@@ -2,108 +2,103 @@ package space.nows.tube.server;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
-import net.minestom.server.coordinate.Pos;
-import net.minestom.server.instance.Instance;
 import space.nows.tube.api.GameMode;
-import space.nows.tube.api.Location;
+import space.nows.tube.api.Inventory;
 import space.nows.tube.api.Player;
-import space.nows.tube.api.World;
 
 import java.net.InetSocketAddress;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
-final class TubePlayer implements Player {
+final class TubePlayer extends TubeLivingEntity implements Player {
 
-    private final net.minestom.server.entity.Player handle;
-    private final WorldService worlds;
+    private final net.minestom.server.entity.Player player;
     private final PermissionService permissions;
 
-    TubePlayer(net.minestom.server.entity.Player handle, WorldService worlds, PermissionService permissions) {
-        this.handle = handle;
-        this.worlds = worlds;
+    TubePlayer(net.minestom.server.entity.Player player, WorldService worlds, PermissionService permissions) {
+        super(player, worlds);
+        this.player = player;
         this.permissions = permissions;
     }
 
     @Override
     public String name() {
-        return handle.getUsername();
+        return player.getUsername();
     }
 
     @Override
     public boolean hasPermission(String node) {
-        return permissions.has(handle.getUuid(), node);
-    }
-
-    @Override
-    public UUID uuid() {
-        return handle.getUuid();
+        return permissions.has(player.getUuid(), node);
     }
 
     @Override
     public Optional<InetSocketAddress> address() {
-        return handle.getPlayerConnection().getRemoteAddress() instanceof InetSocketAddress address ? Optional.of(address) : Optional.empty();
-    }
-
-    @Override
-    public World world() {
-        return worlds.of(handle.getInstance());
-    }
-
-    @Override
-    public Location location() {
-        Pos pos = handle.getPosition();
-        return new Location(world(), pos.x(), pos.y(), pos.z(), pos.yaw(), pos.pitch());
-    }
-
-    @Override
-    public CompletableFuture<Void> teleport(Location location) {
-        Pos pos = new Pos(location.x(), location.y(), location.z(), location.yaw(), location.pitch());
-        Instance target = worlds.instanceOf(location.world());
-        if (target == handle.getInstance()) {
-            return handle.teleport(pos);
-        }
-        return handle.setInstance(target, pos);
+        return player.getPlayerConnection().getRemoteAddress() instanceof InetSocketAddress address ? Optional.of(address) : Optional.empty();
     }
 
     @Override
     public GameMode gameMode() {
-        return GameMode.valueOf(handle.getGameMode().name());
+        return GameMode.valueOf(player.getGameMode().name());
     }
 
     @Override
     public void setGameMode(GameMode gameMode) {
-        handle.setGameMode(net.minestom.server.entity.GameMode.valueOf(gameMode.name()));
+        player.setGameMode(net.minestom.server.entity.GameMode.valueOf(gameMode.name()));
     }
 
     @Override
-    public double health() {
-        return handle.getHealth();
+    public Inventory inventory() {
+        return new TubeInventory(player.getInventory());
     }
 
     @Override
-    public void setHealth(double health) {
-        handle.setHealth((float) health);
+    public int heldSlot() {
+        return player.getHeldSlot();
+    }
+
+    @Override
+    public void setHeldSlot(int slot) {
+        if (slot < 0 || slot > 8) {
+            throw new IllegalArgumentException("Held slot must be between 0 and 8");
+        }
+        player.setHeldItemSlot((byte) slot);
+    }
+
+    @Override
+    public void openInventory(Inventory inventory) {
+        if (inventory instanceof TubeInventory tube && tube.handle() instanceof net.minestom.server.inventory.Inventory container) {
+            player.openInventory(container);
+            return;
+        }
+        throw new IllegalArgumentException("Only inventories created by the server can be opened");
+    }
+
+    @Override
+    public void closeInventory() {
+        player.closeInventory();
     }
 
     @Override
     public void sendActionBar(Component message) {
-        handle.sendActionBar(message);
+        player.sendActionBar(message);
     }
 
     @Override
     public void showTitle(Component title, Component subtitle) {
-        handle.showTitle(Title.title(title, subtitle));
+        player.showTitle(Title.title(title, subtitle));
     }
 
     @Override
     public void kick(Component reason) {
-        handle.kick(reason);
+        player.kick(reason);
+    }
+
+    @Override
+    public void remove() {
+        player.kick(Component.text("Removed from the server"));
     }
 
     @Override
     public void sendMessage(Component message) {
-        handle.sendMessage(message);
+        player.sendMessage(message);
     }
 }

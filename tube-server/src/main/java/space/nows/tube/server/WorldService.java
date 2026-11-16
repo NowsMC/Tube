@@ -29,6 +29,7 @@ final class WorldService implements WorldManager {
     private final Path root;
     private final String defaultName;
     private final Map<String, TubeWorld> worlds = new ConcurrentHashMap<>();
+    private PlayerService players;
     private final ConcurrentChainedReference2ReferenceHashTable<Instance, TubeWorld> byInstance = ConcurrentChainedReference2ReferenceHashTable.createWithExpected(8);
 
     WorldService(Path root, String defaultName) {
@@ -62,6 +63,20 @@ final class WorldService implements WorldManager {
     @Override
     public void saveAll() {
         worlds.values().forEach(TubeWorld::save);
+    }
+
+    void attach(PlayerService players) {
+        this.players = players;
+    }
+
+    space.nows.tube.api.Entity wrap(net.minestom.server.entity.Entity entity) {
+        if (entity instanceof net.minestom.server.entity.Player player) {
+            return players.wrap(player);
+        }
+        if (entity instanceof net.minestom.server.entity.LivingEntity living) {
+            return new TubeLivingEntity(living, this);
+        }
+        return new TubeEntity(entity, this);
     }
 
     TubeWorld of(Instance instance) {
@@ -104,7 +119,7 @@ final class WorldService implements WorldManager {
                 .createInstanceContainer(DimensionType.OVERWORLD, new AnvilLoader(directory, Key.key("minecraft:overworld")));
         instance.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
 
-        TubeWorld world = new TubeWorld(name, instance, spawn);
+        TubeWorld world = new TubeWorld(name, instance, spawn, this);
         byInstance.put(instance, world);
         return world;
     }

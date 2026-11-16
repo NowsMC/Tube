@@ -9,11 +9,13 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.server.ServerListPingEvent;
+import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.ping.Status;
 import net.minestom.server.world.Difficulty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.CommandRegistry;
+import space.nows.tube.api.Inventory;
 import space.nows.tube.api.Location;
 import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Player;
@@ -119,6 +121,14 @@ public final class TubeServer implements Server {
     @Override
     public Collection<PluginDescriptor> plugins() {
         return plugins.descriptors();
+    }
+
+    @Override
+    public Inventory createInventory(Component title, int rows) {
+        if (rows < 1 || rows > 6) {
+            throw new IllegalArgumentException("rows must be between 1 and 6");
+        }
+        return new TubeInventory(new net.minestom.server.inventory.Inventory(InventoryType.valueOf("CHEST_" + rows + "_ROW"), title));
     }
 
     @Override

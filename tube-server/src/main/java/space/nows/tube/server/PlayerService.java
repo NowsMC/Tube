@@ -16,6 +16,7 @@ final class PlayerService {
     PlayerService(WorldService worlds, PermissionService permissions) {
         this.worlds = worlds;
         this.permissions = permissions;
+        worlds.attach(this);
     }
 
     TubePlayer wrap(net.minestom.server.entity.Player handle) {

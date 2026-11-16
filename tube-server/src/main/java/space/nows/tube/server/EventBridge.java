@@ -3,13 +3,20 @@ package space.nows.tube.server;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.inventory.InventoryPreClickEvent;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import space.nows.tube.api.event.BlockBreakEvent;
+import space.nows.tube.api.LivingEntity;
 import space.nows.tube.api.event.BlockPlaceEvent;
+import space.nows.tube.api.event.EntityDamageEvent;
+import space.nows.tube.api.event.EntityDeathEvent;
+import space.nows.tube.api.event.EntitySpawnEvent;
+import space.nows.tube.api.event.InventoryClickEvent;
+import space.nows.tube.api.event.InventoryCloseEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
@@ -77,6 +84,34 @@ final class EventBridge {
                 event.setCancelled(true);
             } else if (!posted.block().equals(BlockMapper.fromMinestom(event.getBlock()))) {
                 event.setBlock(BlockMapper.toMinestom(posted.block()));
+            }
+        });
+
+        node.addListener(InventoryPreClickEvent.class, event -> {
+            var posted = bus.post(new InventoryClickEvent(
+                    players.wrap(event.getPlayer()), new TubeInventory(event.getInventory()),
+                    event.getSlot(), ItemMapper.fromMinestom(event.getClickedItem())));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            }
+        });
+
+        node.addListener(net.minestom.server.event.inventory.InventoryCloseEvent.class, event ->
+                bus.post(new InventoryCloseEvent(players.wrap(event.getPlayer()), new TubeInventory(event.getInventory()))));
+
+        node.addListener(net.minestom.server.event.entity.EntityDamageEvent.class, event -> {
+            var posted = bus.post(new EntityDamageEvent((LivingEntity) worlds.wrap(event.getEntity()), event.getDamage().getAmount()));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            }
+        });
+
+        node.addListener(net.minestom.server.event.entity.EntityDeathEvent.class, event ->
+                bus.post(new EntityDeathEvent((LivingEntity) worlds.wrap(event.getEntity()))));
+
+        node.addListener(net.minestom.server.event.entity.EntitySpawnEvent.class, event -> {
+            if (!(event.getEntity() instanceof net.minestom.server.entity.Player)) {
+                bus.post(new EntitySpawnEvent(worlds.wrap(event.getEntity())));
             }
         });
     }
