@@ -80,6 +80,10 @@ public final class WorldService implements WorldManager {
         worlds.values().forEach(MinestomWorld::save);
     }
 
+    public Path folderOf(String name) {
+        return root.resolve(name);
+    }
+
     public void attach(PlayerService players) {
         this.players = players;
     }

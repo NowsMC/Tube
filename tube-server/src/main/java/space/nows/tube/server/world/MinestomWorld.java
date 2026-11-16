@@ -12,6 +12,7 @@ import space.nows.tube.api.world.Location;
 import space.nows.tube.api.world.World;
 import space.nows.tube.server.inventory.ItemMapper;
 
+import java.nio.file.Path;
 import java.util.Collection;
 
 public final class MinestomWorld implements World {
@@ -35,6 +36,11 @@ public final class MinestomWorld implements World {
     @Override
     public String name() {
         return name;
+    }
+
+    @Override
+    public Path folder() {
+        return owner.folderOf(name);
     }
 
     @Override

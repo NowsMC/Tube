@@ -1,5 +1,7 @@
 package space.nows.tube.api.entity;
 
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.SoundStop;
 import net.kyori.adventure.text.Component;
 import space.nows.tube.api.ResourcePack;
 import space.nows.tube.api.command.CommandSender;
@@ -41,6 +43,24 @@ public interface Player extends LivingEntity, CommandSender {
     void hideBossBar(net.kyori.adventure.bossbar.BossBar bar);
 
     void showTitle(Component title, Component subtitle);
+
+    void showTitle(Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks);
+
+    void clearTitle();
+
+    void resetTitle();
+
+    void setPlayerListHeaderAndFooter(Component header, Component footer);
+
+    void playSound(Sound sound, double x, double y, double z);
+
+    void stopSound(SoundStop stop);
+
+    Optional<Skin> skin();
+
+    void setSkin(Skin skin);
+
+    LoginMode loginMode();
 
     int latency();
 

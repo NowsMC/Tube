@@ -5,6 +5,7 @@ import space.nows.tube.api.world.Location;
 import space.nows.tube.api.world.World;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,6 +26,12 @@ public interface Entity {
     void setCustomName(Component name);
 
     boolean isRemoved();
+
+    Set<String> tags();
+
+    boolean addTag(String tag);
+
+    boolean removeTag(String tag);
 
     void remove();
 }

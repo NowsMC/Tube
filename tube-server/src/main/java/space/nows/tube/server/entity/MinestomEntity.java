@@ -3,16 +3,22 @@ package space.nows.tube.server.entity;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.tag.Tag;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.api.world.World;
 import space.nows.tube.server.world.WorldService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class MinestomEntity implements Entity {
+
+    private static final Tag<List<String>> TAGS = Tag.String("tube:tags").list().defaultValue(List.of());
 
     protected final net.minestom.server.entity.Entity handle;
     protected final WorldService worlds;
@@ -79,6 +85,33 @@ public class MinestomEntity implements Entity {
     @Override
     public void remove() {
         handle.remove();
+    }
+
+    @Override
+    public Set<String> tags() {
+        return Set.copyOf(handle.getTag(TAGS));
+    }
+
+    @Override
+    public boolean addTag(String tag) {
+        List<String> current = handle.getTag(TAGS);
+        if (current.contains(tag)) {
+            return false;
+        }
+        List<String> updated = new ArrayList<>(current);
+        updated.add(tag);
+        handle.setTag(TAGS, updated);
+        return true;
+    }
+
+    @Override
+    public boolean removeTag(String tag) {
+        List<String> updated = new ArrayList<>(handle.getTag(TAGS));
+        if (!updated.remove(tag)) {
+            return false;
+        }
+        handle.setTag(TAGS, updated);
+        return true;
     }
 
     @Override

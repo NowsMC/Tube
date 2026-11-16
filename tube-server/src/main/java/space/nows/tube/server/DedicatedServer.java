@@ -34,6 +34,7 @@ import space.nows.tube.server.command.VanillaCommands;
 import space.nows.tube.server.config.ServerProperties;
 import space.nows.tube.server.config.ServerSettings;
 import space.nows.tube.server.connection.ConnectionLog;
+import space.nows.tube.server.connection.LoginGate;
 import space.nows.tube.server.connection.LoginHandler;
 import space.nows.tube.server.connection.PacketRateLimiter;
 import space.nows.tube.server.connection.PluginChannelService;
@@ -241,6 +242,7 @@ public final class DedicatedServer implements Server {
 
         var handler = MinecraftServer.getGlobalEventHandler();
         ResourcePackHandler resourcePacks = new ResourcePackHandler(settings.resourcePack(), events, players);
+        new LoginGate(settings.connection().onlineMode(), events, players).install(handler);
         new LoginHandler(settings, new AccessControl(whitelist, bans), userCache, players, playerData, worlds, resourcePacks.pack(), this::savePlayer).install(handler);
         resourcePacks.install(handler);
         new StatusResponder(settings, events, name() + " " + minecraftVersion()).install(handler);

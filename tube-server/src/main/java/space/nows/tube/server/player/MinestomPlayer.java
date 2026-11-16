@@ -1,10 +1,15 @@
 package space.nows.tube.server.player;
 
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.SoundStop;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import net.minestom.server.entity.PlayerSkin;
 import space.nows.tube.api.ResourcePack;
 import space.nows.tube.api.entity.GameMode;
+import space.nows.tube.api.entity.LoginMode;
 import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.Skin;
 import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.entity.MinestomLivingEntity;
@@ -12,6 +17,7 @@ import space.nows.tube.server.inventory.MinestomInventory;
 import space.nows.tube.server.world.WorldService;
 
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.Optional;
 
 public final class MinestomPlayer extends MinestomLivingEntity implements Player {
@@ -126,6 +132,56 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     @Override
     public void showTitle(Component title, Component subtitle) {
         player.showTitle(Title.title(title, subtitle));
+    }
+
+    @Override
+    public void showTitle(Component title, Component subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        player.showTitle(Title.title(title, subtitle, Title.Times.times(ticks(fadeInTicks), ticks(stayTicks), ticks(fadeOutTicks))));
+    }
+
+    private static Duration ticks(int ticks) {
+        return Duration.ofMillis(Math.max(0, ticks) * 50L);
+    }
+
+    @Override
+    public void clearTitle() {
+        player.clearTitle();
+    }
+
+    @Override
+    public void resetTitle() {
+        player.resetTitle();
+    }
+
+    @Override
+    public void setPlayerListHeaderAndFooter(Component header, Component footer) {
+        player.sendPlayerListHeaderAndFooter(header == null ? Component.empty() : header, footer == null ? Component.empty() : footer);
+    }
+
+    @Override
+    public void playSound(Sound sound, double x, double y, double z) {
+        player.playSound(sound, x, y, z);
+    }
+
+    @Override
+    public void stopSound(SoundStop stop) {
+        player.stopSound(stop);
+    }
+
+    @Override
+    public Optional<Skin> skin() {
+        PlayerSkin skin = player.getSkin();
+        return skin == null ? Optional.empty() : Optional.of(new Skin(skin.textures(), skin.signature()));
+    }
+
+    @Override
+    public void setSkin(Skin skin) {
+        player.setSkin(skin == null ? null : new PlayerSkin(skin.textures(), skin.signature()));
+    }
+
+    @Override
+    public LoginMode loginMode() {
+        return service.loginMode(player.getUuid());
     }
 
     public void setClientBrand(String brand) {

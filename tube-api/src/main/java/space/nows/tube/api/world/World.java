@@ -3,6 +3,7 @@ package space.nows.tube.api.world;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.inventory.ItemStack;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -10,6 +11,8 @@ import java.util.concurrent.CompletableFuture;
 public interface World {
 
     String name();
+
+    Path folder();
 
     Location spawn();
 
