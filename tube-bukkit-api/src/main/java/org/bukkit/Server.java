@@ -30,6 +30,8 @@ public interface Server {
 
     ServicesManager getServicesManager();
 
+    org.bukkit.plugin.messaging.Messenger getMessenger();
+
     PluginCommand getPluginCommand(String name);
 
     ConsoleCommandSender getConsoleSender();

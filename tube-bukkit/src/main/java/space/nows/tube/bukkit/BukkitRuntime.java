@@ -27,6 +27,7 @@ final class BukkitRuntime {
     final java.util.logging.Logger julLogger = java.util.logging.Logger.getLogger("Minecraft");
     final TubeBukkitScheduler scheduler;
     final BukkitServices services = new BukkitServices();
+    final BukkitMessenger messenger = new BukkitMessenger(this);
     final Wrappers wrappers;
     final BukkitCommands commands;
     final BukkitPluginManager pluginManager;

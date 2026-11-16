@@ -20,6 +20,12 @@ public interface Player extends HumanEntity, OfflinePlayer {
 
     int getLevel();
 
+    int getPing();
+
+    void sendPluginMessage(org.bukkit.plugin.Plugin source, String channel, byte[] message);
+
+    java.util.Set<String> getListeningPluginChannels();
+
     void setLevel(int level);
 
     InetSocketAddress getAddress();

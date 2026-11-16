@@ -427,6 +427,21 @@ final class Wrappers {
         }
 
         @Override
+        public int getPing() {
+            return tube.latency();
+        }
+
+        @Override
+        public void sendPluginMessage(org.bukkit.plugin.Plugin source, String channel, byte[] message) {
+            runtime.messenger.send(source, tube, channel, message);
+        }
+
+        @Override
+        public java.util.Set<String> getListeningPluginChannels() {
+            return runtime.messenger.listening();
+        }
+
+        @Override
         public InetSocketAddress getAddress() {
             return tube.address().orElse(null);
         }

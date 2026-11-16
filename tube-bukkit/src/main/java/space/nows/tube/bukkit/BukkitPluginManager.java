@@ -238,6 +238,7 @@ final class BukkitPluginManager implements PluginManager {
     private void teardown(Plugin plugin) {
         runtime.scheduler.cancelTasks(plugin);
         runtime.services.unregisterAll(plugin);
+        runtime.messenger.unregisterAll(plugin);
         HandlerList.unregisterAll(plugin);
         runtime.commands.unregister(plugin);
         if (plugin.getClass().getClassLoader() instanceof PluginClassLoader loader) {

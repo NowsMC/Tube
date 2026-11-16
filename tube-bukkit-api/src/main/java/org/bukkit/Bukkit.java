@@ -61,6 +61,10 @@ public final class Bukkit {
         return server.getServicesManager();
     }
 
+    public static org.bukkit.plugin.messaging.Messenger getMessenger() {
+        return server.getMessenger();
+    }
+
     public static PluginCommand getPluginCommand(String name) {
         return server.getPluginCommand(name);
     }

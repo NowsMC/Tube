@@ -63,6 +63,11 @@ final class BukkitServer implements Server {
     }
 
     @Override
+    public org.bukkit.plugin.messaging.Messenger getMessenger() {
+        return runtime.messenger;
+    }
+
+    @Override
     public PluginCommand getPluginCommand(String name) {
         return runtime.commands.get(name);
     }

@@ -128,6 +128,8 @@ final class StubServer {
     final List<Player> players = new ArrayList<>();
     final List<String> broadcasts = new ArrayList<>();
     final Set<UUID> ops = new HashSet<>();
+    final java.util.Map<String, space.nows.tube.api.network.PluginChannels.ChannelHandler> channelHandlers = new java.util.HashMap<>();
+    final List<String> sentMessages = new ArrayList<>();
     final Server server;
 
     StubServer() {
@@ -151,6 +153,19 @@ final class StubServer {
             case "bindAddress" -> "0.0.0.0";
             case "commands" -> commands;
             case "events" -> events;
+            case "network" -> Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {space.nows.tube.api.network.Network.class}, (p, m, a) -> {
+                if (!m.getName().equals("channels")) {
+                    return null;
+                }
+                return Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {space.nows.tube.api.network.PluginChannels.class}, (p2, m2, a2) -> {
+                    if (m2.getName().equals("register")) {
+                        channelHandlers.put((String) a2[0], (space.nows.tube.api.network.PluginChannels.ChannelHandler) a2[1]);
+                        return (space.nows.tube.api.event.Subscription) () -> channelHandlers.remove((String) a2[0]);
+                    }
+                    sentMessages.add(a2[1] + ":" + new String((byte[]) a2[2]));
+                    return null;
+                });
+            });
             case "scheduler" -> scheduler;
             case "permissions" -> permissions;
             case "worlds" -> worlds;

@@ -58,6 +58,8 @@ class BukkitLayerTest {
                     saveDefaultConfig();
                     log("enable:" + getConfig().getString("greeting") + ":" + getServer().getName());
                     getServer().getPluginManager().registerEvents(this, this);
+                    getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+                    getServer().getMessenger().registerIncomingPluginChannel(this, "demo:chan", (channel, player, message) -> log("message:" + channel + ":" + player.getName() + ":" + new String(message)));
                     getCommand("demo").setExecutor((CommandSender sender, Command command, String label, String[] args) -> {
                         sender.sendMessage("demo " + label + " " + String.join(",", args));
                         return true;
@@ -209,6 +211,16 @@ class BukkitLayerTest {
 
         assertTrue(cancelled.isCancelled());
         assertTrue(!kept.isCancelled());
+    }
+
+    @Test
+    void pluginMessagesFlowBothWays() throws IOException {
+        var player = stub.player("Steve");
+        stub.channelHandlers.get("demo:chan").received(player, "demo:chan", "hi".getBytes());
+        assertEquals("message:demo:chan:Steve:hi", log().getLast());
+
+        runtime.messenger.send(runtime.pluginManager.getPlugin("Demo"), player, "BungeeCord", "go".getBytes());
+        assertEquals("bungeecord:main:go", stub.sentMessages.getLast());
     }
 
     @Test
