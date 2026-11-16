@@ -110,6 +110,11 @@ public final class DedicatedServer implements Server {
     }
 
     @Override
+    public int dataVersion() {
+        return MinecraftServer.DATA_VERSION;
+    }
+
+    @Override
     public int maxPlayers() {
         return settings.connection().maxPlayers();
     }
@@ -235,6 +240,7 @@ public final class DedicatedServer implements Server {
         scheduler = new SchedulerService();
         events = new DefaultEventBus();
         players.attachEvents(events);
+        commands.attachEvents(events);
         PluginChannelService channels = new PluginChannelService(players);
         network = new NettyNetwork(channels, Transport.choose(settings.network().nativeTransport()));
         LOGGER.info("Using {} for Tube network sockets", network.transport());

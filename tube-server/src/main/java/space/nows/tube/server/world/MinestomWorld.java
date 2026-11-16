@@ -10,6 +10,7 @@ import space.nows.tube.api.inventory.ItemStack;
 import space.nows.tube.api.world.Block;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.api.world.World;
+import space.nows.tube.api.world.WorldBorder;
 import space.nows.tube.server.inventory.ItemMapper;
 
 import java.nio.file.Path;
@@ -41,6 +42,24 @@ public final class MinestomWorld implements World {
     @Override
     public Path folder() {
         return owner.folderOf(name);
+    }
+
+    @Override
+    public WorldBorder border() {
+        var border = instance.getWorldBorder();
+        return new WorldBorder(border.centerX(), border.centerZ(), border.diameter(), border.warningDistance(), border.warningTime());
+    }
+
+    @Override
+    public void setBorder(WorldBorder border) {
+        setBorder(border, 0);
+    }
+
+    @Override
+    public void setBorder(WorldBorder border, double transitionSeconds) {
+        var current = instance.getWorldBorder();
+        instance.setWorldBorder(new net.minestom.server.instance.WorldBorder(border.diameter(), border.centerX(), border.centerZ(),
+                border.warningDistance(), border.warningTime(), current.dimensionTeleportBoundary()), transitionSeconds);
     }
 
     @Override

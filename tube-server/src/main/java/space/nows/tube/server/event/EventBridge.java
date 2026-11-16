@@ -8,25 +8,34 @@ import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockInteractEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerChatEvent;
+import net.minestom.server.event.player.PlayerCommandEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerHandAnimationEvent;
 import net.minestom.server.event.player.PlayerRespawnEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.player.PlayerStartDiggingEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
+import net.minestom.server.inventory.click.Click;
+import space.nows.tube.api.entity.GameMode;
 import space.nows.tube.api.entity.LivingEntity;
 import space.nows.tube.api.event.BlockBreakEvent;
 import space.nows.tube.api.event.BlockPlaceEvent;
+import space.nows.tube.api.event.Cancellable;
+import space.nows.tube.api.event.CommandDispatchEvent;
 import space.nows.tube.api.event.EntityDamageEvent;
 import space.nows.tube.api.event.EntityDeathEvent;
 import space.nows.tube.api.event.EntitySpawnEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.InventoryClickEvent;
 import space.nows.tube.api.event.InventoryCloseEvent;
+import space.nows.tube.api.event.InventoryDragEvent;
+import space.nows.tube.api.event.InventoryOpenEvent;
+import space.nows.tube.api.event.PlayerGameModeChangeEvent;
 import space.nows.tube.api.event.PlayerInteractEvent;
 import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerMoveEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
+import space.nows.tube.api.inventory.ClickType;
 import space.nows.tube.server.inventory.ItemMapper;
 import space.nows.tube.server.inventory.MinestomInventory;
 import space.nows.tube.server.player.PlayerService;
@@ -43,6 +52,23 @@ public final class EventBridge {
         this.bus = bus;
         this.players = players;
         this.worlds = worlds;
+    }
+
+    static ClickType clickType(Click click) {
+        return switch (click) {
+            case Click.Left ignored -> ClickType.LEFT;
+            case Click.Right ignored -> ClickType.RIGHT;
+            case Click.LeftShift ignored -> ClickType.SHIFT_LEFT;
+            case Click.RightShift ignored -> ClickType.SHIFT_RIGHT;
+            case Click.Middle ignored -> ClickType.MIDDLE;
+            case Click.Double ignored -> ClickType.DOUBLE_CLICK;
+            case Click.HotbarSwap ignored -> ClickType.NUMBER_KEY;
+            case Click.OffhandSwap ignored -> ClickType.SWAP_OFFHAND;
+            case Click.DropSlot drop -> drop.all() ? ClickType.CONTROL_DROP : ClickType.DROP;
+            case Click.LeftDropCursor ignored -> ClickType.WINDOW_BORDER_LEFT;
+            case Click.RightDropCursor ignored -> ClickType.WINDOW_BORDER_RIGHT;
+            default -> ClickType.UNKNOWN;
+        };
     }
 
     private static void announce(Component message) {
@@ -112,6 +138,29 @@ public final class EventBridge {
             }
         });
 
+        node.addListener(PlayerCommandEvent.class, event -> {
+            var posted = bus.post(new CommandDispatchEvent(players.wrap(event.getPlayer()), event.getCommand()));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            } else if (!posted.line().equals(event.getCommand())) {
+                event.setCommand(posted.line());
+            }
+        });
+
+        node.addListener(net.minestom.server.event.player.PlayerGameModeChangeEvent.class, event -> {
+            var posted = bus.post(new PlayerGameModeChangeEvent(players.wrap(event.getPlayer()), GameMode.valueOf(event.getNewGameMode().name())));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            }
+        });
+
+        node.addListener(net.minestom.server.event.inventory.InventoryOpenEvent.class, event -> {
+            var posted = bus.post(new InventoryOpenEvent(players.wrap(event.getPlayer()), new MinestomInventory(event.getInventory())));
+            if (posted.isCancelled()) {
+                event.setCancelled(true);
+            }
+        });
+
         node.addListener(PlayerRespawnEvent.class, event -> {
             var player = players.wrap(event.getPlayer());
             var target = event.getRespawnPosition();
@@ -165,9 +214,16 @@ public final class EventBridge {
         });
 
         node.addListener(InventoryPreClickEvent.class, event -> {
-            var posted = bus.post(new InventoryClickEvent(
-                    players.wrap(event.getPlayer()), new MinestomInventory(event.getInventory()),
-                    event.getSlot(), ItemMapper.fromMinestom(event.getClickedItem())));
+            Click click = event.getClick();
+            var player = players.wrap(event.getPlayer());
+            var inventory = new MinestomInventory(event.getInventory());
+            Cancellable posted = switch (click) {
+                case Click.LeftDrag drag -> bus.post(new InventoryDragEvent(player, inventory, drag.slots(), false));
+                case Click.RightDrag drag -> bus.post(new InventoryDragEvent(player, inventory, drag.slots(), true));
+                case Click.MiddleDrag drag -> bus.post(new InventoryDragEvent(player, inventory, drag.slots(), false));
+                default -> bus.post(new InventoryClickEvent(player, inventory, event.getSlot(), ItemMapper.fromMinestom(event.getClickedItem()),
+                        clickType(click), click instanceof Click.HotbarSwap swap ? swap.hotbarSlot() : -1));
+            };
             if (posted.isCancelled()) {
                 event.setCancelled(true);
             }

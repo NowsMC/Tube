@@ -333,8 +333,8 @@ class BukkitLayerTest {
         var inventory = (space.nows.tube.api.inventory.Inventory) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class<?>[] {space.nows.tube.api.inventory.Inventory.class}, (proxy, method, args) -> method.getName().equals("equals") ? proxy == args[0] : method.getName().equals("hashCode") ? 1 : null);
 
-        var cancelled = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 3)));
-        var kept = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 2)));
+        var cancelled = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 3), space.nows.tube.api.inventory.ClickType.LEFT, -1));
+        var kept = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 2), space.nows.tube.api.inventory.ClickType.LEFT, -1));
 
         assertTrue(cancelled.isCancelled());
         assertTrue(!kept.isCancelled());

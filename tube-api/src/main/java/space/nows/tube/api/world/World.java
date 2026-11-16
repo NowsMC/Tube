@@ -14,6 +14,12 @@ public interface World {
 
     Path folder();
 
+    WorldBorder border();
+
+    void setBorder(WorldBorder border);
+
+    void setBorder(WorldBorder border, double transitionSeconds);
+
     Location spawn();
 
     Block block(int x, int y, int z);

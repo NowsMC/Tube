@@ -20,6 +20,8 @@ public interface Server {
 
     String minecraftVersion();
 
+    int dataVersion();
+
     int maxPlayers();
 
     boolean onlineMode();

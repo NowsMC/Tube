@@ -6,6 +6,8 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import space.nows.tube.api.command.Command;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.event.CommandDispatchEvent;
+import space.nows.tube.api.event.EventBus;
 import space.nows.tube.server.player.PlayerService;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public final class CommandService implements CommandRegistry {
     private final PlayerService players;
     private final ConsoleSender console = new ConsoleSender();
     private final Map<String, Entry> entries = new ConcurrentHashMap<>();
+    private volatile EventBus events;
 
     public CommandService(PlayerService players) {
         this.players = players;
@@ -68,11 +71,23 @@ public final class CommandService implements CommandRegistry {
         return entries.values().stream().map(Entry::name).distinct().sorted().toList();
     }
 
+    public void attachEvents(EventBus events) {
+        this.events = events;
+    }
+
     public void dispatchConsole(String line) {
         dispatch(console, line);
     }
 
     public void dispatch(CommandSender sender, String line) {
+        EventBus bus = events;
+        if (bus != null) {
+            var posted = bus.post(new CommandDispatchEvent(sender, line));
+            if (posted.isCancelled()) {
+                return;
+            }
+            line = posted.line();
+        }
         String trimmed = line.strip();
         if (trimmed.startsWith("/")) {
             trimmed = trimmed.substring(1);
