@@ -42,6 +42,29 @@ final class TubeWorld implements World {
     }
 
     @Override
+    public boolean isChunkLoaded(int chunkX, int chunkZ) {
+        return instance.getChunk(chunkX, chunkZ) != null;
+    }
+
+    @Override
+    public java.util.concurrent.CompletableFuture<Void> loadChunk(int chunkX, int chunkZ) {
+        return instance.loadChunk(chunkX, chunkZ).thenApply(chunk -> null);
+    }
+
+    @Override
+    public void unloadChunk(int chunkX, int chunkZ) {
+        var chunk = instance.getChunk(chunkX, chunkZ);
+        if (chunk != null) {
+            instance.unloadChunk(chunk);
+        }
+    }
+
+    @Override
+    public java.util.List<space.nows.tube.api.ChunkPos> loadedChunks() {
+        return instance.getChunks().stream().map(chunk -> new space.nows.tube.api.ChunkPos(chunk.getChunkX(), chunk.getChunkZ())).toList();
+    }
+
+    @Override
     public Block block(int x, int y, int z) {
         instance.loadChunk(x >> 4, z >> 4).join();
         return BlockMapper.fromMinestom(instance.getBlock(x, y, z));

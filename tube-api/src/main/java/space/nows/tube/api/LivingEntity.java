@@ -11,4 +11,12 @@ public interface LivingEntity extends Entity {
     ItemStack equipment(EquipmentSlot slot);
 
     void setEquipment(EquipmentSlot slot, ItemStack item);
+
+    java.util.List<PotionEffect> effects();
+
+    void addEffect(PotionEffect effect);
+
+    void removeEffect(String type);
+
+    void clearEffects();
 }

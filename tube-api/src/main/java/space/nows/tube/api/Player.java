@@ -33,6 +33,10 @@ public interface Player extends LivingEntity, CommandSender {
 
     void sendActionBar(Component message);
 
+    void showBossBar(net.kyori.adventure.bossbar.BossBar bar);
+
+    void hideBossBar(net.kyori.adventure.bossbar.BossBar bar);
+
     void showTitle(Component title, Component subtitle);
 
     int latency();

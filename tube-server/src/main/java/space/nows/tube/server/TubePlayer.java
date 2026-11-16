@@ -154,6 +154,16 @@ final class TubePlayer extends TubeLivingEntity implements Player {
     }
 
     @Override
+    public void showBossBar(net.kyori.adventure.bossbar.BossBar bar) {
+        player.showBossBar(bar);
+    }
+
+    @Override
+    public void hideBossBar(net.kyori.adventure.bossbar.BossBar bar) {
+        player.hideBossBar(bar);
+    }
+
+    @Override
     public void kick(Component reason) {
         player.kick(reason);
     }

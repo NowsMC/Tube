@@ -35,6 +35,43 @@ class TubeLivingEntity extends TubeEntity implements LivingEntity {
     }
 
     @Override
+    public java.util.List<space.nows.tube.api.PotionEffect> effects() {
+        return living().getActiveEffects().stream().map(timed -> {
+            var potion = timed.potion();
+            return new space.nows.tube.api.PotionEffect(potion.effect().key().asString(), potion.duration(), potion.amplifier(), potion.isAmbient(), potion.hasParticles(), potion.hasIcon());
+        }).toList();
+    }
+
+    @Override
+    public void addEffect(space.nows.tube.api.PotionEffect effect) {
+        var type = net.minestom.server.potion.PotionEffect.fromKey(effect.type());
+        if (type == null) {
+            throw new IllegalArgumentException("Unknown potion effect: " + effect.type());
+        }
+        byte flags = (byte) ((effect.ambient() ? net.minestom.server.potion.Potion.AMBIENT_FLAG : 0)
+                | (effect.particles() ? net.minestom.server.potion.Potion.PARTICLES_FLAG : 0)
+                | (effect.icon() ? net.minestom.server.potion.Potion.ICON_FLAG : 0));
+        living().addEffect(new net.minestom.server.potion.Potion(type, effect.amplifier(), effect.duration(), flags));
+    }
+
+    @Override
+    public void removeEffect(String type) {
+        var effect = net.minestom.server.potion.PotionEffect.fromKey(type.indexOf(':') < 0 ? "minecraft:" + type : type);
+        if (effect != null) {
+            living().removeEffect(effect);
+        }
+    }
+
+    @Override
+    public void clearEffects() {
+        living().clearEffects();
+    }
+
+    private net.minestom.server.entity.LivingEntity living() {
+        return (net.minestom.server.entity.LivingEntity) handle;
+    }
+
+    @Override
     public ItemStack equipment(EquipmentSlot slot) {
         return ItemMapper.fromMinestom(living.getEquipment(toMinestom(slot)));
     }

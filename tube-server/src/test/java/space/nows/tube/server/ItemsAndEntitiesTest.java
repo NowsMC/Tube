@@ -83,6 +83,45 @@ class ItemsAndEntitiesTest {
     }
 
     @Test
+    void potionEffectsAreAppliedAndRemoved(Env env) {
+        TubePlayer player = join(env);
+
+        player.addEffect(space.nows.tube.api.PotionEffect.of("speed", 200, 1));
+
+        assertEquals(1, player.effects().size());
+        assertEquals("minecraft:speed", player.effects().getFirst().type());
+        assertEquals(1, player.effects().getFirst().amplifier());
+        player.removeEffect("speed");
+        assertTrue(player.effects().isEmpty());
+        assertThrows(IllegalArgumentException.class, () -> player.addEffect(space.nows.tube.api.PotionEffect.of("tube:nothing", 20, 0)));
+    }
+
+    @Test
+    void chunksCanBeLoadedAndUnloaded(Env env) {
+        TubePlayer player = join(env);
+        var world = worlds.defaultWorld();
+
+        world.loadChunk(40, 41).join();
+        assertTrue(world.isChunkLoaded(40, 41));
+        assertTrue(world.loadedChunks().contains(new space.nows.tube.api.ChunkPos(40, 41)));
+
+        world.unloadChunk(40, 41);
+        assertFalse(world.isChunkLoaded(40, 41));
+    }
+
+    @Test
+    void cancelledTeleportsLeaveThePlayerInPlace(Env env) {
+        TubePlayer player = join(env);
+        players.attachEvents(bus);
+        bus.subscribe(space.nows.tube.api.event.PlayerTeleportEvent.class, event -> event.setCancelled(true));
+        double before = player.location().x();
+
+        player.teleport(new Location(player.world(), before + 50, 42, 0)).join();
+
+        assertEquals(before, player.location().x());
+    }
+
+    @Test
     void containersOpenForPlayers(Env env) {
         TubePlayer player = join(env);
         Inventory menu = new TubeServer(() -> "26.2", directory).createInventory(Component.text("Menu"), 3);

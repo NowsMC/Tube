@@ -1,6 +1,8 @@
 package space.nows.tube.api;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface World {
 
@@ -17,6 +19,14 @@ public interface World {
     Entity dropItem(Location location, ItemStack item);
 
     Collection<Entity> entities();
+
+    boolean isChunkLoaded(int chunkX, int chunkZ);
+
+    CompletableFuture<Void> loadChunk(int chunkX, int chunkZ);
+
+    void unloadChunk(int chunkX, int chunkZ);
+
+    List<ChunkPos> loadedChunks();
 
     void save();
 }

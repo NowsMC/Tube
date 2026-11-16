@@ -18,7 +18,13 @@ final class ItemMapper {
         }
         Component name = stack.get(DataComponents.CUSTOM_NAME);
         List<Component> lore = stack.get(DataComponents.LORE);
-        return new ItemStack(stack.material().key().asString(), stack.amount(), name, lore == null ? List.of() : lore);
+        var enchantments = new java.util.HashMap<String, Integer>();
+        var list = stack.get(DataComponents.ENCHANTMENTS);
+        if (list != null) {
+            list.enchantments().forEach((key, level) -> enchantments.put(key.key().asString(), level));
+        }
+        Integer damage = stack.get(DataComponents.DAMAGE);
+        return new ItemStack(stack.material().key().asString(), stack.amount(), name, lore == null ? List.of() : lore, enchantments, damage == null ? 0 : damage);
     }
 
     static net.minestom.server.item.ItemStack toMinestom(ItemStack stack) {
@@ -35,6 +41,14 @@ final class ItemMapper {
         }
         if (!stack.lore().isEmpty()) {
             result = result.with(DataComponents.LORE, stack.lore());
+        }
+        if (!stack.enchantments().isEmpty()) {
+            var map = new java.util.HashMap<net.minestom.server.registry.RegistryKey<net.minestom.server.item.enchant.Enchantment>, Integer>();
+            stack.enchantments().forEach((key, level) -> map.put(net.minestom.server.registry.RegistryKey.of(key), level));
+            result = result.with(DataComponents.ENCHANTMENTS, new net.minestom.server.item.component.EnchantmentList(map));
+        }
+        if (stack.damage() > 0) {
+            result = result.with(DataComponents.DAMAGE, stack.damage());
         }
         return result;
     }
