@@ -59,6 +59,13 @@ final class Wrappers {
         players.remove(uuid);
     }
 
+    org.bukkit.entity.LivingEntity living(space.nows.tube.api.LivingEntity tube) {
+        if (tube instanceof space.nows.tube.api.Player player) {
+            return player(player);
+        }
+        return new BukkitMob(runtime, tube);
+    }
+
     World world(space.nows.tube.api.World tube) {
         return worlds.computeIfAbsent(tube.name(), name -> new BukkitWorld(runtime, tube));
     }
@@ -498,6 +505,130 @@ final class Wrappers {
         @Override
         public String toString() {
             return "CraftPlayer{name=" + tube.name() + "}";
+        }
+    }
+
+    private static final class BukkitMob extends BukkitPermissible implements org.bukkit.entity.LivingEntity {
+
+        private final space.nows.tube.api.LivingEntity tube;
+
+        BukkitMob(BukkitRuntime runtime, space.nows.tube.api.LivingEntity tube) {
+            super(runtime);
+            this.tube = tube;
+        }
+
+        @Override
+        boolean granted(String node) {
+            return false;
+        }
+
+        @Override
+        public boolean isOp() {
+            return false;
+        }
+
+        @Override
+        public void setOp(boolean value) {
+        }
+
+        @Override
+        public void sendMessage(String message) {
+        }
+
+        @Override
+        public void sendMessage(String... messages) {
+        }
+
+        @Override
+        public String getName() {
+            return tube.customName().map(component -> LEGACY.serialize(component)).orElse(tube.type());
+        }
+
+        @Override
+        public Server getServer() {
+            return runtime.server;
+        }
+
+        @Override
+        public Location getLocation() {
+            return runtime.wrappers.location(tube.location());
+        }
+
+        @Override
+        public int getEntityId() {
+            return tube.uuid().hashCode();
+        }
+
+        @Override
+        public World getWorld() {
+            return runtime.wrappers.world(tube.world());
+        }
+
+        @Override
+        public EntityType getType() {
+            EntityType type = EntityType.fromName(tube.type());
+            return type == null ? EntityType.UNKNOWN : type;
+        }
+
+        @Override
+        public UUID getUniqueId() {
+            return tube.uuid();
+        }
+
+        @Override
+        public boolean teleport(Location location) {
+            tube.teleport(runtime.wrappers.tubeLocation(location));
+            return true;
+        }
+
+        @Override
+        public String getCustomName() {
+            return tube.customName().map(component -> LEGACY.serialize(component)).orElse(null);
+        }
+
+        @Override
+        public void setCustomName(String name) {
+            tube.setCustomName(name == null ? null : LEGACY.deserialize(name));
+        }
+
+        @Override
+        public boolean isValid() {
+            return !tube.isRemoved();
+        }
+
+        @Override
+        public boolean isDead() {
+            return tube.health() <= 0;
+        }
+
+        @Override
+        public void remove() {
+            tube.remove();
+        }
+
+        @Override
+        public double getHealth() {
+            return tube.health();
+        }
+
+        @Override
+        public void setHealth(double health) {
+            tube.setHealth(health);
+        }
+
+        @Override
+        public double getMaxHealth() {
+            return tube.maxHealth();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof org.bukkit.entity.Entity entity && entity.getUniqueId().equals(tube.uuid());
+        }
+
+        @Override
+        public int hashCode() {
+            return tube.uuid().hashCode();
         }
     }
 

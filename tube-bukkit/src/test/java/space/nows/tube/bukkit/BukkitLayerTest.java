@@ -27,6 +27,8 @@ class BukkitLayerTest {
             import org.bukkit.event.EventHandler;
             import org.bukkit.event.EventPriority;
             import org.bukkit.event.Listener;
+            import org.bukkit.event.block.BlockBreakEvent;
+            import org.bukkit.event.inventory.InventoryClickEvent;
             import org.bukkit.event.player.AsyncPlayerChatEvent;
             import org.bukkit.event.player.PlayerJoinEvent;
             import org.bukkit.plugin.java.JavaPlugin;
@@ -71,6 +73,19 @@ class BukkitLayerTest {
                 @EventHandler
                 public void onJoin(PlayerJoinEvent event) {
                     log("join:" + event.getPlayer().getName() + ":" + event.getPlayer().getUniqueId().equals(event.getPlayer().getUniqueId()));
+                }
+
+                @EventHandler
+                public void onBreak(BlockBreakEvent event) {
+                    log("break:" + event.getBlock().getX() + "," + event.getBlock().getY() + "," + event.getBlock().getZ() + ":" + event.getPlayer().getName());
+                    if (event.getBlock().getX() == 13) {
+                        event.setCancelled(true);
+                    }
+                }
+
+                @EventHandler
+                public void onClick(InventoryClickEvent event) {
+                    event.setCancelled(event.getSlot() == 5 && event.getCurrentItem() != null && event.getCurrentItem().getAmount() == 3);
                 }
 
                 @EventHandler(priority = EventPriority.HIGH)
@@ -167,6 +182,33 @@ class BukkitLayerTest {
 
         PlayerChatEvent blocked = stub.events.post(new PlayerChatEvent(player, "this is blocked"));
         assertTrue(blocked.isCancelled());
+    }
+
+    @Test
+    void blockBreaksReachBukkitListenersAndCanBeCancelled() throws IOException {
+        var player = stub.player("Steve");
+        var world = (space.nows.tube.api.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
+
+        var allowed = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 1, 64, 2, space.nows.tube.api.Block.of("stone")));
+        var denied = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 13, 64, 2, space.nows.tube.api.Block.of("stone")));
+
+        assertTrue(!allowed.isCancelled());
+        assertTrue(denied.isCancelled());
+        assertEquals("break:13,64,2:Steve", log().getLast());
+    }
+
+    @Test
+    void inventoryClicksCanBeCancelled() {
+        var player = stub.player("Steve");
+        var inventory = (space.nows.tube.api.Inventory) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.Inventory.class}, (proxy, method, args) -> method.getName().equals("equals") ? proxy == args[0] : method.getName().equals("hashCode") ? 1 : null);
+
+        var cancelled = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.ItemStack.of("stone", 3)));
+        var kept = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, inventory, 5, space.nows.tube.api.ItemStack.of("stone", 2)));
+
+        assertTrue(cancelled.isCancelled());
+        assertTrue(!kept.isCancelled());
     }
 
     @Test
