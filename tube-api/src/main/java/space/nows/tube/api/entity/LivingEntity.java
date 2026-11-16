@@ -11,6 +11,8 @@ public interface LivingEntity extends Entity {
 
     double maxHealth();
 
+    void damage(double amount);
+
     ItemStack equipment(EquipmentSlot slot);
 
     void setEquipment(EquipmentSlot slot, ItemStack item);

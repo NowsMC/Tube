@@ -10,6 +10,7 @@ import net.minestom.server.event.player.PlayerBlockPlaceEvent;
 import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerHandAnimationEvent;
+import net.minestom.server.event.player.PlayerRespawnEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.player.PlayerStartDiggingEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
@@ -108,6 +109,17 @@ public final class EventBridge {
             } else if (!posted.to().equals(to)) {
                 var changed = posted.to();
                 event.setNewPosition(new net.minestom.server.coordinate.Pos(changed.x(), changed.y(), changed.z(), changed.yaw(), changed.pitch()));
+            }
+        });
+
+        node.addListener(PlayerRespawnEvent.class, event -> {
+            var player = players.wrap(event.getPlayer());
+            var target = event.getRespawnPosition();
+            var at = new space.nows.tube.api.world.Location(player.world(), target.x(), target.y(), target.z(), target.yaw(), target.pitch());
+            var posted = bus.post(new space.nows.tube.api.event.PlayerRespawnEvent(player, at));
+            if (!posted.location().equals(at)) {
+                var changed = posted.location();
+                event.setRespawnPosition(new net.minestom.server.coordinate.Pos(changed.x(), changed.y(), changed.z(), changed.yaw(), changed.pitch()));
             }
         });
 

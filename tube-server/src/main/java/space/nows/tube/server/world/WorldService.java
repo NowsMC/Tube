@@ -12,6 +12,7 @@ import space.nows.tube.api.world.World;
 import space.nows.tube.api.world.WorldManager;
 import space.nows.tube.server.config.FileConfig;
 import space.nows.tube.server.entity.MinestomEntity;
+import space.nows.tube.server.entity.MinestomItemEntity;
 import space.nows.tube.server.entity.MinestomLivingEntity;
 import space.nows.tube.server.player.PlayerService;
 
@@ -89,6 +90,9 @@ public final class WorldService implements WorldManager {
         }
         if (entity instanceof net.minestom.server.entity.LivingEntity living) {
             return new MinestomLivingEntity(living, this);
+        }
+        if (entity instanceof net.minestom.server.entity.ItemEntity item) {
+            return new MinestomItemEntity(item, this);
         }
         return new MinestomEntity(entity, this);
     }

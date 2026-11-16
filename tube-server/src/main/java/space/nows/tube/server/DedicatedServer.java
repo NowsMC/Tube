@@ -39,6 +39,7 @@ import space.nows.tube.server.connection.PacketRateLimiter;
 import space.nows.tube.server.connection.PluginChannelService;
 import space.nows.tube.server.connection.ResourcePackHandler;
 import space.nows.tube.server.connection.StatusResponder;
+import space.nows.tube.server.entity.ItemDrops;
 import space.nows.tube.server.event.DefaultEventBus;
 import space.nows.tube.server.event.EventBridge;
 import space.nows.tube.server.inventory.MinestomInventory;
@@ -244,6 +245,7 @@ public final class DedicatedServer implements Server {
         resourcePacks.install(handler);
         new StatusResponder(settings, events, name() + " " + minecraftVersion()).install(handler);
         new EventBridge(events, players, worlds).install(handler);
+        new ItemDrops(events, players, worlds).install(handler);
         new SpawnProtection(settings.level().spawnProtection(), worlds, permissions).install(events);
         ConnectionLog.install(events, settings.connection().logIps());
         new PacketRateLimiter(settings.network().rateLimit(), System::nanoTime).install(handler);

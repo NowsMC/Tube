@@ -1,6 +1,7 @@
 package space.nows.tube.server.entity;
 
 import net.minestom.server.entity.attribute.Attribute;
+import net.minestom.server.entity.damage.DamageType;
 import space.nows.tube.api.entity.LivingEntity;
 import space.nows.tube.api.inventory.EquipmentSlot;
 import space.nows.tube.api.inventory.ItemStack;
@@ -34,6 +35,11 @@ public class MinestomLivingEntity extends MinestomEntity implements LivingEntity
     @Override
     public double maxHealth() {
         return living.getAttributeValue(Attribute.MAX_HEALTH);
+    }
+
+    @Override
+    public void damage(double amount) {
+        living.damage(DamageType.GENERIC, (float) amount);
     }
 
     @Override
