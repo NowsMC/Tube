@@ -1,11 +1,11 @@
 package space.nows.tube.server;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
-import net.minestom.server.event.player.PlayerDisconnectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.CommandRegistry;
@@ -15,6 +15,7 @@ import space.nows.tube.api.PluginDescriptor;
 import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.WorldManager;
+import space.nows.tube.api.event.EventBus;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public final class TubeServer implements Server {
     private PlayerService players;
     private CommandService commands;
     private SchedulerService scheduler;
+    private DefaultEventBus events;
     private PluginManager plugins;
     private ScheduledExecutorService autosave;
 
@@ -75,6 +77,11 @@ public final class TubeServer implements Server {
     }
 
     @Override
+    public EventBus events() {
+        return events;
+    }
+
+    @Override
     public Collection<Player> players() {
         return players.online();
     }
@@ -85,9 +92,9 @@ public final class TubeServer implements Server {
     }
 
     @Override
-    public void broadcast(String message) {
-        MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(player -> player.sendMessage(Component.text(message)));
-        LOGGER.info(message);
+    public void broadcast(Component message) {
+        MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(player -> player.sendMessage(message));
+        LOGGER.info(PlainTextComponentSerializer.plainText().serialize(message));
     }
 
     @Override
@@ -109,7 +116,8 @@ public final class TubeServer implements Server {
         players = new PlayerService(worlds);
         commands = new CommandService(players);
         scheduler = new SchedulerService();
-        plugins = new PluginManager(this, commands, scheduler, directory.resolve("plugins"));
+        events = new DefaultEventBus();
+        plugins = new PluginManager(this, commands, scheduler, events, directory.resolve("plugins"));
 
         MinecraftServer.getGlobalEventHandler().addListener(AsyncPlayerConfigurationEvent.class, event -> {
             players.wrap(event.getPlayer());
@@ -117,7 +125,7 @@ public final class TubeServer implements Server {
             event.setSpawningInstance(worlds.instanceOf(location.world()));
             event.getPlayer().setRespawnPoint(new Pos(location.x(), location.y(), location.z()));
         });
-        MinecraftServer.getGlobalEventHandler().addListener(PlayerDisconnectEvent.class, event -> players.remove(event.getPlayer()));
+        new EventBridge(events, players, worlds).install(MinecraftServer.getGlobalEventHandler());
 
         BuiltinCommands.register(this, commands);
         worlds.defaultWorld();

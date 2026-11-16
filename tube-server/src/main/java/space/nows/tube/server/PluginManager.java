@@ -7,6 +7,7 @@ import space.nows.tube.api.Plugin;
 import space.nows.tube.api.PluginDescriptor;
 import space.nows.tube.api.Scheduler;
 import space.nows.tube.api.Server;
+import space.nows.tube.api.event.EventBus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,19 +35,21 @@ public final class PluginManager {
     private record Candidate(Path jar, PluginDescriptor descriptor) {
     }
 
-    private record Running(PluginDescriptor descriptor, Plugin plugin, URLClassLoader loader, ScopedCommands commands, ScopedScheduler scheduler) {
+    private record Running(PluginDescriptor descriptor, Plugin plugin, URLClassLoader loader, ScopedCommands commands, ScopedScheduler scheduler, ScopedEvents events) {
     }
 
     private final Server server;
     private final CommandRegistry commands;
     private final Scheduler scheduler;
+    private final EventBus events;
     private final Path directory;
     private final List<Running> running = new ArrayList<>();
 
-    public PluginManager(Server server, CommandRegistry commands, Scheduler scheduler, Path directory) {
+    public PluginManager(Server server, CommandRegistry commands, Scheduler scheduler, EventBus events, Path directory) {
         this.server = server;
         this.commands = commands;
         this.scheduler = scheduler;
+        this.events = events;
         this.directory = directory;
     }
 
@@ -74,6 +77,7 @@ public final class PluginManager {
             }
             plugin.commands().unregisterAll();
             plugin.scheduler().cancelAll();
+            plugin.events().cancelAll();
             try {
                 plugin.loader().close();
             } catch (IOException e) {
@@ -192,6 +196,7 @@ public final class PluginManager {
 
         ScopedCommands scoped = new ScopedCommands(commands);
         ScopedScheduler scopedScheduler = new ScopedScheduler(scheduler);
+        ScopedEvents scopedEvents = new ScopedEvents(events);
         URLClassLoader loader = null;
         try {
             URL url = candidate.jar().toUri().toURL();
@@ -202,13 +207,14 @@ public final class PluginManager {
             }
             Plugin plugin = (Plugin) type.getDeclaredConstructor().newInstance();
             Path dataFolder = directory.resolve(descriptor.name());
-            plugin.onEnable(new DefaultPluginContext(server, descriptor, candidate.jar(), dataFolder, scoped, scopedScheduler));
-            running.add(new Running(descriptor, plugin, loader, scoped, scopedScheduler));
+            plugin.onEnable(new DefaultPluginContext(server, descriptor, candidate.jar(), dataFolder, scoped, scopedScheduler, scopedEvents));
+            running.add(new Running(descriptor, plugin, loader, scoped, scopedScheduler, scopedEvents));
             LOGGER.info("Enabled {} {}", descriptor.name(), descriptor.version());
         } catch (Throwable e) {
             LOGGER.error("Could not enable {}", descriptor.name(), e);
             scoped.unregisterAll();
             scopedScheduler.cancelAll();
+            scopedEvents.cancelAll();
             if (loader != null) {
                 try {
                     loader.close();

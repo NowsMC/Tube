@@ -83,7 +83,7 @@ class PluginManagerTest {
         writePlugin("1-first.jar", "b", List.of("a"), null);
         writePlugin("2-second.jar", "a", List.of(), "greeting: hello\n");
 
-        PluginManager manager = new PluginManager(server, registry, scheduler, directory);
+        PluginManager manager = new PluginManager(server, registry, scheduler, new DefaultEventBus(), directory);
         manager.loadAll();
 
         assertEquals(List.of("enable:a:hello", "enable:b:none"), RecordingPlugin.EVENTS);
@@ -101,7 +101,7 @@ class PluginManagerTest {
     @Test
     void copiesDefaultConfigIntoDataFolder() throws IOException {
         writePlugin("a.jar", "a", List.of(), "greeting: hello\n");
-        new PluginManager(server, registry, scheduler, directory).loadAll();
+        new PluginManager(server, registry, scheduler, new DefaultEventBus(), directory).loadAll();
         assertTrue(Files.isRegularFile(directory.resolve("a").resolve("config.yml")));
     }
 
@@ -109,7 +109,7 @@ class PluginManagerTest {
     void readsDescriptorAndConfigInJsonAndToml() throws IOException {
         writePlugin("json.jar", "j", List.of(), "{\"greeting\": \"from-json\"}", "config.json", "json");
         writePlugin("toml.jar", "t", List.of("j"), "greeting = \"from-toml\"\n", "config.toml", "toml");
-        new PluginManager(server, registry, scheduler, directory).loadAll();
+        new PluginManager(server, registry, scheduler, new DefaultEventBus(), directory).loadAll();
         assertEquals(List.of("enable:j:from-json", "enable:t:from-toml"), RecordingPlugin.EVENTS);
         assertTrue(Files.isRegularFile(directory.resolve("t").resolve("config.toml")));
     }
@@ -117,7 +117,7 @@ class PluginManagerTest {
     @Test
     void skipsPluginWithMissingDependency() throws IOException {
         writePlugin("b.jar", "b", List.of("missing"), null);
-        PluginManager manager = new PluginManager(server, registry, scheduler, directory);
+        PluginManager manager = new PluginManager(server, registry, scheduler, new DefaultEventBus(), directory);
         manager.loadAll();
         assertTrue(RecordingPlugin.EVENTS.isEmpty());
         assertTrue(manager.descriptors().isEmpty());
@@ -128,7 +128,7 @@ class PluginManagerTest {
         try (JarOutputStream ignored = new JarOutputStream(Files.newOutputStream(directory.resolve("broken.jar")))) {
             ignored.flush();
         }
-        PluginManager manager = new PluginManager(server, registry, scheduler, directory);
+        PluginManager manager = new PluginManager(server, registry, scheduler, new DefaultEventBus(), directory);
         manager.loadAll();
         assertTrue(manager.descriptors().isEmpty());
     }

@@ -1,13 +1,16 @@
 package space.nows.tube.server;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.Instance;
+import space.nows.tube.api.GameMode;
 import space.nows.tube.api.Location;
 import space.nows.tube.api.Player;
 import space.nows.tube.api.World;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 final class TubePlayer implements Player {
 
@@ -41,23 +44,52 @@ final class TubePlayer implements Player {
     }
 
     @Override
-    public void teleport(Location location) {
+    public CompletableFuture<Void> teleport(Location location) {
         Pos pos = new Pos(location.x(), location.y(), location.z(), location.yaw(), location.pitch());
         Instance target = worlds.instanceOf(location.world());
         if (target == handle.getInstance()) {
-            handle.teleport(pos);
-        } else {
-            handle.setInstance(target, pos);
+            return handle.teleport(pos);
         }
+        return handle.setInstance(target, pos);
     }
 
     @Override
-    public void kick(String reason) {
-        handle.kick(Component.text(reason));
+    public GameMode gameMode() {
+        return GameMode.valueOf(handle.getGameMode().name());
     }
 
     @Override
-    public void sendMessage(String message) {
+    public void setGameMode(GameMode gameMode) {
+        handle.setGameMode(net.minestom.server.entity.GameMode.valueOf(gameMode.name()));
+    }
+
+    @Override
+    public double health() {
+        return handle.getHealth();
+    }
+
+    @Override
+    public void setHealth(double health) {
+        handle.setHealth((float) health);
+    }
+
+    @Override
+    public void sendActionBar(Component message) {
+        handle.sendActionBar(message);
+    }
+
+    @Override
+    public void showTitle(Component title, Component subtitle) {
+        handle.showTitle(Title.title(title, subtitle));
+    }
+
+    @Override
+    public void kick(Component reason) {
+        handle.kick(reason);
+    }
+
+    @Override
+    public void sendMessage(Component message) {
         handle.sendMessage(message);
     }
 }

@@ -1,6 +1,7 @@
 package space.nows.tube.server;
 
 import net.minestom.server.instance.InstanceContainer;
+import space.nows.tube.api.Block;
 import space.nows.tube.api.Location;
 import space.nows.tube.api.World;
 
@@ -28,6 +29,19 @@ final class TubeWorld implements World {
     @Override
     public Location spawn() {
         return new Location(this, spawn[0], spawn[1], spawn[2]);
+    }
+
+    @Override
+    public Block block(int x, int y, int z) {
+        instance.loadChunk(x >> 4, z >> 4).join();
+        return BlockMapper.fromMinestom(instance.getBlock(x, y, z));
+    }
+
+    @Override
+    public void setBlock(int x, int y, int z, Block block) {
+        net.minestom.server.instance.block.Block resolved = BlockMapper.toMinestom(block);
+        instance.loadChunk(x >> 4, z >> 4).join();
+        instance.setBlock(x, y, z, resolved);
     }
 
     @Override
