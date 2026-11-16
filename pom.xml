@@ -41,6 +41,7 @@
     <module>tube-bootstrap</module>
     <module>tube-api</module>
     <module>tube-server</module>
+    <module>tube-bukkit</module>
     <module>versions</module>
     <module>tube-core</module>
     <module>tube-cli</module>
@@ -57,6 +58,8 @@
     <minestom.version>2026.10.07-26.2</minestom.version>
     <slf4j.version>2.0.17</slf4j.version>
     <logback.version>1.6.5</logback.version>
+    <paper-api.version>26.2.build.135-stable</paper-api.version>
+    <commons-lang3.version>3.18.0</commons-lang3.version>
     <adventure.version>5.2.0</adventure.version>
     <snakeyaml.version>2.7</snakeyaml.version>
     <gson.version>2.15.0</gson.version>
@@ -159,6 +162,11 @@
       <dependency>
         <groupId>space.nows</groupId>
         <artifactId>tube-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>space.nows</groupId>
+        <artifactId>tube-bukkit</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

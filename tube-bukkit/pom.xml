@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>space.nows</groupId>
+    <artifactId>tube-parent</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>tube-bukkit</artifactId>
+  <name>Tube Bukkit</name>
+  <description>Runs Bukkit plugins on top of the Tube API</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>space.nows</groupId>
+      <artifactId>tube-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <version>${paper-api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.maven</groupId>
+          <artifactId>maven-resolver-provider</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.resolver</groupId>
+          <artifactId>maven-resolver-connector-basic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.resolver</groupId>
+          <artifactId>maven-resolver-transport-http</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs combine.self="override">
+            <arg>-Xlint:all,-removal,-deprecation</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useManifestOnlyJar>false</useManifestOnlyJar>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

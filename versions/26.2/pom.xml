@@ -34,6 +34,10 @@
       <artifactId>tube-server</artifactId>
     </dependency>
     <dependency>
+      <groupId>space.nows</groupId>
+      <artifactId>tube-bukkit</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
