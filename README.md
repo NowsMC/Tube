@@ -2,7 +2,7 @@
 
 Minecraft server launcher built on modern Maven tooling instead of custom code.
 
-Supported Minecraft versions: 26.1.2, 26.2, 26.3
+Supported Minecraft versions: 26.1.2, 26.2
 
 ## License
 

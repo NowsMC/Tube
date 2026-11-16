@@ -12,7 +12,7 @@ class SupportedVersionsTest {
 
     @Test
     void listsConfiguredMinecraftVersions() {
-        assertEquals(List.of("26.1.2", "26.2", "26.3"), SupportedVersions.minecraft());
+        assertEquals(List.of("26.1.2", "26.2"), SupportedVersions.minecraft());
     }
 
     @Test
