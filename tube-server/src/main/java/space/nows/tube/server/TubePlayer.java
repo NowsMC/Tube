@@ -51,6 +51,26 @@ final class TubePlayer extends TubeLivingEntity implements Player {
     }
 
     @Override
+    public int food() {
+        return player.getFood();
+    }
+
+    @Override
+    public void setFood(int food) {
+        player.setFood(food);
+    }
+
+    @Override
+    public int level() {
+        return player.getLevel();
+    }
+
+    @Override
+    public void setLevel(int level) {
+        player.setLevel(level);
+    }
+
+    @Override
     public int heldSlot() {
         return player.getHeldSlot();
     }

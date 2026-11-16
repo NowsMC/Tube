@@ -29,6 +29,7 @@ record ServerSettings(
         GameMode gamemode,
         Difficulty difficulty,
         boolean hardcore,
+        boolean forceGamemode,
         boolean whiteList,
         boolean enforceWhitelist,
         boolean enableStatus,
@@ -63,6 +64,7 @@ record ServerSettings(
         defaults.put("gamemode", "survival");
         defaults.put("difficulty", "easy");
         defaults.put("hardcore", "false");
+        defaults.put("force-gamemode", "false");
         defaults.put("white-list", "false");
         defaults.put("enforce-whitelist", "false");
         defaults.put("enable-status", "true");
@@ -82,7 +84,6 @@ record ServerSettings(
         keys.put("enable-rcon", "false");
         keys.put("enforce-secure-profile", "true");
         keys.put("entity-broadcast-range-percentage", "100");
-        keys.put("force-gamemode", "false");
         keys.put("generate-structures", "true");
         keys.put("generator-settings", "{}");
         keys.put("initial-enabled-packs", "vanilla");
@@ -127,6 +128,7 @@ record ServerSettings(
                 gameMode(properties),
                 difficulty(properties),
                 bool(properties, "hardcore"),
+                bool(properties, "force-gamemode"),
                 bool(properties, "white-list"),
                 bool(properties, "enforce-whitelist"),
                 bool(properties, "enable-status"),

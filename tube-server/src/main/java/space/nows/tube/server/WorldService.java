@@ -42,6 +42,16 @@ final class WorldService implements WorldManager {
         return load(defaultName);
     }
 
+    Optional<World> loadExisting(String name) {
+        if (worlds.containsKey(name)) {
+            return Optional.of(worlds.get(name));
+        }
+        if (VALID_NAME.matcher(name).matches() && Files.isDirectory(root.resolve(name))) {
+            return Optional.of(load(name));
+        }
+        return Optional.empty();
+    }
+
     @Override
     public Optional<World> get(String name) {
         return Optional.ofNullable(worlds.get(name));

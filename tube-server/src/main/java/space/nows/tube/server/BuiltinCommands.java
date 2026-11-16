@@ -40,8 +40,8 @@ final class BuiltinCommands {
         });
 
         registry.register("save-all", Command.withPermission(ADMIN, (sender, args) -> {
-            server.worlds().saveAll();
-            sender.sendMessage("Saved " + server.worlds().all().size() + " world(s)");
+            server.saveAll();
+            sender.sendMessage("Saved " + server.worlds().all().size() + " world(s) and " + server.players().size() + " player(s)");
         }));
 
         registry.register("stop", Command.withPermission(ADMIN, (sender, args) -> {

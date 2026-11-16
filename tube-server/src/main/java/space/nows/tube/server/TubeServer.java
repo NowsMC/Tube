@@ -7,6 +7,7 @@ import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
+import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.server.ServerListPingEvent;
 import net.minestom.server.inventory.InventoryType;
@@ -38,6 +39,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -59,6 +61,7 @@ public final class TubeServer implements Server {
     private UserCache userCache;
     private Whitelist whitelist;
     private BanList bans;
+    private PlayerDataStore playerData;
     private AccessControl access;
     private WorldService worlds;
     private PlayerService players;
@@ -138,6 +141,12 @@ public final class TubeServer implements Server {
     }
 
     @Override
+    public void saveAll() {
+        worlds.saveAll();
+        MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(this::savePlayer);
+    }
+
+    @Override
     public void stop() {
         Thread thread = new Thread(() -> {
             shutdown();
@@ -170,6 +179,7 @@ public final class TubeServer implements Server {
         bans = new BanList(directory);
         access = new AccessControl(whitelist, bans);
         worlds = new WorldService(directory.resolve("worlds"), settings.levelName());
+        playerData = new PlayerDataStore(directory.resolve("worlds").resolve(settings.levelName()).resolve("playerdata"));
         players = new PlayerService(worlds, permissions);
         commands = new CommandService(players);
         scheduler = new SchedulerService();
@@ -212,16 +222,29 @@ public final class TubeServer implements Server {
                 return;
             }
             players.wrap(event.getPlayer());
+            var saved = playerData.spawn(event.getPlayer().getUuid()).flatMap(spawn -> worlds.loadExisting(spawn.world()).map(world -> Map.entry(world, spawn.position())));
+            if (saved.isPresent()) {
+                event.setSpawningInstance(worlds.instanceOf(saved.get().getKey()));
+                event.getPlayer().setRespawnPoint(saved.get().getValue());
+                return;
+            }
             Location location = worlds.defaultWorld().spawn();
             event.setSpawningInstance(worlds.instanceOf(location.world()));
             event.getPlayer().setRespawnPoint(new Pos(location.x(), location.y(), location.z()));
         });
 
         handler.addListener(PlayerSpawnEvent.class, event -> {
-            if (event.isFirstSpawn()) {
+            if (!event.isFirstSpawn()) {
+                return;
+            }
+            var data = playerData.read(event.getPlayer().getUuid());
+            data.ifPresent(tag -> playerData.apply(tag, event.getPlayer(), !settings.forceGamemode()));
+            if (data.isEmpty() || settings.forceGamemode()) {
                 event.getPlayer().setGameMode(net.minestom.server.entity.GameMode.valueOf(settings.gamemode().name()));
             }
         });
+
+        handler.addListener(PlayerDisconnectEvent.class, event -> savePlayer(event.getPlayer()));
 
         handler.addListener(ServerListPingEvent.class, event -> {
             if (!settings.enableStatus()) {
@@ -258,6 +281,17 @@ public final class TubeServer implements Server {
         });
     }
 
+    private void savePlayer(net.minestom.server.entity.Player player) {
+        if (player.getInstance() == null) {
+            return;
+        }
+        try {
+            playerData.save(player, worlds.of(player.getInstance()).name());
+        } catch (RuntimeException e) {
+            LOGGER.error("Could not save the data of {}", player.getUsername(), e);
+        }
+    }
+
     private void protectSpawn(Player player, space.nows.tube.api.World world, int x, int z, space.nows.tube.api.event.Cancellable event) {
         int radius = settings.spawnProtection();
         if (radius <= 0 || !world.equals(worlds.defaultWorld()) || permissions.isOp(player.uuid())) {
@@ -280,7 +314,7 @@ public final class TubeServer implements Server {
         }
         plugins.disableAll();
         try {
-            worlds.saveAll();
+            saveAll();
         } catch (RuntimeException e) {
             LOGGER.error("Could not save worlds", e);
         }
@@ -299,6 +333,7 @@ public final class TubeServer implements Server {
         autosave.scheduleWithFixedDelay(() -> {
             try {
                 worlds.saveAll();
+                scheduler.runSync(() -> MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(this::savePlayer));
             } catch (RuntimeException e) {
                 LOGGER.error("Autosave failed", e);
             }
