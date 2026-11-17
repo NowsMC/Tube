@@ -12,7 +12,19 @@ class SupportedVersionsTest {
 
     @Test
     void listsConfiguredMinecraftVersions() {
-        assertEquals(List.of("26.1.2", "26.2"), SupportedVersions.minecraft());
+        assertEquals(List.of("26.2"), SupportedVersions.minecraft());
+    }
+
+    @Test
+    void everyEnabledVersionIsBuilt() throws java.io.IOException {
+        String modules = java.nio.file.Files.readString(Path.of("..", "versions", "pom.xml"));
+        for (String version : SupportedVersions.minecraft()) {
+            assertTrue(modules.contains("<module>" + version + "</module>"), version + " is enabled but not built in versions/pom.xml");
+        }
+        java.util.regex.Matcher built = java.util.regex.Pattern.compile("<module>([^<]+)</module>").matcher(modules);
+        while (built.find()) {
+            assertTrue(SupportedVersions.minecraft().contains(built.group(1)), built.group(1) + " is built but not enabled in tube.minecraft.versions");
+        }
     }
 
     @Test

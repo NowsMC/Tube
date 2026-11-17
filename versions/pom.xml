@@ -24,8 +24,8 @@
     <tube.server.release.key>${tube.b2.releases}/${project.version}/${tube.minecraft.version}</tube.server.release.key>
   </properties>
 
+  <!-- A Minecraft version is turned on by listing its module here and in tube.minecraft.versions in the root pom. -->
   <modules>
-    <module>26.1.2</module>
     <module>26.2</module>
   </modules>
 
