@@ -58,6 +58,7 @@ public final class BuiltinCommands {
         all.add(new BanListCommand(bans));
         all.add(new WhitelistCommand(server, whitelist, profiles, targets, settingsFile, enforceWhitelist));
         all.add(new SayCommand(server));
+        all.add(new MeCommand(server));
         return all;
     }
 }
