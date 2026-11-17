@@ -65,6 +65,7 @@ public final class BuiltinCommands {
         all.add(new GiveCommand(targets));
         all.add(new ClearCommand(targets));
         all.add(new ExperienceCommand(targets));
+        all.add(new EffectCommand(targets));
         return all;
     }
 }
