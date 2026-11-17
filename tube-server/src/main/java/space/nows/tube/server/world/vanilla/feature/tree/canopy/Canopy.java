@@ -27,6 +27,7 @@ public abstract class Canopy {
         SHAPES.put("dark_oak_foliage_placer", DarkOakCanopy::new);
         SHAPES.put("jungle_foliage_placer", JungleCanopy::new);
         SHAPES.put("random_spread_foliage_placer", ScatterCanopy::new);
+        SHAPES.put("cherry_foliage_placer", CherryCanopy::new);
     }
 
     protected final IntSampler radius;
