@@ -76,6 +76,7 @@ public final class BuiltinCommands {
         all.add(new WorldBorderCommand(targets));
         all.add(new SetBlockCommand(targets));
         all.add(new FillCommand(targets));
+        all.add(new CloneCommand(targets));
         return all;
     }
 }
