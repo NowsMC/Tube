@@ -15,6 +15,7 @@ import space.nows.tube.server.world.vanilla.feature.kind.PickOneFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SeagrassFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SequenceFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SimpleBlockFeature;
+import space.nows.tube.server.world.vanilla.feature.kind.SpringFeature;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementStep;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementSteps;
 
@@ -50,6 +51,7 @@ public final class FeatureRegistry implements DecorationSource {
         kinds.put("disk", (config, source) -> DiskFeature.read(config));
         kinds.put("seagrass", (config, source) -> SeagrassFeature.read(config));
         kinds.put("kelp", (config, source) -> new KelpFeature());
+        kinds.put("spring_feature", (config, source) -> SpringFeature.read(config));
     }
 
     public synchronized Decoration placed(String id) {
