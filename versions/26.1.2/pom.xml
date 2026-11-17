@@ -16,6 +16,9 @@
   <description>Tube server for Minecraft 26.1.2</description>
 
   <properties>
+    <tube.minecraft.version>26.1.2</tube.minecraft.version>
+    <tube.server.release.files>verify</tube.server.release.files>
+    <tube.server.release.upload>deploy</tube.server.release.upload>
     <minestom.version>2026.07.01-26.1.2</minestom.version>
   </properties>
 

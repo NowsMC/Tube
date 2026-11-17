@@ -87,6 +87,15 @@
     <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
     <flatten-maven-plugin.version>1.9.0</flatten-maven-plugin.version>
+    <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
+    <checksum-maven-plugin.version>1.11</checksum-maven-plugin.version>
+    <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+    <s3-storage-wagon.version>2.3</s3-storage-wagon.version>
+    <tube.b2.bucket>nows-space-files</tube.b2.bucket>
+    <tube.b2.maven>maven</tube.b2.maven>
+    <tube.b2.releases>releases/tube</tube.b2.releases>
+    <tube.b2.region>us-east-005</tube.b2.region>
+    <tube.b2.endpoint>https://s3.us-east-005.backblazeb2.com</tube.b2.endpoint>
     <maven.deploy.skip>false</maven.deploy.skip>
     <gpg.skip>${maven.deploy.skip}</gpg.skip>
   </properties>
@@ -240,7 +249,22 @@
     </dependencies>
   </dependencyManagement>
 
+  <distributionManagement>
+    <repository>
+      <id>nows-b2</id>
+      <url>s3://${tube.b2.bucket}/${tube.b2.maven}</url>
+    </repository>
+  </distributionManagement>
+
   <build>
+    <extensions>
+      <extension>
+        <groupId>com.gkatzioura.maven.cloud</groupId>
+        <artifactId>s3-storage-wagon</artifactId>
+        <version>${s3-storage-wagon.version}</version>
+      </extension>
+    </extensions>
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -312,6 +336,57 @@
       <id>release</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>${properties-maven-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>read-env-file</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>read-project-properties</goal>
+                </goals>
+                <configuration>
+                  <files>
+                    <file>${maven.multiModuleProjectDirectory}/.env</file>
+                  </files>
+                  <quiet>true</quiet>
+                </configuration>
+              </execution>
+              <execution>
+                <id>b2-credentials</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>set-system-properties</goal>
+                </goals>
+                <configuration>
+                  <properties>
+                    <property>
+                      <name>aws.accessKeyId</name>
+                      <value>${keyID}</value>
+                    </property>
+                    <property>
+                      <name>aws.secretKey</name>
+                      <value>${applicationKey}</value>
+                    </property>
+                    <property>
+                      <name>aws.region</name>
+                      <value>${tube.b2.region}</value>
+                    </property>
+                    <property>
+                      <name>S3_ENDPOINT</name>
+                      <value>${tube.b2.endpoint}</value>
+                    </property>
+                    <property>
+                      <name>S3_PATH_STYLE_ENABLED</name>
+                      <value>true</value>
+                    </property>
+                  </properties>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>flatten-maven-plugin</artifactId>

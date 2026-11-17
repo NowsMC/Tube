@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Import the signing key
+        run: echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: Write the B2 key
+        run: printf 'keyID=%s\nkeyName=%s\napplicationKey=%s\n' "$keyID" "$keyName" "$applicationKey" > .env
+        env:
+          keyID: ${{ secrets.keyID }}
+          keyName: ${{ secrets.keyName }}
+          applicationKey: ${{ secrets.applicationKey }}
+
+      - name: Deploy to files.nows.space
+        run: ./mvnw -Prelease -Drevision="${GITHUB_REF_NAME#v}" deploy
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Create the GitHub release
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="## $version" 'index($0, v) == 1 {on = 1; next} /^## / {on = 0} on' CHANGELOG.md > notes.md
+          gh release create "$GITHUB_REF_NAME" --title "Tube $version" --notes-file notes.md versions/*/target/release/*.jar
+        env:
+          GH_TOKEN: ${{ github.token }}
