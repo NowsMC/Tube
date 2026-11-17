@@ -9,6 +9,7 @@ import space.nows.tube.server.world.vanilla.WorldgenData;
 import space.nows.tube.server.world.vanilla.feature.kind.BlockColumnFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.ChanceListFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.DecorationSource;
+import space.nows.tube.server.world.vanilla.feature.kind.DiskFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.PickOneFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SequenceFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SimpleBlockFeature;
@@ -44,6 +45,7 @@ public final class FeatureRegistry implements DecorationSource {
         kinds.put("random_boolean_selector", PickOneFeature::coinFlip);
         kinds.put("weighted_random_selector", PickOneFeature::weighted);
         kinds.put("sequence", SequenceFeature::read);
+        kinds.put("disk", (config, source) -> DiskFeature.read(config));
     }
 
     public synchronized Decoration placed(String id) {
