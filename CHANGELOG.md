@@ -5,6 +5,17 @@
 ### Server
 
 - Shows a single "Preparing libraries..." line on first start instead of one line per downloaded library. ([`a0e20a5`](https://github.com/NowsMC/Tube/commit/a0e20a574135a6dfea001723ceb285b4985bf6e9))
+- Downloads the world generation data from Mojang's server jar together with the recipes. ([`05de9a6`](https://github.com/NowsMC/Tube/commit/05de9a63e1dfe315a4a5dc88b9dea23168bedc1e))
+
+### Worlds
+
+- Normal worlds are generated from Minecraft's own world generation data. Terrain, biomes and surface blocks are the same as in vanilla for the same seed. ([`21d1df7`](https://github.com/NowsMC/Tube/commit/21d1df7d14f1cd60c25a964e2f13ef20634d7de6))
+- Caves, ravines, underground water and lava, and copper and iron veins follow vanilla. ([`3d1b3cb`](https://github.com/NowsMC/Tube/commit/3d1b3cbdb4af920ad487a745ce697ddc911eef6b), [`eb01a55`](https://github.com/NowsMC/Tube/commit/eb01a559f2ef4da463250110e18598f2f2d31b01))
+- Trees, ores, flowers, grass, snow and ice are placed by the vanilla rules, and trees grow across chunk borders without being cut. ([`39da44c`](https://github.com/NowsMC/Tube/commit/39da44cb8dd3312afca165414a46d98f1606a740), [`27ed448`](https://github.com/NowsMC/Tube/commit/27ed4486b652a8dceade58295909cb18eb9a1dc3))
+
+### Not implemented yet
+
+- Lakes, geodes, dripstone, monster rooms, underwater magma and structures in generated worlds. Trees and ores do not appear at the same positions as in vanilla.
 
 ## 0.2611.0 - 2026-11-17
 
