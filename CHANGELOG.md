@@ -43,6 +43,7 @@ First release, for Minecraft 26.2.
 ### Plugins
 
 - Tube has its own plugin API for commands, events, the scheduler, worlds, players, inventories, items, entities, configuration (YAML, JSON and TOML), plugin channels, resource packs, skins and logins.
+- Plugins can change damage, death drops and XP, block drops, explosions, crafting, mob spawns, the world time and player respawn points.
 - Bukkit plugins run through Tube's own `org.bukkit` translator. This is not the real Bukkit, and plugins that need NMS, CraftBukkit or Paper-only APIs do not work.
 
 ### Not implemented yet
