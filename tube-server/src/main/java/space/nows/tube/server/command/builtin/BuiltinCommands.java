@@ -64,6 +64,7 @@ public final class BuiltinCommands {
         all.add(new DefaultGameModeCommand(server));
         all.add(new GiveCommand(targets));
         all.add(new ClearCommand(targets));
+        all.add(new ExperienceCommand(targets));
         return all;
     }
 }
