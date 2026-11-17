@@ -19,6 +19,7 @@ import net.minestom.server.network.packet.client.play.ClientCloseWindowPacket;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.inventory.PlayerInventoryUtils;
 
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
 public final class CraftingGrids {
@@ -26,9 +27,15 @@ public final class CraftingGrids {
     private static final Tag<Boolean> TABLE = Tag.Transient("tube:crafting_table");
 
     private final Supplier<RecipeBook> recipes;
+    private final BiPredicate<Player, ItemStack> allowCraft;
 
     public CraftingGrids(Supplier<RecipeBook> recipes) {
+        this(recipes, (player, result) -> true);
+    }
+
+    public CraftingGrids(Supplier<RecipeBook> recipes, BiPredicate<Player, ItemStack> allowCraft) {
         this.recipes = recipes;
+        this.allowCraft = allowCraft;
     }
 
     private record Grid(AbstractInventory inventory, int resultSlot, int firstSlot, int size) {
@@ -119,6 +126,10 @@ public final class CraftingGrids {
         }
         event.setCancelled(true);
         refresh(grid);
+        ItemStack offered = grid.inventory().getItemStack(grid.resultSlot());
+        if (offered.isAir() || !allowCraft.test(player, offered)) {
+            return;
+        }
         switch (click) {
             case Click.Left ignored -> takeToCursor(player, grid);
             case Click.Right ignored -> takeToCursor(player, grid);

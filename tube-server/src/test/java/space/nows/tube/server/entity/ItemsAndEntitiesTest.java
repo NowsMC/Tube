@@ -213,6 +213,38 @@ class ItemsAndEntitiesTest {
         assertEquals(List.of("spawn:minecraft:zombie", "damage:4.0", "damage:1000.0", "death:minecraft:zombie"), log);
     }
 
+    @Test
+    void pluginsChangeDamageAndDrops(Env env) {
+        worlds = new WorldService(directory, "main");
+        players = new PlayerService(worlds, new PermissionService(directory));
+        var world = worlds.defaultWorld();
+        var bridge = new EventBridge(bus, players, worlds);
+        bridge.setDeathDrops(entity -> new space.nows.tube.server.event.DeathDrops.Drops(
+                List.of(net.minestom.server.item.ItemStack.of(net.minestom.server.item.Material.ROTTEN_FLESH, 2)), 5));
+        bridge.install(MinecraftServer.getGlobalEventHandler());
+        List<String> drops = new ArrayList<>();
+        bus.subscribe(EntityDamageEvent.class, event -> event.setDamage(event.damage() * 2));
+        bus.subscribe(EntityDeathEvent.class, event -> {
+            event.drops().forEach(item -> drops.add(item.type() + "x" + item.amount()));
+            event.drops().clear();
+            event.drops().add(new space.nows.tube.api.inventory.ItemStack("minecraft:diamond", 1, null, List.of(), java.util.Map.of(), 0));
+            event.setExperience(0);
+        });
+
+        var zombie = (LivingEntity) world.spawn("zombie", new Location(world, 4, 42, 4));
+        ((MinestomLivingEntity) zombie).minestom().damage(DamageType.GENERIC, 3f);
+        assertEquals(zombie.maxHealth() - 6, zombie.health());
+
+        ((MinestomLivingEntity) zombie).minestom().kill();
+        var instance = ((MinestomWorld) worlds.defaultWorld()).instance();
+        boolean diamond = instance.getEntities().stream().anyMatch(entity -> entity instanceof net.minestom.server.entity.ItemEntity item
+                && item.getItemStack().material() == net.minestom.server.item.Material.DIAMOND);
+        boolean orb = instance.getEntities().stream().anyMatch(net.minestom.server.entity.ExperienceOrb.class::isInstance);
+        assertTrue(drops.contains("minecraft:rotten_fleshx2"), drops::toString);
+        assertTrue(diamond);
+        assertFalse(orb);
+    }
+
     private static Object playerHandle(MinestomPlayer player) {
         return player.minestom();
     }

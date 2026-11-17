@@ -47,6 +47,7 @@ public final class EventBridge {
     private final EventBus bus;
     private final PlayerService players;
     private final WorldService worlds;
+    private volatile DeathDrops deathDrops = DeathDrops.NONE;
 
     public EventBridge(EventBus bus, PlayerService players, WorldService worlds) {
         this.bus = bus;
@@ -110,6 +111,8 @@ public final class EventBridge {
                     pos.blockX(), pos.blockY(), pos.blockZ(), BlockMapper.fromMinestom(event.getBlock())));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
+            } else if (!posted.dropItems()) {
+                event.getPlayer().setTag(BlockBreakDrops.SUPPRESSED_AT, pos);
             }
         });
 
@@ -233,19 +236,75 @@ public final class EventBridge {
                 bus.post(new InventoryCloseEvent(players.wrap(event.getPlayer()), new MinestomInventory(event.getInventory()))));
 
         node.addListener(net.minestom.server.event.entity.EntityDamageEvent.class, event -> {
-            var posted = bus.post(new EntityDamageEvent((LivingEntity) worlds.wrap(event.getEntity()), event.getDamage().getAmount(), event.getDamage().getType().key().asString()));
+            var damage = event.getDamage();
+            var attacker = damage.getAttacker() == null ? null : worlds.wrap(damage.getAttacker());
+            var posted = bus.post(new EntityDamageEvent((LivingEntity) worlds.wrap(event.getEntity()), damage.getAmount(),
+                    damage.getType().key().asString(), attacker));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
+            } else if (posted.damage() != damage.getAmount()) {
+                damage.setAmount((float) posted.damage());
             }
         });
 
-        node.addListener(net.minestom.server.event.entity.EntityDeathEvent.class, event ->
-                bus.post(new EntityDeathEvent((LivingEntity) worlds.wrap(event.getEntity()))));
+        node.addListener(net.minestom.server.event.entity.EntityDeathEvent.class, event -> {
+            if (event.getEntity() instanceof net.minestom.server.entity.LivingEntity living) {
+                death(living);
+            }
+        });
 
         node.addListener(net.minestom.server.event.entity.EntitySpawnEvent.class, event -> {
             if (!(event.getEntity() instanceof net.minestom.server.entity.Player)) {
-                bus.post(new EntitySpawnEvent(worlds.wrap(event.getEntity())));
+                var posted = bus.post(new EntitySpawnEvent(worlds.wrap(event.getEntity())));
+                if (posted.isCancelled()) {
+                    event.getEntity().scheduleNextTick(net.minestom.server.entity.Entity::remove);
+                }
             }
         });
+    }
+
+    public void setDeathDrops(DeathDrops deathDrops) {
+        this.deathDrops = deathDrops;
+    }
+
+    private void death(net.minestom.server.entity.LivingEntity entity) {
+        DeathDrops.Drops drops = deathDrops.collect(entity);
+        java.util.List<space.nows.tube.api.inventory.ItemStack> mapped = new java.util.ArrayList<>();
+        for (var item : drops.items()) {
+            mapped.add(space.nows.tube.server.inventory.ItemMapper.fromMinestom(item));
+        }
+        var posted = bus.post(new EntityDeathEvent((LivingEntity) worlds.wrap(entity), mapped, drops.experience()));
+        var instance = entity.getInstance();
+        if (instance == null) {
+            return;
+        }
+        boolean[] used = new boolean[mapped.size()];
+        var position = entity.getPosition().add(0, 0.5, 0);
+        for (var item : posted.drops()) {
+            net.minestom.server.item.ItemStack stack = null;
+            for (int i = 0; i < mapped.size(); i++) {
+                if (!used[i] && mapped.get(i).equals(item)) {
+                    used[i] = true;
+                    stack = drops.items().get(i);
+                    break;
+                }
+            }
+            if (stack == null) {
+                stack = space.nows.tube.server.inventory.ItemMapper.toMinestom(item);
+            }
+            if (!stack.isAir()) {
+                var dropped = new net.minestom.server.entity.ItemEntity(stack);
+                dropped.setPickupDelay(java.time.Duration.ofMillis(500));
+                var random = java.util.concurrent.ThreadLocalRandom.current();
+                dropped.setVelocity(new net.minestom.server.coordinate.Vec(random.nextDouble(-1, 1), 3, random.nextDouble(-1, 1)));
+                dropped.setInstance(instance, position);
+            }
+        }
+        int experience = posted.experience();
+        while (experience > 0) {
+            int orb = Math.min(experience, 37);
+            experience -= orb;
+            new net.minestom.server.entity.ExperienceOrb((short) orb).setInstance(instance, position);
+        }
     }
 }

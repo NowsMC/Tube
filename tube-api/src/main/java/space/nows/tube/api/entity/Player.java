@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import space.nows.tube.api.ResourcePack;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.inventory.Inventory;
+import space.nows.tube.api.world.Location;
 
 import java.net.InetSocketAddress;
 import java.util.Optional;
@@ -27,6 +28,22 @@ public interface Player extends LivingEntity, CommandSender {
     int level();
 
     void setLevel(int level);
+
+    float experienceProgress();
+
+    void setExperienceProgress(float progress);
+
+    float saturation();
+
+    void setSaturation(float saturation);
+
+    boolean allowFlight();
+
+    void setAllowFlight(boolean allowFlight);
+
+    Optional<Location> respawnPoint();
+
+    void setRespawnPoint(Location location);
 
     int heldSlot();
 

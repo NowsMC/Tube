@@ -24,6 +24,10 @@ public interface World {
 
     Location spawn();
 
+    long time();
+
+    void setTime(long time);
+
     Block block(int x, int y, int z);
 
     void setBlock(int x, int y, int z, Block block);

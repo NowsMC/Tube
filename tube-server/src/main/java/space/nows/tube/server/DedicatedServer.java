@@ -251,9 +251,12 @@ public final class DedicatedServer implements Server {
         new LoginHandler(settings, new AccessControl(whitelist, bans), userCache, players, playerData, worlds, resourcePacks.pack(), this::savePlayer).install(handler);
         resourcePacks.install(handler);
         new StatusResponder(settings, events, name() + " " + minecraftVersion()).install(handler);
-        new EventBridge(events, players, worlds).install(handler);
+        EventBridge bridge = new EventBridge(events, players, worlds);
+        bridge.install(handler);
         new ItemDrops(events, players, worlds).install(handler);
-        new SurvivalRules(directory.resolve("cache"), minecraftVersion(), worlds, Math.min(6, settings.level().viewDistance())).install(handler);
+        SurvivalRules survival = new SurvivalRules(directory.resolve("cache"), minecraftVersion(), worlds, events, Math.min(6, settings.level().viewDistance()));
+        survival.install(handler);
+        bridge.setDeathDrops(survival.deathDrops());
         new SpawnProtection(settings.level().spawnProtection(), worlds, permissions).install(events);
         ConnectionLog.install(events, settings.connection().logIps());
         new PacketRateLimiter(settings.network().rateLimit(), System::nanoTime).install(handler);

@@ -8,6 +8,7 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
+import space.nows.tube.server.event.BlockBreakDrops;
 import space.nows.tube.server.gameplay.block.BlockDropper;
 import space.nows.tube.server.gameplay.loot.LootTables;
 
@@ -26,6 +27,10 @@ final class BlockDrops {
             }
             Player player = event.getPlayer();
             if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
+                return;
+            }
+            if (event.getBlockPosition().equals(player.getTag(BlockBreakDrops.SUPPRESSED_AT))) {
+                player.removeTag(BlockBreakDrops.SUPPRESSED_AT);
                 return;
             }
             Block block = BlockDropper.lootState(event.getBlock());

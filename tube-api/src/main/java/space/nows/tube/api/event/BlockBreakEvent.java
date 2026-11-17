@@ -13,6 +13,7 @@ public final class BlockBreakEvent implements Cancellable {
     private final int z;
     private final Block block;
     private boolean cancelled;
+    private boolean dropItems = true;
 
     public BlockBreakEvent(Player player, World world, int x, int y, int z, Block block) {
         this.player = player;
@@ -45,6 +46,14 @@ public final class BlockBreakEvent implements Cancellable {
 
     public Block block() {
         return block;
+    }
+
+    public boolean dropItems() {
+        return dropItems;
+    }
+
+    public void setDropItems(boolean dropItems) {
+        this.dropItems = dropItems;
     }
 
     @Override

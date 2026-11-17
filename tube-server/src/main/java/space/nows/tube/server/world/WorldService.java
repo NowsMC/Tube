@@ -161,6 +161,10 @@ public final class WorldService implements WorldManager {
         return new MinestomEntity(entity, this);
     }
 
+    public Optional<MinestomWorld> find(Instance instance) {
+        return Optional.ofNullable(byInstance.get(instance));
+    }
+
     public MinestomWorld of(Instance instance) {
         MinestomWorld world = byInstance.get(instance);
         if (world == null) {

@@ -2,6 +2,9 @@ package space.nows.tube.server.gameplay;
 
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
+import space.nows.tube.api.event.CraftItemEvent;
+import space.nows.tube.api.event.EventBus;
+import space.nows.tube.server.event.DeathDrops;
 import space.nows.tube.server.gameplay.block.BlockInteractions;
 import space.nows.tube.server.gameplay.crafting.CraftingGrids;
 import space.nows.tube.server.gameplay.crafting.Furnaces;
@@ -13,6 +16,7 @@ import space.nows.tube.server.gameplay.physics.Fluids;
 import space.nows.tube.server.gameplay.physics.Growth;
 import space.nows.tube.server.gameplay.physics.ItemUse;
 import space.nows.tube.server.gameplay.physics.NetherPortals;
+import space.nows.tube.server.inventory.ItemMapper;
 import space.nows.tube.server.world.WorldService;
 
 import java.nio.file.Path;
@@ -22,13 +26,15 @@ public final class SurvivalRules {
     private final Path cache;
     private final String minecraftVersion;
     private final WorldService worlds;
+    private final EventBus events;
     private final int simulationDistance;
     private volatile RecipeBook recipes = RecipeBook.EMPTY;
 
-    public SurvivalRules(Path cache, String minecraftVersion, WorldService worlds, int simulationDistance) {
+    public SurvivalRules(Path cache, String minecraftVersion, WorldService worlds, EventBus events, int simulationDistance) {
         this.cache = cache;
         this.minecraftVersion = minecraftVersion;
         this.worlds = worlds;
+        this.events = events;
         this.simulationDistance = simulationDistance;
     }
 
@@ -41,13 +47,14 @@ public final class SurvivalRules {
         BlockInteractions.install(handler);
         BlockDrops.install(handler);
         Containers.install(handler);
-        new CraftingGrids(this::recipes).install(handler);
+        Explosions.configure(events, worlds);
+        new CraftingGrids(this::recipes, (player, result) -> !events.post(new CraftItemEvent(
+                (space.nows.tube.api.entity.Player) worlds.wrap(player), ItemMapper.fromMinestom(result))).isCancelled()).install(handler);
         new Furnaces(this::recipes).install(handler);
         Combat.install(handler);
         Falling.install(handler);
         Hunger.install(handler);
         Experience.install(handler);
-        DeathDrops.install(handler);
         new Beds(worlds).install(handler);
         Mobs.install(handler);
         Hazards.install();
@@ -57,6 +64,10 @@ public final class SurvivalRules {
         new Fluids().install(handler);
         new FallingBlocks().install(handler);
         new Growth(simulationDistance).install(handler);
+    }
+
+    public DeathDrops deathDrops() {
+        return new DeathLoot();
     }
 
     public static void prepareForSave(Player player) {

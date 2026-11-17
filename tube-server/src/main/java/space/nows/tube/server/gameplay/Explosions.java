@@ -16,10 +16,16 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
+import space.nows.tube.api.event.EventBus;
+import space.nows.tube.api.event.ExplosionEvent;
+import space.nows.tube.api.world.Location;
 import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.world.WorldService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class Explosions {
@@ -29,18 +35,49 @@ public final class Explosions {
     private Explosions() {
     }
 
+    private static volatile EventBus events;
+    private static volatile WorldService worlds;
+
+    static void configure(EventBus bus, WorldService worldService) {
+        events = bus;
+        worlds = worldService;
+    }
+
     public static void explode(Instance instance, Point center, float power, boolean breakBlocks, Entity source) {
         List<Point> destroyed = breakBlocks ? affectedBlocks(instance, center, power) : List.of();
+        EventBus bus = events;
+        WorldService worldService = worlds;
+        var world = worldService == null ? java.util.Optional.<space.nows.tube.server.world.MinestomWorld>empty() : worldService.find(instance);
+        if (bus != null && world.isPresent()) {
+            List<ExplosionEvent.BlockPosition> positions = new ArrayList<>();
+            for (Point point : destroyed) {
+                positions.add(new ExplosionEvent.BlockPosition(point.blockX(), point.blockY(), point.blockZ()));
+            }
+            var posted = bus.post(new ExplosionEvent(new Location(world.get(), center.x(), center.y(), center.z()),
+                    source == null ? null : worldService.wrap(source), power, positions));
+            if (posted.isCancelled()) {
+                return;
+            }
+            power = posted.power();
+            Set<ExplosionEvent.BlockPosition> allowed = new HashSet<>(posted.blocks());
+            destroyed = destroyed.stream().filter(point -> allowed.contains(
+                    new ExplosionEvent.BlockPosition(point.blockX(), point.blockY(), point.blockZ()))).toList();
+        }
+        if (power <= 0) {
+            return;
+        }
         List<Block> previous = new ArrayList<>();
         for (Point point : destroyed) {
             previous.add(instance.getBlock(point));
         }
+        List<Point> removed = destroyed;
         new Explosion((float) center.x(), (float) center.y(), (float) center.z(), power) {
             @Override
             protected List<Point> prepare(Instance ignored) {
-                return destroyed;
+                return removed;
             }
         }.apply(instance);
+        float strength = power;
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < destroyed.size(); i++) {
             Point point = destroyed.get(i);
@@ -52,14 +89,14 @@ public final class Explosions {
                     }
                 }
             }
-            if (random.nextFloat() < 1f / power) {
+            if (random.nextFloat() < 1f / strength) {
                 LootTables.Context context = new LootTables.Context(ItemStack.AIR, block, false, false, false, null, false, random);
                 for (ItemStack drop : LootTables.forBlock(block, context)) {
                     Drops.spawn(instance, point.add(0.5, 0.5, 0.5), drop);
                 }
             }
         }
-        double radius = power * 2;
+        double radius = strength * 2;
         for (Entity entity : instance.getNearbyEntities(center, radius)) {
             Vec offset = entity.getPosition().add(0, entity.getEyeHeight(), 0).asVec().sub(center);
             double distance = offset.length() / radius;

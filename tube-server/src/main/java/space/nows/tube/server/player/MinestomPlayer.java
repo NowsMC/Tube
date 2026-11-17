@@ -98,6 +98,59 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     }
 
     @Override
+    public float experienceProgress() {
+        return player.getExp();
+    }
+
+    @Override
+    public void setExperienceProgress(float progress) {
+        player.setExp(Math.clamp(progress, 0f, 1f));
+    }
+
+    @Override
+    public float saturation() {
+        return player.getFoodSaturation();
+    }
+
+    @Override
+    public void setSaturation(float saturation) {
+        player.setFoodSaturation(Math.clamp(saturation, 0f, 20f));
+    }
+
+    @Override
+    public boolean allowFlight() {
+        return player.isAllowFlying();
+    }
+
+    @Override
+    public void setAllowFlight(boolean allowFlight) {
+        player.setAllowFlying(allowFlight);
+        if (!allowFlight) {
+            player.setFlying(false);
+        }
+    }
+
+    @Override
+    public Optional<space.nows.tube.api.world.Location> respawnPoint() {
+        RespawnPoint point = player.getTag(RespawnPoint.TAG);
+        if (point == null) {
+            return Optional.empty();
+        }
+        return worlds.get(point.world()).map(world ->
+                new space.nows.tube.api.world.Location(world, point.position().x(), point.position().y(), point.position().z()));
+    }
+
+    @Override
+    public void setRespawnPoint(space.nows.tube.api.world.Location location) {
+        if (location == null) {
+            player.removeTag(RespawnPoint.TAG);
+            return;
+        }
+        player.setTag(RespawnPoint.TAG, new RespawnPoint(location.world().name(),
+                new net.minestom.server.coordinate.Pos(location.x(), location.y(), location.z())));
+    }
+
+    @Override
     public int heldSlot() {
         return player.getHeldSlot();
     }

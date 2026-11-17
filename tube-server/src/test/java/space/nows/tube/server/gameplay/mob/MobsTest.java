@@ -6,7 +6,6 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.entity.GameMode;
-import net.minestom.server.entity.ItemEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.instance.Instance;
@@ -88,10 +87,7 @@ class MobsTest {
         setup(env);
         Mob cow = new Mob(Mob.Kind.COW);
         cow.setInstance(instance, new Pos(10, 40, 10)).join();
-        cow.kill();
-        ticks(env, 2);
-        boolean beef = instance.getEntities().stream().filter(ItemEntity.class::isInstance)
-                .anyMatch(entity -> ((ItemEntity) entity).getItemStack().material() == Material.BEEF);
+        boolean beef = Mobs.loot(cow).items().stream().anyMatch(item -> item.material() == Material.BEEF);
         assertTrue(beef);
     }
 }

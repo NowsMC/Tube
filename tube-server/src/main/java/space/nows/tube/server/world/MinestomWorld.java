@@ -76,6 +76,16 @@ public final class MinestomWorld implements World {
     }
 
     @Override
+    public long time() {
+        return instance.getTime();
+    }
+
+    @Override
+    public void setTime(long time) {
+        instance.setTime(time);
+    }
+
+    @Override
     public boolean isChunkLoaded(int chunkX, int chunkZ) {
         return instance.getChunk(chunkX, chunkZ) != null;
     }

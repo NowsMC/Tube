@@ -5,7 +5,6 @@ import net.minestom.server.color.DyeColor;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
-import net.minestom.server.entity.ExperienceOrb;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
@@ -13,7 +12,6 @@ import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.entity.metadata.animal.SheepMeta;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.entity.EntityDamageEvent;
-import net.minestom.server.event.entity.EntityDeathEvent;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
@@ -22,6 +20,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.world.Difficulty;
+import space.nows.tube.server.event.DeathDrops;
 import space.nows.tube.server.gameplay.Durability;
 import space.nows.tube.server.gameplay.block.BlockDropper;
 import space.nows.tube.server.gameplay.loot.LootTables;
@@ -46,11 +45,6 @@ public final class Mobs {
 
     public static void install(GlobalEventHandler handler) {
         Archery.install(handler);
-        handler.addListener(EntityDeathEvent.class, event -> {
-            if (event.getEntity() instanceof Mob mob) {
-                dropLoot(mob);
-            }
-        });
         handler.addListener(EntityDamageEvent.class, event -> {
             if (!event.isCancelled() && event.getEntity() instanceof Mob mob) {
                 mob.panic(event.getDamage().getAttacker());
@@ -64,11 +58,7 @@ public final class Mobs {
         return entity instanceof Mob mob && mob.kind().hostile();
     }
 
-    private static void dropLoot(Mob mob) {
-        Instance instance = mob.getInstance();
-        if (instance == null) {
-            return;
-        }
+    public static DeathDrops.Drops loot(Mob mob) {
         Long hit = mob.getTag(LAST_PLAYER_HIT);
         Player killer = mob.getTag(LAST_PLAYER);
         boolean byPlayer = hit != null && killer != null && mob.getAliveTicks() - hit < 100;
@@ -77,13 +67,9 @@ public final class Mobs {
         if (mob.getEntityMeta() instanceof SheepMeta sheep) {
             context = context.withSheep(sheep.getColor().name().toLowerCase(java.util.Locale.ROOT), sheep.isSheared());
         }
-        for (ItemStack item : LootTables.forEntity(mob.getEntityType().key().asString(), context)) {
-            BlockDropper.spawn(instance, mob.getPosition().add(0, 0.5, 0), item);
-        }
-        if (byPlayer) {
-            int xp = mob.kind().hostile() ? 5 : 1 + ThreadLocalRandom.current().nextInt(3);
-            new ExperienceOrb((short) xp).setInstance(instance, mob.getPosition().add(0, 0.5, 0));
-        }
+        List<ItemStack> items = LootTables.forEntity(mob.getEntityType().key().asString(), context);
+        int experience = !byPlayer ? 0 : mob.kind().hostile() ? 5 : 1 + ThreadLocalRandom.current().nextInt(3);
+        return new DeathDrops.Drops(items, experience);
     }
 
     private static void interact(PlayerEntityInteractEvent event) {
