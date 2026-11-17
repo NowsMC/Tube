@@ -11,6 +11,10 @@ public interface Command {
         return null;
     }
 
+    default List<String> suggest(CommandSender sender, List<String> args) {
+        return List.of();
+    }
+
     static Command withPermission(String permission, Command delegate) {
         return new Command() {
             @Override
@@ -21,6 +25,11 @@ public interface Command {
             @Override
             public String permission() {
                 return permission;
+            }
+
+            @Override
+            public List<String> suggest(CommandSender sender, List<String> args) {
+                return delegate.suggest(sender, args);
             }
         };
     }
