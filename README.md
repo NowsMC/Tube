@@ -8,7 +8,7 @@ Tube plays like a normal survival server and keeps the files server admins alrea
 
 Not implemented yet: the End, villages and other structures, redstone circuits, enchanting, brewing and advancements.
 
-Supported Minecraft versions: 26.1.2, 26.2
+Supported Minecraft version: 26.2
 
 ## Bukkit
 
