@@ -15,6 +15,7 @@ public final class TreeDecorators {
     static {
         KINDS.put("trunk_vine", json -> new TrunkVines());
         KINDS.put("leave_vine", json -> new HangingVines(json.get("probability").getAsFloat()));
+        KINDS.put("cocoa", json -> new CocoaPods(json.get("probability").getAsFloat()));
     }
 
     private TreeDecorators() {
