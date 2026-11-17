@@ -22,6 +22,7 @@ public abstract class Trunk {
         SHAPES.put("giant_trunk_placer", WideTrunk::new);
         SHAPES.put("mega_jungle_trunk_placer", WideBranchingTrunk::new);
         SHAPES.put("dark_oak_trunk_placer", DarkOakTrunk::new);
+        SHAPES.put("bending_trunk_placer", BentTrunk::new);
     }
 
     private final int baseHeight;
