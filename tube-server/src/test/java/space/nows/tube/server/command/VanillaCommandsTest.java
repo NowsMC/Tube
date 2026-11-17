@@ -14,6 +14,7 @@ import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.entity.GameMode;
 import space.nows.tube.server.access.PermissionService;
+import space.nows.tube.server.command.builtin.BuiltinCommands;
 import space.nows.tube.server.player.MinestomPlayer;
 import space.nows.tube.server.player.PlayerService;
 import space.nows.tube.server.world.MinestomWorld;
@@ -53,7 +54,7 @@ class VanillaCommandsTest {
             }
             return null;
         });
-        new VanillaCommands(server).register(commands);
+        new BuiltinCommands(server, commands, null, null, null, null, false).registerAll();
         return new Setup(commands, player, permissions);
     }
 

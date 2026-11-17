@@ -30,10 +30,8 @@ import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.access.Profiles;
 import space.nows.tube.server.access.UserCache;
 import space.nows.tube.server.access.Whitelist;
-import space.nows.tube.server.command.AccessCommands;
-import space.nows.tube.server.command.BuiltinCommands;
+import space.nows.tube.server.command.builtin.BuiltinCommands;
 import space.nows.tube.server.command.CommandService;
-import space.nows.tube.server.command.VanillaCommands;
 import space.nows.tube.server.config.ServerProperties;
 import space.nows.tube.server.config.ServerSettings;
 import space.nows.tube.server.connection.ConnectionLog;
@@ -301,9 +299,7 @@ public final class DedicatedServer implements Server {
         channels.install(handler);
 
         Profiles profiles = new Profiles(this::players, userCache);
-        BuiltinCommands.register(this, commands, profiles);
-        new VanillaCommands(this).register(commands);
-        new AccessCommands(this, profiles, bans, whitelist, propertiesFile, settings.access().enforceWhitelist()).register(commands);
+        new BuiltinCommands(this, commands, profiles, bans, whitelist, propertiesFile, settings.access().enforceWhitelist()).registerAll();
         worlds.defaultWorld();
         plugins.loadAll();
         enableExtensions();
