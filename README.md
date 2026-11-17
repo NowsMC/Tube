@@ -4,15 +4,9 @@ Tube is a Minecraft server for modern versions. It uses Minestom as the engine a
 
 > Tube uses Minestom instead of NMS on purpose. The goal is to try a different standard, not to build another Paper.
 
-What Tube does:
+Tube plays like a normal survival server and keeps the files server admins already know, such as `server.properties`. It runs plugins written for Tube, and Bukkit plugins through a translator. On first start it downloads the libraries it needs and reads the recipes from Mojang's server jar.
 
-- Runs from a single jar per Minecraft version and downloads the libraries it needs on first start.
-- Reads the files server admins already know: `server.properties`, `ops.json`, the whitelist and the ban lists.
-- Loads plugins written for Tube, and Bukkit plugins through a translator.
-- Provides its own systems for worlds, player data, permissions, commands, RCON and Query, resource packs, item drops and pickups, skins, and a login API that can let chosen players join an online-mode server offline.
-- Watches the tick and the connection: a tick watchdog, a packet rate limit and an idle timeout.
-
-New worlds get simple terrain with hills, beaches and seas. Caves, ores, biomes, trees and structures are not generated yet.
+Not implemented yet: the End, villages and other structures, redstone circuits, enchanting, brewing and advancements.
 
 Supported Minecraft versions: 26.1.2, 26.2
 
