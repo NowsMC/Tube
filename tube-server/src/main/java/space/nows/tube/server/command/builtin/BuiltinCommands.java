@@ -50,6 +50,7 @@ public final class BuiltinCommands {
         all.add(new SeedCommand(targets));
         all.add(new OperatorCommand(true, server.permissions(), profiles, targets));
         all.add(new OperatorCommand(false, server.permissions(), profiles, targets));
+        all.add(new KickCommand(targets));
         return all;
     }
 }
