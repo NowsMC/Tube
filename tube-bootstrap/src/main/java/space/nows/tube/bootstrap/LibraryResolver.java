@@ -21,6 +21,7 @@ final class LibraryResolver {
 
     private final Path directory;
     private final List<String> repositories;
+    private boolean announced;
 
     LibraryResolver(Path directory, List<String> repositories) {
         this.directory = directory;
@@ -77,7 +78,10 @@ final class LibraryResolver {
         Files.createDirectories(jar.getParent());
         Path partial = Files.createTempFile(jar.getParent(), jar.getFileName().toString(), ".part");
         try {
-            System.out.println("[tube] Downloading " + library.coordinates());
+            if (!announced) {
+                System.out.println("[tube] Preparing libraries...");
+                announced = true;
+            }
             try (InputStream in = open(source)) {
                 Files.copy(in, partial, StandardCopyOption.REPLACE_EXISTING);
             }
