@@ -12,3 +12,4 @@ libs/
 # files that real plugins write into the working directory during tests
 tube-bukkit/wepif.yml
 tube-bukkit/logs/
+logs/
