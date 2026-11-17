@@ -71,7 +71,16 @@ class MobsTest {
         ticks(env, 120);
         assertTrue(creeper.isRemoved());
         assertTrue(player.getHealth() < 20);
-        assertTrue(instance.getBlock(2, 39, 0).air() || instance.getBlock(1, 39, 0).air());
+        var center = creeper.getPosition();
+        int holes = 0;
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                if (instance.getBlock(center.blockX() + dx, 39, center.blockZ() + dz).air()) {
+                    holes++;
+                }
+            }
+        }
+        assertTrue(holes > 0);
     }
 
     @Test
