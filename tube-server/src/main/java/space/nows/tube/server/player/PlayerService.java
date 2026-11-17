@@ -1,6 +1,5 @@
 package space.nows.tube.server.player;
 
-import ca.spottedleaf.concurrentutil.map.concurrent.objects.ConcurrentChainedObject2ObjectHashTable;
 import space.nows.tube.api.entity.LoginMode;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.server.access.PermissionService;
@@ -18,7 +17,7 @@ public final class PlayerService {
     private final PermissionService permissions;
     private volatile space.nows.tube.api.event.EventBus events;
     private final Map<UUID, LoginMode> loginModes = new ConcurrentHashMap<>();
-    private final ConcurrentChainedObject2ObjectHashTable<UUID, MinestomPlayer> players = ConcurrentChainedObject2ObjectHashTable.createWithExpected(64);
+    private final Map<UUID, MinestomPlayer> players = new ConcurrentHashMap<>();
 
     public PlayerService(WorldService worlds, PermissionService permissions) {
         this.worlds = worlds;

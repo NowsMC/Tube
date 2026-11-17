@@ -1,6 +1,5 @@
 package space.nows.tube.server.world;
 
-import ca.spottedleaf.concurrentutil.map.concurrent.objects.ConcurrentChainedReference2ReferenceHashTable;
 import net.kyori.adventure.key.Key;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.instance.Instance;
@@ -51,7 +50,7 @@ public final class WorldService implements WorldManager {
     private final Map<String, MinestomWorld> worlds = new ConcurrentHashMap<>();
     private final Map<String, LongFunction<WorldGenerator>> generators = new ConcurrentHashMap<>();
     private PlayerService players;
-    private final ConcurrentChainedReference2ReferenceHashTable<Instance, MinestomWorld> byInstance = ConcurrentChainedReference2ReferenceHashTable.createWithExpected(8);
+    private final Map<Instance, MinestomWorld> byInstance = new ConcurrentHashMap<>();
 
     public WorldService(Path root, String defaultName) {
         this(root, defaultName, WorldOptions.of(WorldOptions.FLAT, 0));

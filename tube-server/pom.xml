@@ -42,10 +42,6 @@
       <artifactId>gson</artifactId>
     </dependency>
     <dependency>
-      <groupId>ca.spottedleaf.leafpile</groupId>
-      <artifactId>concurrentutil</artifactId>
-    </dependency>
-    <dependency>
       <groupId>io.github.wasabithumb</groupId>
       <artifactId>jtoml</artifactId>
     </dependency>

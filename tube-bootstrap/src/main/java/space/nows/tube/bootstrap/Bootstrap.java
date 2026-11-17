@@ -14,9 +14,7 @@ public final class Bootstrap {
 
     private static final String LIBRARY_LIST = "META-INF/tube/libraries.txt";
     private static final String SERVER_MAIN = "space.nows.tube.server.Main";
-    private static final List<String> REPOSITORIES = List.of(
-            "https://repo1.maven.org/maven2/",
-            "https://repo.papermc.io/repository/maven-public/");
+    private static final List<String> REPOSITORIES = List.of("https://repo1.maven.org/maven2/");
 
     private Bootstrap() {
     }

@@ -1,14 +1,15 @@
 package space.nows.tube.server.world;
 
-import ca.spottedleaf.concurrentutil.map.concurrent.ints.ConcurrentChainedInt2ReferenceHashTable;
-import ca.spottedleaf.concurrentutil.map.concurrent.objects.ConcurrentChainedObject2ReferenceHashTable;
 import space.nows.tube.api.world.Block;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public final class BlockMapper {
 
-    private static final ConcurrentChainedInt2ReferenceHashTable<Block> FROM_MINESTOM = ConcurrentChainedInt2ReferenceHashTable.createWithExpected(4096);
-    private static final ConcurrentChainedObject2ReferenceHashTable<Block, net.minestom.server.instance.block.Block> TO_MINESTOM =
-            ConcurrentChainedObject2ReferenceHashTable.createWithExpected(4096);
+    private static final AtomicReferenceArray<Block> FROM_MINESTOM = new AtomicReferenceArray<>(stateCount());
+    private static final Map<Block, net.minestom.server.instance.block.Block> TO_MINESTOM = new ConcurrentHashMap<>(4096);
 
     private BlockMapper() {
     }
@@ -18,7 +19,7 @@ public final class BlockMapper {
         Block cached = FROM_MINESTOM.get(state);
         if (cached == null) {
             cached = new Block(block.key().asString(), block.properties());
-            FROM_MINESTOM.putIfAbsent(state, cached);
+            FROM_MINESTOM.compareAndSet(state, null, cached);
         }
         return cached;
     }
@@ -30,6 +31,16 @@ public final class BlockMapper {
             TO_MINESTOM.putIfAbsent(block, cached);
         }
         return cached;
+    }
+
+    private static int stateCount() {
+        int highest = 0;
+        for (net.minestom.server.instance.block.Block block : net.minestom.server.instance.block.Block.values()) {
+            for (net.minestom.server.instance.block.Block state : block.possibleStates()) {
+                highest = Math.max(highest, state.stateId());
+            }
+        }
+        return highest + 1;
     }
 
     private static net.minestom.server.instance.block.Block resolve(Block block) {

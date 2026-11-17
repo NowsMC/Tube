@@ -1,6 +1,5 @@
 package space.nows.tube.server.event;
 
-import ca.spottedleaf.concurrentutil.map.concurrent.objects.ConcurrentChainedReference2ReferenceHashTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.event.Cancellable;
@@ -11,7 +10,9 @@ import space.nows.tube.api.event.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public final class DefaultEventBus implements EventBus {
@@ -23,7 +24,7 @@ public final class DefaultEventBus implements EventBus {
     }
 
     private final List<Registration> registrations = new ArrayList<>();
-    private final ConcurrentChainedReference2ReferenceHashTable<Class<?>, Registration[]> byType = ConcurrentChainedReference2ReferenceHashTable.createWithExpected(64);
+    private final Map<Class<?>, Registration[]> byType = new ConcurrentHashMap<>(64);
 
     @Override
     @SuppressWarnings("unchecked")

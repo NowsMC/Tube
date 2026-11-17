@@ -18,7 +18,6 @@ Tube uses the following software. The CLI jar bundles picocli. The server jar bu
 | Kyori ansi | 1.1.1 | MIT | https://github.com/KyoriPowered/ansi |
 | Kyori option | 1.1.0 | MIT | https://github.com/KyoriPowered/option |
 | Netty (buffer, codec-base, common, resolver, transport, epoll) | 4.2.19.Final | Apache-2.0 | https://netty.io |
-| concurrentutil, LeafPile common | 1.3.2 | GPL-3.0 | https://github.com/Tuinity/LeafPile |
 | fastutil | 8.5.19 | Apache-2.0 | https://fastutil.di.unimi.it |
 | Flare, flare-fastutil | 2.0.1 | MIT | https://github.com/vectrix-space/flare |
 | JCTools | 4.0.7 | Apache-2.0 | https://github.com/JCTools/JCTools |
