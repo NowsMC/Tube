@@ -19,6 +19,7 @@ public final class PlacementSteps {
         readers.put("count", json -> new Repeat(IntSampler.read(json.get("count"))));
         readers.put("in_square", json -> new SpreadInChunk());
         readers.put("heightmap", json -> new OnHeightmap(Heightmap.parse(json.get("heightmap").getAsString())));
+        readers.put("random_offset", json -> new Jitter(IntSampler.read(json.get("xz_spread")), IntSampler.read(json.get("y_spread"))));
     }
 
     public PlacementStep read(JsonObject json) {
