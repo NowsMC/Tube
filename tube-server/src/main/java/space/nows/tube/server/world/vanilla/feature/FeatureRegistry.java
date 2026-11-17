@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.server.world.vanilla.WorldgenData;
 import space.nows.tube.server.world.vanilla.feature.kind.BlockColumnFeature;
+import space.nows.tube.server.world.vanilla.feature.kind.ChanceListFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.DecorationSource;
 import space.nows.tube.server.world.vanilla.feature.kind.SimpleBlockFeature;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementStep;
@@ -36,6 +37,7 @@ public final class FeatureRegistry implements DecorationSource {
         this.steps = new PlacementSteps(minY, height);
         kinds.put("simple_block", (config, source) -> SimpleBlockFeature.read(config));
         kinds.put("block_column", (config, source) -> BlockColumnFeature.read(config));
+        kinds.put("random_selector", ChanceListFeature::read);
     }
 
     public synchronized Decoration placed(String id) {
