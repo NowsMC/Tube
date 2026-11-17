@@ -23,6 +23,7 @@ public final class PlacementSteps {
         readers.put("heightmap", json -> new OnHeightmap(Heightmap.parse(json.get("heightmap").getAsString())));
         readers.put("random_offset", json -> new Jitter(IntSampler.read(json.get("xz_spread")), IntSampler.read(json.get("y_spread"))));
         readers.put("height_range", json -> new AtHeight(HeightSampler.read(json.get("height"), minY, height)));
+        readers.put("rarity_filter", json -> new Rarity(1.0F / json.get("chance").getAsInt()));
     }
 
     public PlacementStep read(JsonObject json) {
