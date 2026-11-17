@@ -51,6 +51,7 @@ public final class BuiltinCommands {
         all.add(new OperatorCommand(true, server.permissions(), profiles, targets));
         all.add(new OperatorCommand(false, server.permissions(), profiles, targets));
         all.add(new KickCommand(targets));
+        all.add(new BanCommand(bans, profiles, targets));
         return all;
     }
 }
