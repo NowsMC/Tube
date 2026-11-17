@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.server.world.vanilla.WorldgenData;
 import space.nows.tube.server.world.vanilla.feature.kind.BlockColumnFeature;
+import space.nows.tube.server.world.vanilla.feature.kind.BoulderFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.ChanceListFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.DecorationSource;
 import space.nows.tube.server.world.vanilla.feature.kind.DiskFeature;
@@ -54,6 +55,7 @@ public final class FeatureRegistry implements DecorationSource {
         kinds.put("kelp", (config, source) -> new KelpFeature());
         kinds.put("spring_feature", (config, source) -> SpringFeature.read(config));
         kinds.put("freeze_top_layer", (config, source) -> new FreezeFeature());
+        kinds.put("block_blob", (config, source) -> BoulderFeature.read(config));
     }
 
     public synchronized Decoration placed(String id) {
