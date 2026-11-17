@@ -25,6 +25,9 @@ final class BlockChoiceReaders {
         READERS.put("weighted_state_provider", BlockChoiceReaders::weighted);
         READERS.put("randomized_int_state_provider", BlockChoiceReaders::randomizedProperty);
         READERS.put("rule_based_state_provider", BlockChoiceReaders::ruleBased);
+        READERS.put("noise_threshold_provider", NoiseBlockChoice::threshold);
+        READERS.put("noise_provider", NoiseBlockChoice::gradient);
+        READERS.put("dual_noise_provider", NoiseBlockChoice::mixed);
     }
 
     private BlockChoiceReaders() {
