@@ -18,6 +18,7 @@ public abstract class Trunk {
     static {
         SHAPES.put("straight_trunk_placer", StraightTrunk::new);
         SHAPES.put("forking_trunk_placer", ForkingTrunk::new);
+        SHAPES.put("fancy_trunk_placer", BranchingTrunk::new);
     }
 
     private final int baseHeight;
