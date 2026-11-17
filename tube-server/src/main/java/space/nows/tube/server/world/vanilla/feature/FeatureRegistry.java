@@ -10,6 +10,7 @@ import space.nows.tube.server.world.vanilla.feature.kind.BlockColumnFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.ChanceListFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.DecorationSource;
 import space.nows.tube.server.world.vanilla.feature.kind.DiskFeature;
+import space.nows.tube.server.world.vanilla.feature.kind.KelpFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.PickOneFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SeagrassFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SequenceFeature;
@@ -48,6 +49,7 @@ public final class FeatureRegistry implements DecorationSource {
         kinds.put("sequence", SequenceFeature::read);
         kinds.put("disk", (config, source) -> DiskFeature.read(config));
         kinds.put("seagrass", (config, source) -> SeagrassFeature.read(config));
+        kinds.put("kelp", (config, source) -> new KelpFeature());
     }
 
     public synchronized Decoration placed(String id) {
