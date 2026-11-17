@@ -9,6 +9,7 @@ import space.nows.tube.server.world.vanilla.WorldgenData;
 import space.nows.tube.server.world.vanilla.feature.kind.BlockColumnFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.ChanceListFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.DecorationSource;
+import space.nows.tube.server.world.vanilla.feature.kind.PickOneFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SimpleBlockFeature;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementStep;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementSteps;
@@ -38,6 +39,9 @@ public final class FeatureRegistry implements DecorationSource {
         kinds.put("simple_block", (config, source) -> SimpleBlockFeature.read(config));
         kinds.put("block_column", (config, source) -> BlockColumnFeature.read(config));
         kinds.put("random_selector", ChanceListFeature::read);
+        kinds.put("simple_random_selector", PickOneFeature::uniform);
+        kinds.put("random_boolean_selector", PickOneFeature::coinFlip);
+        kinds.put("weighted_random_selector", PickOneFeature::weighted);
     }
 
     public synchronized Decoration placed(String id) {
