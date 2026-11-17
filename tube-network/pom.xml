@@ -14,6 +14,10 @@
   <name>Tube Network</name>
   <description>Netty based networking for Tube with no dependency on the Minecraft engine</description>
 
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>space.nows</groupId>

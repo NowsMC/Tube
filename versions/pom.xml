@@ -15,6 +15,10 @@
   <name>Tube Versions</name>
   <description>One module and one server jar per supported Minecraft version</description>
 
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <modules>
     <module>26.1.2</module>
     <module>26.2</module>

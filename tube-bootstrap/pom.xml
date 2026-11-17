@@ -14,6 +14,10 @@
   <name>Tube Bootstrap</name>
   <description>Downloads runtime libraries and starts the server</description>
 
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

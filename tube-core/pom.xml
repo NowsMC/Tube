@@ -14,6 +14,10 @@
   <name>Tube Core</name>
   <description>Version registry and server launching</description>
 
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
