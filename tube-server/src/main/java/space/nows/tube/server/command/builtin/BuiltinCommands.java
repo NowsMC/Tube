@@ -46,6 +46,7 @@ public final class BuiltinCommands {
         all.add(new PluginsCommand(server));
         all.add(new SaveAllCommand(server));
         all.add(new StopCommand(server));
+        all.add(new TpsCommand(server));
         return all;
     }
 }
