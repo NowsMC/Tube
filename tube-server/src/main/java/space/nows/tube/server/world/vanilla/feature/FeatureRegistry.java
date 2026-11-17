@@ -25,6 +25,7 @@ import space.nows.tube.server.world.vanilla.feature.ore.OreFeature;
 import space.nows.tube.server.world.vanilla.feature.ore.ScatteredOreFeature;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementStep;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementSteps;
+import space.nows.tube.server.world.vanilla.feature.tree.TreeFeature;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ public final class FeatureRegistry implements DecorationSource {
     public FeatureRegistry(WorldgenData data, int minY, int height) {
         this.data = data;
         this.steps = new PlacementSteps(minY, height);
+        kinds.put("tree", (config, source) -> new TreeFeature(config));
         kinds.put("ore", (config, source) -> new OreFeature(config));
         kinds.put("scattered_ore", (config, source) -> new ScatteredOreFeature(config));
         kinds.put("simple_block", (config, source) -> SimpleBlockFeature.read(config));
