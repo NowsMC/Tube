@@ -28,9 +28,9 @@ jobs:
       - name: Write the B2 key
         run: printf 'keyID=%s\nkeyName=%s\napplicationKey=%s\n' "$keyID" "$keyName" "$applicationKey" > .env
         env:
-          keyID: ${{ secrets.keyID }}
-          keyName: ${{ secrets.keyName }}
-          applicationKey: ${{ secrets.applicationKey }}
+          keyID: ${{ secrets.KEYID }}
+          keyName: ${{ secrets.KEYNAME }}
+          applicationKey: ${{ secrets.APPLICATIONKEY }}
 
       - name: Deploy to files.nows.space
         run: ./mvnw -Prelease -Drevision="${GITHUB_REF_NAME#v}" deploy
