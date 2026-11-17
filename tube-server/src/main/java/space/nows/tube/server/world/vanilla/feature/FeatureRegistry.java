@@ -21,6 +21,7 @@ import space.nows.tube.server.world.vanilla.feature.kind.SequenceFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SimpleBlockFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SpringFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.VineFeature;
+import space.nows.tube.server.world.vanilla.feature.ore.OreFeature;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementStep;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementSteps;
 
@@ -46,6 +47,7 @@ public final class FeatureRegistry implements DecorationSource {
     public FeatureRegistry(WorldgenData data, int minY, int height) {
         this.data = data;
         this.steps = new PlacementSteps(minY, height);
+        kinds.put("ore", (config, source) -> new OreFeature(config));
         kinds.put("simple_block", (config, source) -> SimpleBlockFeature.read(config));
         kinds.put("block_column", (config, source) -> BlockColumnFeature.read(config));
         kinds.put("random_selector", ChanceListFeature::read);
