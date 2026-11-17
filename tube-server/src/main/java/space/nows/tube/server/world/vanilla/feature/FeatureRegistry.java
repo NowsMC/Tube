@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.server.world.vanilla.WorldgenData;
+import space.nows.tube.server.world.vanilla.feature.kind.BlockColumnFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.DecorationSource;
 import space.nows.tube.server.world.vanilla.feature.kind.SimpleBlockFeature;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementStep;
@@ -34,6 +35,7 @@ public final class FeatureRegistry implements DecorationSource {
         this.data = data;
         this.steps = new PlacementSteps(minY, height);
         kinds.put("simple_block", (config, source) -> SimpleBlockFeature.read(config));
+        kinds.put("block_column", (config, source) -> BlockColumnFeature.read(config));
     }
 
     public synchronized Decoration placed(String id) {
