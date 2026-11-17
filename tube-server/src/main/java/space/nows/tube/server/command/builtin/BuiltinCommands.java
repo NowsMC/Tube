@@ -60,6 +60,7 @@ public final class BuiltinCommands {
         all.add(new SayCommand(server));
         all.add(new MeCommand(server));
         all.add(new MessageCommand(targets));
+        all.add(new GameModeCommand(targets));
         return all;
     }
 }
