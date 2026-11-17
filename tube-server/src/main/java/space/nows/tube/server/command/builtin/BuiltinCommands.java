@@ -47,6 +47,7 @@ public final class BuiltinCommands {
         all.add(new SaveAllCommand(server));
         all.add(new StopCommand(server));
         all.add(new TpsCommand(server));
+        all.add(new SeedCommand(targets));
         return all;
     }
 }
