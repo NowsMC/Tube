@@ -77,10 +77,24 @@ public final class CommandBridge {
                 return;
             }
             try {
-                runtime.tube().commands().register(label, (sender, args) -> {
-                    CommandSender bukkitSender = runtime.adapters().sender(sender);
-                    if (!dispatch(bukkitSender, args.isEmpty() ? label : label + " " + String.join(" ", args))) {
-                        bukkitSender.sendMessage("Unknown command: " + label);
+                runtime.tube().commands().register(label, new space.nows.tube.api.command.Command() {
+                    @Override
+                    public void execute(space.nows.tube.api.command.CommandSender sender, List<String> args) {
+                        CommandSender bukkitSender = runtime.adapters().sender(sender);
+                        if (!dispatch(bukkitSender, args.isEmpty() ? label : label + " " + String.join(" ", args))) {
+                            bukkitSender.sendMessage("Unknown command: " + label);
+                        }
+                    }
+
+                    @Override
+                    public List<String> suggest(space.nows.tube.api.command.CommandSender sender, List<String> args) {
+                        try {
+                            List<String> options = commandMap.tabComplete(runtime.adapters().sender(sender), label + " " + String.join(" ", args));
+                            return options == null ? List.of() : options;
+                        } catch (RuntimeException e) {
+                            runtime.julLogger().log(Level.WARNING, "Tab completion for /" + label + " failed", e);
+                            return List.of();
+                        }
                     }
                 });
                 exposed.add(label);
