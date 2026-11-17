@@ -17,6 +17,7 @@ public final class TreeDecorators {
         KINDS.put("leave_vine", json -> new HangingVines(json.get("probability").getAsFloat()));
         KINDS.put("cocoa", json -> new CocoaPods(json.get("probability").getAsFloat()));
         KINDS.put("alter_ground", PodzolPatches::read);
+        KINDS.put("place_on_ground", GroundLitter::read);
     }
 
     private TreeDecorators() {
