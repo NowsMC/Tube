@@ -27,6 +27,8 @@ public final class PlacementSteps {
         readers.put("surface_water_depth_filter", json -> new ShallowWater(json.get("max_water_depth").getAsInt()));
         readers.put("surface_relative_threshold_filter", SurfaceBand::read);
         readers.put("environment_scan", Scan::read);
+        readers.put("noise_threshold_count", NoiseCount::threshold);
+        readers.put("noise_based_count", NoiseCount::scaled);
     }
 
     public PlacementStep read(JsonObject json) {
