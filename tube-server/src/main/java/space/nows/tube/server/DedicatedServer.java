@@ -63,6 +63,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.ServiceLoader;
@@ -91,6 +92,7 @@ public final class DedicatedServer implements Server {
     private RemoteAccess remoteAccess;
     private Autosave autosave;
     private TickWatchdog watchdog;
+    private Path propertiesFile;
 
     public DedicatedServer(VersionProfile profile, Path directory) {
         this.profile = Objects.requireNonNull(profile, "profile");
@@ -183,6 +185,17 @@ public final class DedicatedServer implements Server {
     }
 
     @Override
+    public space.nows.tube.api.Difficulty difficulty() {
+        return space.nows.tube.api.Difficulty.valueOf(MinecraftServer.getDifficulty().name());
+    }
+
+    @Override
+    public void setDifficulty(space.nows.tube.api.Difficulty difficulty) {
+        MinecraftServer.setDifficulty(Difficulty.valueOf(difficulty.name()));
+        ServerProperties.set(propertiesFile, "difficulty", difficulty.name().toLowerCase(Locale.ROOT));
+    }
+
+    @Override
     public Inventory createInventory(Component title, int rows) {
         if (rows < 1 || rows > 6) {
             throw new IllegalArgumentException("rows must be between 1 and 6");
@@ -217,7 +230,7 @@ public final class DedicatedServer implements Server {
             Runtime.getRuntime().exit(1);
             return;
         }
-        Path propertiesFile = directory.resolve("server.properties");
+        propertiesFile = directory.resolve("server.properties");
         settings = ServerProperties.load(propertiesFile);
         LOGGER.info("Starting {} {} for Minecraft {}", name(), version, minecraftVersion());
 

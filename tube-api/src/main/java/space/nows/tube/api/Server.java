@@ -48,6 +48,10 @@ public interface Server {
 
     Collection<PluginDescriptor> plugins();
 
+    Difficulty difficulty();
+
+    void setDifficulty(Difficulty difficulty);
+
     Inventory createInventory(Component title, int rows);
 
     void broadcast(Component message);
