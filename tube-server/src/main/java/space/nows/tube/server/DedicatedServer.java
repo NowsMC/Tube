@@ -44,6 +44,7 @@ import space.nows.tube.server.connection.StatusResponder;
 import space.nows.tube.server.entity.ItemDrops;
 import space.nows.tube.server.event.DefaultEventBus;
 import space.nows.tube.server.event.EventBridge;
+import space.nows.tube.server.gameplay.SurvivalRules;
 import space.nows.tube.server.inventory.MinestomInventory;
 import space.nows.tube.server.player.IdleKicker;
 import space.nows.tube.server.player.PlayerDataStore;
@@ -252,6 +253,7 @@ public final class DedicatedServer implements Server {
         new StatusResponder(settings, events, name() + " " + minecraftVersion()).install(handler);
         new EventBridge(events, players, worlds).install(handler);
         new ItemDrops(events, players, worlds).install(handler);
+        new SurvivalRules(directory.resolve("cache"), minecraftVersion(), worlds, Math.min(6, settings.level().viewDistance())).install(handler);
         new SpawnProtection(settings.level().spawnProtection(), worlds, permissions).install(events);
         ConnectionLog.install(events, settings.connection().logIps());
         new PacketRateLimiter(settings.network().rateLimit(), System::nanoTime).install(handler);
@@ -305,6 +307,7 @@ public final class DedicatedServer implements Server {
             return;
         }
         try {
+            SurvivalRules.prepareForSave(player);
             playerData.save(player, worlds.of(player.getInstance()).name());
         } catch (RuntimeException e) {
             LOGGER.error("Could not save the data of {}", player.getUsername(), e);
