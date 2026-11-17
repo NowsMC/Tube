@@ -57,6 +57,8 @@ public interface Server {
 
     void setDefaultGameMode(GameMode gameMode);
 
+    TickReport ticks();
+
     Inventory createInventory(Component title, int rows);
 
     void broadcast(Component message);

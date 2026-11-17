@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.ServerExtension;
+import space.nows.tube.api.TickReport;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.entity.GameMode;
 import space.nows.tube.api.entity.Player;
@@ -95,6 +96,7 @@ public final class DedicatedServer implements Server {
     private TickWatchdog watchdog;
     private Path propertiesFile;
     private volatile GameMode defaultGameMode;
+    private final TickTracker ticks = new TickTracker(System::nanoTime);
 
     public DedicatedServer(VersionProfile profile, Path directory) {
         this.profile = Objects.requireNonNull(profile, "profile");
@@ -209,6 +211,11 @@ public final class DedicatedServer implements Server {
     }
 
     @Override
+    public TickReport ticks() {
+        return ticks.report();
+    }
+
+    @Override
     public Inventory createInventory(Component title, int rows) {
         if (rows < 1 || rows > 6) {
             throw new IllegalArgumentException("rows must be between 1 and 6");
@@ -278,6 +285,7 @@ public final class DedicatedServer implements Server {
         ResourcePackHandler resourcePacks = new ResourcePackHandler(settings.resourcePack(), events, players);
         new LoginGate(settings.connection().onlineMode(), events, players).install(handler);
         new LoginHandler(settings, this::defaultGameMode, new AccessControl(whitelist, bans), userCache, players, playerData, worlds, resourcePacks.pack(), this::savePlayer).install(handler);
+        ticks.install(handler);
         resourcePacks.install(handler);
         new StatusResponder(settings, events, name() + " " + minecraftVersion()).install(handler);
         EventBridge bridge = new EventBridge(events, players, worlds);
