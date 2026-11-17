@@ -2,6 +2,7 @@ package space.nows.tube.api;
 
 import net.kyori.adventure.text.Component;
 import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.entity.GameMode;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.inventory.Inventory;
@@ -51,6 +52,10 @@ public interface Server {
     Difficulty difficulty();
 
     void setDifficulty(Difficulty difficulty);
+
+    GameMode defaultGameMode();
+
+    void setDefaultGameMode(GameMode gameMode);
 
     Inventory createInventory(Component title, int rows);
 

@@ -22,10 +22,12 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public final class LoginHandler {
 
     private final ServerSettings settings;
+    private final Supplier<space.nows.tube.api.entity.GameMode> defaultGameMode;
     private final AccessControl access;
     private final UserCache userCache;
     private final PlayerService players;
@@ -34,9 +36,10 @@ public final class LoginHandler {
     private final Optional<ResourcePack> resourcePack;
     private final Consumer<Player> savePlayer;
 
-    public LoginHandler(ServerSettings settings, AccessControl access, UserCache userCache, PlayerService players, PlayerDataStore playerData,
+    public LoginHandler(ServerSettings settings, Supplier<space.nows.tube.api.entity.GameMode> defaultGameMode, AccessControl access, UserCache userCache, PlayerService players, PlayerDataStore playerData,
                  WorldService worlds, Optional<ResourcePack> resourcePack, Consumer<Player> savePlayer) {
         this.settings = settings;
+        this.defaultGameMode = defaultGameMode;
         this.access = access;
         this.userCache = userCache;
         this.players = players;
@@ -87,7 +90,7 @@ public final class LoginHandler {
         var data = playerData.read(event.getPlayer().getUuid());
         data.ifPresent(tag -> playerData.apply(tag, event.getPlayer(), !force));
         if (data.isEmpty() || force) {
-            event.getPlayer().setGameMode(GameMode.valueOf(settings.gameplay().gamemode().name()));
+            event.getPlayer().setGameMode(GameMode.valueOf(defaultGameMode.get().name()));
         }
     }
 }

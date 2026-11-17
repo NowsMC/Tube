@@ -12,6 +12,7 @@ import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.ServerExtension;
 import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.entity.GameMode;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.inventory.Inventory;
@@ -93,6 +94,7 @@ public final class DedicatedServer implements Server {
     private Autosave autosave;
     private TickWatchdog watchdog;
     private Path propertiesFile;
+    private volatile GameMode defaultGameMode;
 
     public DedicatedServer(VersionProfile profile, Path directory) {
         this.profile = Objects.requireNonNull(profile, "profile");
@@ -196,6 +198,17 @@ public final class DedicatedServer implements Server {
     }
 
     @Override
+    public GameMode defaultGameMode() {
+        return defaultGameMode;
+    }
+
+    @Override
+    public void setDefaultGameMode(GameMode gameMode) {
+        defaultGameMode = gameMode;
+        ServerProperties.set(propertiesFile, "gamemode", gameMode.name().toLowerCase(Locale.ROOT));
+    }
+
+    @Override
     public Inventory createInventory(Component title, int rows) {
         if (rows < 1 || rows > 6) {
             throw new IllegalArgumentException("rows must be between 1 and 6");
@@ -232,6 +245,7 @@ public final class DedicatedServer implements Server {
         }
         propertiesFile = directory.resolve("server.properties");
         settings = ServerProperties.load(propertiesFile);
+        defaultGameMode = settings.gameplay().gamemode();
         LOGGER.info("Starting {} {} for Minecraft {}", name(), version, minecraftVersion());
 
         EngineProperties.apply(settings);
@@ -263,7 +277,7 @@ public final class DedicatedServer implements Server {
         var handler = MinecraftServer.getGlobalEventHandler();
         ResourcePackHandler resourcePacks = new ResourcePackHandler(settings.resourcePack(), events, players);
         new LoginGate(settings.connection().onlineMode(), events, players).install(handler);
-        new LoginHandler(settings, new AccessControl(whitelist, bans), userCache, players, playerData, worlds, resourcePacks.pack(), this::savePlayer).install(handler);
+        new LoginHandler(settings, this::defaultGameMode, new AccessControl(whitelist, bans), userCache, players, playerData, worlds, resourcePacks.pack(), this::savePlayer).install(handler);
         resourcePacks.install(handler);
         new StatusResponder(settings, events, name() + " " + minecraftVersion()).install(handler);
         EventBridge bridge = new EventBridge(events, players, worlds);
