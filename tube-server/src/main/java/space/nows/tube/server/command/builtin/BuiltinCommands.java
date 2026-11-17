@@ -71,6 +71,7 @@ public final class BuiltinCommands {
         all.add(new SpawnPointCommand(targets));
         all.add(new SummonCommand(targets));
         all.add(new TimeCommand(targets));
+        all.add(new SetWorldSpawnCommand(targets));
         return all;
     }
 }
