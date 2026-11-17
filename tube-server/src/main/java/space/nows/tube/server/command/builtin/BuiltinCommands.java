@@ -56,6 +56,7 @@ public final class BuiltinCommands {
         all.add(new BanIpCommand(server, bans, targets));
         all.add(new PardonIpCommand(bans));
         all.add(new BanListCommand(bans));
+        all.add(new WhitelistCommand(server, whitelist, profiles, targets, settingsFile, enforceWhitelist));
         return all;
     }
 }
