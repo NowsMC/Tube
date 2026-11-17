@@ -59,6 +59,7 @@ public final class BuiltinCommands {
         all.add(new WhitelistCommand(server, whitelist, profiles, targets, settingsFile, enforceWhitelist));
         all.add(new SayCommand(server));
         all.add(new MeCommand(server));
+        all.add(new MessageCommand(targets));
         return all;
     }
 }
