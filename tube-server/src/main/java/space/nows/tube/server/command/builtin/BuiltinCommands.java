@@ -40,6 +40,7 @@ public final class BuiltinCommands {
     List<ServerCommand> all() {
         Targets targets = new Targets(server);
         List<ServerCommand> all = new ArrayList<>();
+        all.add(new HelpCommand(commands::availableTo));
         return all;
     }
 }
