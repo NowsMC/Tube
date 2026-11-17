@@ -10,6 +10,7 @@ import space.nows.tube.server.world.vanilla.feature.kind.BlockColumnFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.ChanceListFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.DecorationSource;
 import space.nows.tube.server.world.vanilla.feature.kind.DiskFeature;
+import space.nows.tube.server.world.vanilla.feature.kind.FreezeFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.KelpFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.PickOneFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SeagrassFeature;
@@ -52,6 +53,7 @@ public final class FeatureRegistry implements DecorationSource {
         kinds.put("seagrass", (config, source) -> SeagrassFeature.read(config));
         kinds.put("kelp", (config, source) -> new KelpFeature());
         kinds.put("spring_feature", (config, source) -> SpringFeature.read(config));
+        kinds.put("freeze_top_layer", (config, source) -> new FreezeFeature());
     }
 
     public synchronized Decoration placed(String id) {
