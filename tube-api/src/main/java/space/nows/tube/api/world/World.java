@@ -24,6 +24,8 @@ public interface World {
 
     Location spawn();
 
+    void setSpawn(Location location);
+
     long time();
 
     void setTime(long time);

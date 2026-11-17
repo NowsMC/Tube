@@ -76,6 +76,14 @@ public final class MinestomWorld implements World {
     }
 
     @Override
+    public void setSpawn(Location location) {
+        spawn[0] = location.x();
+        spawn[1] = location.y();
+        spawn[2] = location.z();
+        owner.saveSpawn(this, spawn);
+    }
+
+    @Override
     public long time() {
         return instance.getTime();
     }

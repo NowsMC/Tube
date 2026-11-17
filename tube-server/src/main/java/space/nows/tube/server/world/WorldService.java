@@ -230,6 +230,14 @@ public final class WorldService implements WorldManager {
         settings.save();
     }
 
+    void saveSpawn(MinestomWorld world, double[] spawn) {
+        FileConfig settings = FileConfig.load(root.resolve(world.name()).resolve("tube-world.yml"));
+        settings.set("spawn.x", spawn[0]);
+        settings.set("spawn.y", spawn[1]);
+        settings.set("spawn.z", spawn[2]);
+        settings.save();
+    }
+
     private static WorldOptions storedOptions(FileConfig settings, WorldOptions fallback) {
         String generator = settings.getString("generator", fallback.generator());
         long seed = fallback.seed();
