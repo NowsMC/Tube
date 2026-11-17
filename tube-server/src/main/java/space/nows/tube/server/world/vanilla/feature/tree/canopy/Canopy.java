@@ -25,6 +25,7 @@ public abstract class Canopy {
         SHAPES.put("mega_pine_foliage_placer", TallPineCanopy::new);
         SHAPES.put("acacia_foliage_placer", FlatCanopy::new);
         SHAPES.put("dark_oak_foliage_placer", DarkOakCanopy::new);
+        SHAPES.put("jungle_foliage_placer", JungleCanopy::new);
     }
 
     protected final IntSampler radius;
