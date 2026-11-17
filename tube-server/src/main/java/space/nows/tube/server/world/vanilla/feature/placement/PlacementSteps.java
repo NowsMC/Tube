@@ -18,6 +18,7 @@ public final class PlacementSteps {
     public PlacementSteps(int minY, int height) {
         readers.put("count", json -> new Repeat(IntSampler.read(json.get("count"))));
         readers.put("in_square", json -> new SpreadInChunk());
+        readers.put("heightmap", json -> new OnHeightmap(Heightmap.parse(json.get("heightmap").getAsString())));
     }
 
     public PlacementStep read(JsonObject json) {
