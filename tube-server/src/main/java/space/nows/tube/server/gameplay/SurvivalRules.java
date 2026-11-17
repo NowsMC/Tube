@@ -8,6 +8,11 @@ import space.nows.tube.server.gameplay.crafting.Furnaces;
 import space.nows.tube.server.gameplay.crafting.RecipeBook;
 import space.nows.tube.server.gameplay.crafting.VanillaRecipes;
 import space.nows.tube.server.gameplay.mob.Mobs;
+import space.nows.tube.server.gameplay.physics.FallingBlocks;
+import space.nows.tube.server.gameplay.physics.Fluids;
+import space.nows.tube.server.gameplay.physics.Growth;
+import space.nows.tube.server.gameplay.physics.ItemUse;
+import space.nows.tube.server.gameplay.physics.NetherPortals;
 import space.nows.tube.server.world.WorldService;
 
 import java.nio.file.Path;
@@ -46,6 +51,12 @@ public final class SurvivalRules {
         new Beds(worlds).install(handler);
         Mobs.install(handler);
         Hazards.install();
+        NetherPortals portals = new NetherPortals(worlds);
+        portals.install();
+        new ItemUse(portals).install(handler);
+        new Fluids().install(handler);
+        new FallingBlocks().install(handler);
+        new Growth(simulationDistance).install(handler);
     }
 
     public static void prepareForSave(Player player) {
