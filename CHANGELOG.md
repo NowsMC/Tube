@@ -9,9 +9,14 @@
 
 ### Worlds
 
-- Normal worlds are generated from Minecraft's own world generation data. Terrain, biomes and surface blocks are the same as in vanilla for the same seed. ([`21d1df7`](https://github.com/NowsMC/Tube/commit/21d1df7d14f1cd60c25a964e2f13ef20634d7de6))
-- Caves, ravines, underground water and lava, and copper and iron veins follow vanilla. ([`3d1b3cb`](https://github.com/NowsMC/Tube/commit/3d1b3cbdb4af920ad487a745ce697ddc911eef6b), [`eb01a55`](https://github.com/NowsMC/Tube/commit/eb01a559f2ef4da463250110e18598f2f2d31b01))
-- Trees, ores, flowers, grass, snow and ice are placed by the vanilla rules, and trees grow across chunk borders without being cut. ([`39da44c`](https://github.com/NowsMC/Tube/commit/39da44cb8dd3312afca165414a46d98f1606a740), [`27ed448`](https://github.com/NowsMC/Tube/commit/27ed4486b652a8dceade58295909cb18eb9a1dc3))
+- Normal worlds are generated from Minecraft's own world generation data, so terrain, biomes and caves are the same as in vanilla for the same seed. ([`21d1df7`](https://github.com/NowsMC/Tube/commit/21d1df7d14f1cd60c25a964e2f13ef20634d7de6))
+- All overworld biomes, including mountains, rivers, oceans, badlands and the cave biomes. ([`b9b0ea9`](https://github.com/NowsMC/Tube/commit/b9b0ea93cbfd76144fc0bf98a682893b6530d8a6))
+- Surface blocks follow each biome, with snow, sand, terracotta bands, deepslate and bedrock. ([`e5433d4`](https://github.com/NowsMC/Tube/commit/e5433d413f9d4619511194b72e36420dddf62d1e))
+- Noise caves, winding caves and ravines, with underground water and lava lakes. ([`a29fa84`](https://github.com/NowsMC/Tube/commit/a29fa8455ab7d8e8d6aeb9cbadc024515b379e16), [`29d4f68`](https://github.com/NowsMC/Tube/commit/29d4f68da81c724dc6fc0fecf56d9478aa3843ae), [`eb01a55`](https://github.com/NowsMC/Tube/commit/eb01a559f2ef4da463250110e18598f2f2d31b01))
+- Ores at vanilla heights and amounts, and large copper and iron veins. ([`8f445ae`](https://github.com/NowsMC/Tube/commit/8f445aea760940c75608b0ae512d7bec0e860dfb), [`2642b20`](https://github.com/NowsMC/Tube/commit/2642b20b2ea286841b284d854194c6dfe7424fa9))
+- Every vanilla tree type, and trees are not cut at chunk borders. ([`39da44c`](https://github.com/NowsMC/Tube/commit/39da44cb8dd3312afca165414a46d98f1606a740), [`27ed448`](https://github.com/NowsMC/Tube/commit/27ed4486b652a8dceade58295909cb18eb9a1dc3))
+- Grass, flowers, fallen logs, seagrass, kelp, snow and ice where vanilla places them. ([`c66d92a`](https://github.com/NowsMC/Tube/commit/c66d92a23c3ab846d37562fd754e3259e4167da1), [`9501f7d`](https://github.com/NowsMC/Tube/commit/9501f7d2f42805408f0dd784cc2ee55c3b4d635f))
+- The spawn is placed on dry land. Without the network on the first start, normal worlds use Tube's simple terrain instead. ([`328580a`](https://github.com/NowsMC/Tube/commit/328580aa48a7866bfbb22914de4ddf8a396120dd))
 
 ### Not implemented yet
 
