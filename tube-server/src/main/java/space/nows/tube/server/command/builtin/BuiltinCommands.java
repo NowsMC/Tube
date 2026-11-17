@@ -45,6 +45,7 @@ public final class BuiltinCommands {
         all.add(new ListCommand(server));
         all.add(new PluginsCommand(server));
         all.add(new SaveAllCommand(server));
+        all.add(new StopCommand(server));
         return all;
     }
 }
