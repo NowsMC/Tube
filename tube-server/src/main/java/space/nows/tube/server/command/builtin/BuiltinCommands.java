@@ -75,6 +75,7 @@ public final class BuiltinCommands {
         all.add(new DifficultyCommand(server));
         all.add(new WorldBorderCommand(targets));
         all.add(new SetBlockCommand(targets));
+        all.add(new FillCommand(targets));
         return all;
     }
 }
