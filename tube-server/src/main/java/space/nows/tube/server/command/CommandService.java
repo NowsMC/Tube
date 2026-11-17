@@ -74,6 +74,15 @@ public final class CommandService implements CommandRegistry {
         return entries.values().stream().map(Entry::name).distinct().sorted().toList();
     }
 
+    public Collection<String> availableTo(CommandSender sender) {
+        return entries.values().stream()
+                .filter(entry -> allowed(entry.handler(), sender))
+                .map(Entry::name)
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
     public void attachEvents(EventBus events) {
         this.events = events;
     }
