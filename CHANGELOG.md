@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2611.1 - 2026-11-17
+
+### Server
+
+- Shows a single "Preparing libraries..." line on first start instead of one line per downloaded library. ([`a0e20a5`](https://github.com/NowsMC/Tube/commit/a0e20a574135a6dfea001723ceb285b4985bf6e9))
+
 ## 0.2611.0 - 2026-11-17
 
 First release, for Minecraft 26.2.
