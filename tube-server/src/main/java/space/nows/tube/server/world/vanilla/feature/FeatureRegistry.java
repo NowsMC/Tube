@@ -11,6 +11,7 @@ import space.nows.tube.server.world.vanilla.feature.kind.BoulderFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.ChanceListFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.DecorationSource;
 import space.nows.tube.server.world.vanilla.feature.kind.DiskFeature;
+import space.nows.tube.server.world.vanilla.feature.kind.FallenLogFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.FreezeFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.KelpFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.LichenFeature;
@@ -52,6 +53,7 @@ public final class FeatureRegistry implements DecorationSource {
         kinds.put("random_boolean_selector", PickOneFeature::coinFlip);
         kinds.put("weighted_random_selector", PickOneFeature::weighted);
         kinds.put("sequence", SequenceFeature::read);
+        kinds.put("fallen_tree", (config, source) -> FallenLogFeature.read(config));
         kinds.put("disk", (config, source) -> DiskFeature.read(config));
         kinds.put("seagrass", (config, source) -> SeagrassFeature.read(config));
         kinds.put("kelp", (config, source) -> new KelpFeature());
