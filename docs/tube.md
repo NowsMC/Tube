@@ -16,6 +16,7 @@ Tube is a Minecraft server built on Minestom with its own API and systems. Bukki
 - A new feature is designed in Tube's terms first: API in `tube-api`, implementation in `tube-server`.
 - Bukkit support only translates. Add to `tube-bukkit-api` what plugins actually call, and implement it in `tube-bukkit` on top of the Tube API. If the Tube API cannot do it yet, extend the Tube API first.
 - `tools/bukkit` measures which Bukkit classes and methods plugins need.
+- Normal world generation is in `tube-server` under `world/vanilla`. It reads Mojang's world generation data, downloaded at run time.
 
 ## Versions
 
