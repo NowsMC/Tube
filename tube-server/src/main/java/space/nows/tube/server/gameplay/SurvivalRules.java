@@ -7,6 +7,7 @@ import space.nows.tube.server.gameplay.crafting.CraftingGrids;
 import space.nows.tube.server.gameplay.crafting.Furnaces;
 import space.nows.tube.server.gameplay.crafting.RecipeBook;
 import space.nows.tube.server.gameplay.crafting.VanillaRecipes;
+import space.nows.tube.server.gameplay.mob.Mobs;
 import space.nows.tube.server.world.WorldService;
 
 import java.nio.file.Path;
@@ -37,11 +38,14 @@ public final class SurvivalRules {
         Containers.install(handler);
         new CraftingGrids(this::recipes).install(handler);
         new Furnaces(this::recipes).install(handler);
+        Combat.install(handler);
         Falling.install(handler);
         Hunger.install(handler);
         Experience.install(handler);
         DeathDrops.install(handler);
         new Beds(worlds).install(handler);
+        Mobs.install(handler);
+        Hazards.install();
     }
 
     public static void prepareForSave(Player player) {

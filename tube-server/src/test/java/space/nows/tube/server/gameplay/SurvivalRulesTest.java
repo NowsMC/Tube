@@ -67,6 +67,13 @@ class SurvivalRulesTest {
     }
 
     @Test
+    void weaponsAddTheirAttackDamage() {
+        assertEquals(1, Combat.attackDamage(ItemStack.AIR));
+        assertEquals(7, Combat.attackDamage(ItemStack.of(Material.DIAMOND_SWORD)));
+        assertEquals(9, Combat.attackDamage(ItemStack.of(Material.DIAMOND_AXE)));
+    }
+
+    @Test
     void containerItemsSurviveTheBlockNbt() {
         assertEquals(InventoryType.CHEST_3_ROW, Containers.kind(Block.CHEST).type());
         assertEquals(InventoryType.SHULKER_BOX, Containers.kind(Block.RED_SHULKER_BOX).type());
