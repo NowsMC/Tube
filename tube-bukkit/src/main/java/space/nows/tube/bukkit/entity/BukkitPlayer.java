@@ -95,6 +95,46 @@ public final class BukkitPlayer extends BukkitLivingEntity implements Player {
     }
 
     @Override
+    public float getExp() {
+        return tube.experienceProgress();
+    }
+
+    @Override
+    public void setExp(float exp) {
+        tube.setExperienceProgress(exp);
+    }
+
+    @Override
+    public float getSaturation() {
+        return tube.saturation();
+    }
+
+    @Override
+    public void setSaturation(float saturation) {
+        tube.setSaturation(saturation);
+    }
+
+    @Override
+    public boolean getAllowFlight() {
+        return tube.allowFlight();
+    }
+
+    @Override
+    public void setAllowFlight(boolean flight) {
+        tube.setAllowFlight(flight);
+    }
+
+    @Override
+    public org.bukkit.Location getRespawnLocation() {
+        return tube.respawnPoint().map(runtime.adapters()::location).orElse(null);
+    }
+
+    @Override
+    public void setRespawnLocation(org.bukkit.Location location) {
+        tube.setRespawnPoint(location == null ? null : runtime.adapters().tubeLocation(location));
+    }
+
+    @Override
     public PlayerInventory getInventory() {
         return new BukkitPlayerInventory(tube, this);
     }

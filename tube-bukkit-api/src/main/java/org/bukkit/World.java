@@ -9,6 +9,14 @@ import java.util.UUID;
 
 public interface World {
 
+    long getTime();
+
+    void setTime(long time);
+
+    long getFullTime();
+
+    void setFullTime(long time);
+
     String getName();
 
     java.io.File getWorldFolder();

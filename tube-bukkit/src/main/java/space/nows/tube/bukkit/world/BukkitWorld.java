@@ -82,6 +82,27 @@ public final class BukkitWorld implements World {
     }
 
     @Override
+    public long getTime() {
+        return Math.floorMod(tube.time(), 24000L);
+    }
+
+    @Override
+    public void setTime(long time) {
+        long full = tube.time();
+        tube.setTime(full + Math.floorMod(time - full, 24000L));
+    }
+
+    @Override
+    public long getFullTime() {
+        return tube.time();
+    }
+
+    @Override
+    public void setFullTime(long time) {
+        tube.setTime(time);
+    }
+
+    @Override
     public long getSeed() {
         return tube.options().seed();
     }

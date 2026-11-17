@@ -28,6 +28,22 @@ public interface Player extends HumanEntity, OfflinePlayer {
 
     void setLevel(int level);
 
+    float getExp();
+
+    void setExp(float exp);
+
+    float getSaturation();
+
+    void setSaturation(float saturation);
+
+    boolean getAllowFlight();
+
+    void setAllowFlight(boolean flight);
+
+    org.bukkit.Location getRespawnLocation();
+
+    void setRespawnLocation(org.bukkit.Location location);
+
     InetSocketAddress getAddress();
 
     @Override

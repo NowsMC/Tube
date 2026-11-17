@@ -17,7 +17,7 @@ public class EntitySpawnEvent extends org.bukkit.event.entity.EntityEvent implem
     }
 
     public org.bukkit.Location getLocation() {
-        throw new UnsupportedOperationException("EntitySpawnEvent#getLocation is not supported by Tube yet");
+        return getEntity().getLocation();
     }
 
     @Override

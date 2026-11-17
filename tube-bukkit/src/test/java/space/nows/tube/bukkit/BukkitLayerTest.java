@@ -90,6 +90,22 @@ class BukkitLayerTest {
                     if (event.getBlock().getX() == 13) {
                         event.setCancelled(true);
                     }
+                    if (event.getBlock().getX() == 7) {
+                        event.setDropItems(false);
+                    }
+                }
+
+                @EventHandler
+                public void onDeath(org.bukkit.event.entity.PlayerDeathEvent event) {
+                    log("death:" + event.getDrops().size() + ":" + event.getDroppedExp());
+                    event.getDrops().clear();
+                    event.getDrops().add(new org.bukkit.inventory.ItemStack(org.bukkit.Material.DIAMOND));
+                    event.setDroppedExp(3);
+                }
+
+                @EventHandler
+                public void onDamage(org.bukkit.event.entity.EntityDamageEvent event) {
+                    event.setDamage(event.getDamage() + 1);
                 }
 
                 @EventHandler
@@ -232,6 +248,25 @@ class BukkitLayerTest {
         assertTrue(!allowed.isCancelled());
         assertTrue(denied.isCancelled());
         assertEquals("break:13,64,2:Steve", log().getLast());
+    }
+
+    @Test
+    void pluginsChangeDropsDamageAndBlockDrops() throws IOException {
+        var player = stub.player("Steve");
+        var world = (space.nows.tube.api.world.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.world.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
+
+        var death = stub.events.post(new space.nows.tube.api.event.EntityDeathEvent(player,
+                java.util.List.of(space.nows.tube.api.inventory.ItemStack.of("stone", 3)), 10));
+        assertEquals("death:1:10", log().getLast());
+        assertEquals(java.util.List.of("minecraft:diamond"), death.drops().stream().map(space.nows.tube.api.inventory.ItemStack::type).toList());
+        assertEquals(3, death.experience());
+
+        var damage = stub.events.post(new space.nows.tube.api.event.EntityDamageEvent(player, 4));
+        assertEquals(5, damage.damage());
+
+        var noDrops = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 7, 64, 2, space.nows.tube.api.world.Block.of("stone")));
+        assertTrue(!noDrops.dropItems());
     }
 
     @Test

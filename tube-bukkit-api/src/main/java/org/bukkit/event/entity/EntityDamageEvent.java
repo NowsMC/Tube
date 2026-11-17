@@ -8,7 +8,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled;
-    private final double damage;
+    private double damage;
     private final DamageCause cause;
 
     public EntityDamageEvent(Entity damagee, double damage) {
@@ -60,6 +60,10 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
 
     public double getDamage() {
         return damage;
+    }
+
+    public void setDamage(double damage) {
+        this.damage = damage;
     }
 
     @Override

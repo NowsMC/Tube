@@ -11,7 +11,11 @@ public class PlayerDeathEvent extends EntityDeathEvent {
     private boolean keepInventory;
 
     public PlayerDeathEvent(Player player, String deathMessage) {
-        super(player);
+        this(player, new java.util.ArrayList<>(), 0, deathMessage);
+    }
+
+    public PlayerDeathEvent(Player player, java.util.List<org.bukkit.inventory.ItemStack> drops, int droppedExp, String deathMessage) {
+        super(player, drops, droppedExp);
         this.deathMessage = deathMessage;
     }
 
