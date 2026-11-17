@@ -68,6 +68,7 @@ public final class BuiltinCommands {
         all.add(new EffectCommand(targets));
         all.add(new KillCommand(targets));
         all.add(new TeleportCommand(targets));
+        all.add(new SpawnPointCommand(targets));
         return all;
     }
 }
