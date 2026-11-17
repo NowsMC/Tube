@@ -5,6 +5,7 @@ import net.kyori.adventure.key.Key;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
+import net.minestom.server.instance.LightingChunk;
 import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.world.DimensionType;
@@ -21,6 +22,8 @@ import space.nows.tube.server.entity.MinestomItemEntity;
 import space.nows.tube.server.entity.MinestomLivingEntity;
 import space.nows.tube.server.player.PlayerService;
 import space.nows.tube.server.world.generator.FlatGenerator;
+import space.nows.tube.server.world.generator.NetherGenerator;
+import space.nows.tube.server.world.generator.SpawnSearch;
 import space.nows.tube.server.world.generator.TerrainGenerator;
 import space.nows.tube.server.world.generator.VoidGenerator;
 
@@ -61,6 +64,7 @@ public final class WorldService implements WorldManager {
         generators.put(WorldOptions.FLAT, seed -> new FlatGenerator());
         generators.put(WorldOptions.VOID, seed -> new VoidGenerator());
         generators.put(WorldOptions.NORMAL, TerrainGenerator::new);
+        generators.put(WorldOptions.NETHER, NetherGenerator::new);
     }
 
     @Override
@@ -188,9 +192,10 @@ public final class WorldService implements WorldManager {
             settings.set("generator", options.generator());
             settings.set("seed", Long.toString(options.seed()));
             settings.set("environment", options.environment().name().toLowerCase(java.util.Locale.ROOT));
-            settings.set("spawn.x", 0.5);
-            settings.set("spawn.y", (double) generator.spawnHeight(0, 0));
-            settings.set("spawn.z", 0.5);
+            int[] column = SpawnSearch.find(generator);
+            settings.set("spawn.x", column[0] + 0.5);
+            settings.set("spawn.y", (double) generator.spawnHeight(column[0], column[1]));
+            settings.set("spawn.z", column[1] + 0.5);
             settings.save();
         }
         double[] spawn = {
@@ -201,11 +206,21 @@ public final class WorldService implements WorldManager {
 
         InstanceContainer instance = MinecraftServer.getInstanceManager()
                 .createInstanceContainer(dimension(options.environment()), new AnvilLoader(directory, Key.key(dimensionKey(options.environment()))));
+        instance.setChunkSupplier(LightingChunk::new);
         instance.setGenerator(unit -> generator.generate(new MinestomChunkBuilder(unit)));
+        instance.setWorldAge((long) settings.getDouble("age", 0));
+        instance.setTime((long) settings.getDouble("time", 1000));
 
         MinestomWorld world = new MinestomWorld(name, instance, spawn, options, this);
         byInstance.put(instance, world);
         return world;
+    }
+
+    void saveState(MinestomWorld world) {
+        FileConfig settings = FileConfig.load(root.resolve(world.name()).resolve("tube-world.yml"));
+        settings.set("time", world.instance().getTime());
+        settings.set("age", world.instance().getWorldAge());
+        settings.save();
     }
 
     private static WorldOptions storedOptions(FileConfig settings, WorldOptions fallback) {

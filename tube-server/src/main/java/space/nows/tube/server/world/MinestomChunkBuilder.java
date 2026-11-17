@@ -2,6 +2,7 @@ package space.nows.tube.server.world;
 
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.instance.generator.GenerationUnit;
+import net.minestom.server.registry.RegistryKey;
 import space.nows.tube.api.world.Block;
 import space.nows.tube.api.world.ChunkBuilder;
 
@@ -63,6 +64,13 @@ final class MinestomChunkBuilder implements ChunkBuilder {
         int to = Math.min(toY, maxY);
         if (from < to) {
             unit.modifier().fillHeight(from, to, BlockMapper.toMinestom(block));
+        }
+    }
+
+    @Override
+    public void setBiome(int x, int y, int z, String biome) {
+        if (y >= minY && y < maxY) {
+            unit.modifier().setBiome(startX + x, y, startZ + z, RegistryKey.of(biome));
         }
     }
 }

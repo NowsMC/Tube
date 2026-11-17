@@ -15,4 +15,6 @@ public interface ChunkBuilder {
     void fillColumn(int x, int z, int fromY, int toY, Block block);
 
     void fillLayers(int fromY, int toY, Block block);
+
+    void setBiome(int x, int y, int z, String biome);
 }

@@ -52,12 +52,15 @@ class WorldCreationTest {
     void normalWorldsSpawnOnTheirSurface() {
         WorldService service = new WorldService(directory, "main");
         World world = service.create("terrain", WorldOptions.of(WorldOptions.NORMAL, 7));
-        world.loadChunk(0, 0).join();
+        int spawnX = (int) Math.floor(world.spawn().x());
+        int spawnZ = (int) Math.floor(world.spawn().z());
+        world.loadChunk(spawnX >> 4, spawnZ >> 4).join();
 
         int spawnY = (int) world.spawn().y();
-        assertTrue(world.block(0, spawnY, 0).isAir());
-        assertFalse(world.block(0, spawnY - 1, 0).isAir());
-        assertEquals("minecraft:bedrock", world.block(3, -64, 3).key());
+        assertTrue(world.block(spawnX, spawnY, spawnZ).isAir());
+        assertFalse(world.block(spawnX, spawnY - 1, spawnZ).isAir());
+        assertFalse(world.block(spawnX, spawnY - 1, spawnZ).key().equals("minecraft:water"));
+        assertEquals("minecraft:bedrock", world.block((spawnX & ~15) + 3, -64, (spawnZ & ~15) + 3).key());
         release(world);
     }
 

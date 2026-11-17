@@ -7,6 +7,7 @@ public record WorldOptions(String generator, long seed, Environment environment)
     public static final String FLAT = "tube:flat";
     public static final String VOID = "tube:void";
     public static final String NORMAL = "tube:normal";
+    public static final String NETHER = "tube:nether";
 
     public WorldOptions {
         Objects.requireNonNull(generator, "generator");

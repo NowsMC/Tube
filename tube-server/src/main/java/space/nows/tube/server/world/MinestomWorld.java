@@ -143,6 +143,7 @@ public final class MinestomWorld implements World {
 
     @Override
     public void save() {
+        owner.saveState(this);
         instance.saveInstance().join();
         instance.saveChunksToStorage().join();
     }

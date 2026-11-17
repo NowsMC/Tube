@@ -7,4 +7,8 @@ public interface WorldGenerator {
     default int spawnHeight(int x, int z) {
         return 64;
     }
+
+    default boolean canSpawnAt(int x, int z) {
+        return true;
+    }
 }
