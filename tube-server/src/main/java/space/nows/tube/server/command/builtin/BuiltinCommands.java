@@ -70,6 +70,7 @@ public final class BuiltinCommands {
         all.add(new TeleportCommand(targets));
         all.add(new SpawnPointCommand(targets));
         all.add(new SummonCommand(targets));
+        all.add(new TimeCommand(targets));
         return all;
     }
 }
