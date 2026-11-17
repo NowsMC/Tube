@@ -18,6 +18,7 @@ import space.nows.tube.server.world.vanilla.feature.kind.SeagrassFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SequenceFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SimpleBlockFeature;
 import space.nows.tube.server.world.vanilla.feature.kind.SpringFeature;
+import space.nows.tube.server.world.vanilla.feature.kind.VineFeature;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementStep;
 import space.nows.tube.server.world.vanilla.feature.placement.PlacementSteps;
 
@@ -56,6 +57,7 @@ public final class FeatureRegistry implements DecorationSource {
         kinds.put("spring_feature", (config, source) -> SpringFeature.read(config));
         kinds.put("freeze_top_layer", (config, source) -> new FreezeFeature());
         kinds.put("block_blob", (config, source) -> BoulderFeature.read(config));
+        kinds.put("vines", (config, source) -> new VineFeature());
     }
 
     public synchronized Decoration placed(String id) {
