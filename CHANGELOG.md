@@ -18,6 +18,21 @@
 - Grass, flowers, fallen logs, seagrass, kelp, snow and ice where vanilla places them. ([`c66d92a`](https://github.com/NowsMC/Tube/commit/c66d92a23c3ab846d37562fd754e3259e4167da1), [`9501f7d`](https://github.com/NowsMC/Tube/commit/9501f7d2f42805408f0dd784cc2ee55c3b4d635f))
 - The spawn is placed on dry land. Without the network on the first start, normal worlds use Tube's simple terrain instead. ([`328580a`](https://github.com/NowsMC/Tube/commit/328580aa48a7866bfbb22914de4ddf8a396120dd))
 
+### Commands
+
+- Commands are filled in while typing in game: command names, online players, selectors, items, blocks, entities, effects and each command's options. Ids can be typed without `minecraft:`, and only commands the player may use are offered. ([`73030e6`](https://github.com/NowsMC/Tube/commit/73030e64d20290ad693284b62ff0d67d148f1e3c), [`f95da57`](https://github.com/NowsMC/Tube/commit/f95da57be0512864f9a5996a23f53d63e30dcae0))
+- Bukkit plugins with a tab completer get the same auto-fill. ([`3cd1c3e`](https://github.com/NowsMC/Tube/commit/3cd1c3e151ad172433ab6515dab6da7cdaec77c3))
+- New everyday commands `time`, `kill`, `clear`, `xp`, `effect`, `spawnpoint`, `setworldspawn`, `me`, `seed` and `setblock`. ([`2c05d36`](https://github.com/NowsMC/Tube/commit/2c05d368d04b391374a7dc3cb1d75ba527343656), [`a88d7b9`](https://github.com/NowsMC/Tube/commit/a88d7b9007f8ac875544cedb710cd3fea753dda8), [`572f0b6`](https://github.com/NowsMC/Tube/commit/572f0b60a5f5c3ac765c94d0ef9b7da2edae3060), [`43f515c`](https://github.com/NowsMC/Tube/commit/43f515cf4d4dd723fb119b049907ac8154833d54), [`2ee74de`](https://github.com/NowsMC/Tube/commit/2ee74de286a97305a56e9b5b52fa70801b631aa9), [`effd67f`](https://github.com/NowsMC/Tube/commit/effd67f87e8fe58740c2b148d06f47fbf95d7793), [`b588147`](https://github.com/NowsMC/Tube/commit/b58814736e84e26f0595209fa36fa7badb6398a5), [`4a838ce`](https://github.com/NowsMC/Tube/commit/4a838ce5ff5a4d9e3fdcf1dbfb603e713732f299), [`604c1a3`](https://github.com/NowsMC/Tube/commit/604c1a392eb79fdfc74b01df4d090e3d1c06d66f), [`e18d1ea`](https://github.com/NowsMC/Tube/commit/e18d1eab56bbb9ecad8788284119f8c09803cfe6))
+- New server commands `difficulty`, `defaultgamemode`, `worldborder` and `tps`. Difficulty and the default game mode are saved to `server.properties`, and the world spawn to `tube-world.yml`. ([`f08202b`](https://github.com/NowsMC/Tube/commit/f08202b69a11e8c54b1b17176fd9d4a357d3c8e8), [`b94c7eb`](https://github.com/NowsMC/Tube/commit/b94c7eb2617a3692d0cf7fec91c241563f1f0371), [`8303bbb`](https://github.com/NowsMC/Tube/commit/8303bbb31d43710c23ab9f622c6b085901a42f8c), [`b7c75eb`](https://github.com/NowsMC/Tube/commit/b7c75eba87c70f7ad51a20e5c86b1492a156329f))
+- New building commands `fill` and `clone`, limited to 32768 blocks like vanilla. ([`cb74109`](https://github.com/NowsMC/Tube/commit/cb74109dd7f81f7835f7310be3134f9ca5969b23), [`415e173`](https://github.com/NowsMC/Tube/commit/415e173252ebe608ea414f66ce9725429819752d))
+- Player arguments accept `@a`, `@p`, `@r` and `@s`, and coordinates accept `~`. `gamemode`, `give` and `tp` can target several players. ([`a55966b`](https://github.com/NowsMC/Tube/commit/a55966b4052647889cfbbd5df1d0e11a067af3cc), [`6814b14`](https://github.com/NowsMC/Tube/commit/6814b144887ec92725809d577cfb8cb2def36de6))
+- `/plugins` can also be run as `/pl` and `/plugin`. ([`7a1d35f`](https://github.com/NowsMC/Tube/commit/7a1d35f8bbc8ee9d12a848d39a42669e02bd821e))
+
+### API
+
+- `Command.suggest` lets plugin commands offer auto-fill, with `Suggestions.matching` for filtering. ([`f95da57`](https://github.com/NowsMC/Tube/commit/f95da57be0512864f9a5996a23f53d63e30dcae0))
+- `Server` gains the difficulty, the default game mode and tick rates, and `World.setSpawn` moves the world spawn. ([`c46982c`](https://github.com/NowsMC/Tube/commit/c46982c2ae41b03f452839f6cab305f5e26925e2), [`a2bf934`](https://github.com/NowsMC/Tube/commit/a2bf934bd6f9a3314613feb9e2b9776d778ebdd4), [`0c2758d`](https://github.com/NowsMC/Tube/commit/0c2758de7aea44c9b31206fdd5f98afaad7a39b1), [`bf0edf9`](https://github.com/NowsMC/Tube/commit/bf0edf9ece46748d1cce7e3945c712498c454356))
+
 ### Not implemented yet
 
 - Lakes, geodes, dripstone, monster rooms, underwater magma and structures in generated worlds. Trees and ores do not appear at the same positions as in vanilla.
