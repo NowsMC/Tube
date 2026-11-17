@@ -7,7 +7,7 @@ Tube is a Minecraft server built on Minestom with its own API and systems. Bukki
 | Module | Put here |
 | --- | --- |
 | `tube-api` | The public API that plugins use. |
-| `tube-server` | The server. Minestom is only used inside this module. |
+| `tube-server` | Tube's own server systems: world generation, gameplay and server management. Minestom only runs the protocol and chunks underneath, and no other module touches it. |
 | `tube-network` | Netty sockets, RCON and Query. |
 | `tube-bukkit-api` | Tube's own `org.bukkit` classes. |
 | `tube-bukkit` | The translator from Bukkit calls to the Tube API. |
