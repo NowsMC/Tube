@@ -41,6 +41,7 @@ public final class BuiltinCommands {
         Targets targets = new Targets(server);
         List<ServerCommand> all = new ArrayList<>();
         all.add(new HelpCommand(commands::availableTo));
+        all.add(new VersionCommand(server));
         return all;
     }
 }
