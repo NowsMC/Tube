@@ -57,12 +57,16 @@ public final class WorldService implements WorldManager {
     }
 
     public WorldService(Path root, String defaultName, WorldOptions defaultOptions) {
+        this(root, defaultName, defaultOptions, TerrainGenerator::new);
+    }
+
+    public WorldService(Path root, String defaultName, WorldOptions defaultOptions, LongFunction<WorldGenerator> normalGenerator) {
         this.root = root;
         this.defaultName = defaultName;
         this.defaultOptions = defaultOptions;
         generators.put(WorldOptions.FLAT, seed -> new FlatGenerator());
         generators.put(WorldOptions.VOID, seed -> new VoidGenerator());
-        generators.put(WorldOptions.NORMAL, TerrainGenerator::new);
+        generators.put(WorldOptions.NORMAL, normalGenerator);
         generators.put(WorldOptions.NETHER, NetherGenerator::new);
     }
 

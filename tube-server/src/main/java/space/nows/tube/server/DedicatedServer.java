@@ -54,6 +54,7 @@ import space.nows.tube.server.remote.RemoteAccess;
 import space.nows.tube.server.scheduler.SchedulerService;
 import space.nows.tube.server.world.SpawnProtection;
 import space.nows.tube.server.world.WorldService;
+import space.nows.tube.server.world.vanilla.WorldgenLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -232,7 +233,8 @@ public final class DedicatedServer implements Server {
         UserCache userCache = new UserCache(directory);
         Whitelist whitelist = new Whitelist(directory, settings.access().whitelist());
         BanList bans = new BanList(directory);
-        worlds = new WorldService(directory.resolve("worlds"), settings.level().name(), defaultWorldOptions(settings.level()));
+        worlds = new WorldService(directory.resolve("worlds"), settings.level().name(), defaultWorldOptions(settings.level()),
+                new WorldgenLoader(directory.resolve("cache"), minecraftVersion()));
         playerData = new PlayerDataStore(directory.resolve("worlds").resolve(settings.level().name()).resolve("playerdata"));
         players = new PlayerService(worlds, permissions);
         commands = new CommandService(players);
