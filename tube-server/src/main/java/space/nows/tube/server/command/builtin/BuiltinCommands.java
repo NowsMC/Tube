@@ -73,6 +73,7 @@ public final class BuiltinCommands {
         all.add(new TimeCommand(targets));
         all.add(new SetWorldSpawnCommand(targets));
         all.add(new DifficultyCommand(server));
+        all.add(new WorldBorderCommand(targets));
         return all;
     }
 }
