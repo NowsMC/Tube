@@ -2,6 +2,7 @@ package space.nows.tube.server.gameplay;
 
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
+import space.nows.tube.server.gameplay.block.BlockInteractions;
 import space.nows.tube.server.gameplay.crafting.CraftingGrids;
 import space.nows.tube.server.gameplay.crafting.Furnaces;
 import space.nows.tube.server.gameplay.crafting.RecipeBook;
@@ -31,6 +32,7 @@ public final class SurvivalRules {
 
     public void install(GlobalEventHandler handler) {
         Thread.ofVirtual().name("tube-recipes").start(() -> recipes = VanillaRecipes.load(cache, minecraftVersion));
+        BlockInteractions.install(handler);
         BlockDrops.install(handler);
         Containers.install(handler);
         new CraftingGrids(this::recipes).install(handler);
@@ -39,6 +41,7 @@ public final class SurvivalRules {
         Hunger.install(handler);
         Experience.install(handler);
         DeathDrops.install(handler);
+        new Beds(worlds).install(handler);
     }
 
     public static void prepareForSave(Player player) {

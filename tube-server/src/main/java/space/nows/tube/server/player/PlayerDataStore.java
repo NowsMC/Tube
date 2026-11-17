@@ -87,12 +87,29 @@ public final class PlayerDataStore {
                 .putFloat("XpP", player.getExp())
                 .putInt("playerGameType", player.getGameMode().ordinal())
                 .putString("Dimension", "minecraft:overworld")
-                .put("tube", CompoundBinaryTag.builder().putString("world", world).build())
+                .put("tube", tubeData(player, world))
                 .build();
         write(player.getUuid(), data);
     }
 
+    private static CompoundBinaryTag tubeData(Player player, String world) {
+        CompoundBinaryTag.Builder tube = CompoundBinaryTag.builder().putString("world", world);
+        RespawnPoint respawn = player.getTag(RespawnPoint.TAG);
+        if (respawn != null) {
+            tube.putString("respawnWorld", respawn.world())
+                    .putInt("respawnX", respawn.position().blockX())
+                    .putInt("respawnY", respawn.position().blockY())
+                    .putInt("respawnZ", respawn.position().blockZ());
+        }
+        return tube.build();
+    }
+
     public void apply(CompoundBinaryTag data, Player player, boolean restoreGameMode) {
+        CompoundBinaryTag tube = data.getCompound("tube");
+        if (tube.keySet().contains("respawnWorld")) {
+            player.setTag(RespawnPoint.TAG, new RespawnPoint(tube.getString("respawnWorld"),
+                    new Pos(tube.getInt("respawnX"), tube.getInt("respawnY"), tube.getInt("respawnZ"))));
+        }
         var registries = MinecraftServer.getRegistries();
         for (var element : data.getList("Inventory", BinaryTagTypes.COMPOUND)) {
             CompoundBinaryTag tag = (CompoundBinaryTag) element;
