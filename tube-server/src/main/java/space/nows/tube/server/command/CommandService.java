@@ -3,6 +3,8 @@ package space.nows.tube.server.command;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.server.command.builder.suggestion.Suggestion;
+import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import space.nows.tube.api.command.Command;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
@@ -47,7 +49,8 @@ public final class CommandService implements CommandRegistry {
 
         var bridge = new net.minestom.server.command.builder.Command(labels.getFirst(), labels.stream().skip(1).toArray(String[]::new));
         var args = ArgumentType.StringArray("args");
-        bridge.setCondition((sender, commandString) -> command.permission() == null || wrap(sender).hasPermission(command.permission()));
+        args.setSuggestionCallback((sender, context, suggestion) -> offer(command, wrap(sender), suggestion));
+        bridge.setCondition((sender, commandString) -> allowed(command, wrap(sender)));
         bridge.setDefaultExecutor((sender, context) -> run(command, wrap(sender), List.of()));
         bridge.addSyntax((sender, context) -> run(command, wrap(sender), List.of(context.get(args))), args);
         MinecraftServer.getCommandManager().register(bridge);
@@ -104,9 +107,35 @@ public final class CommandService implements CommandRegistry {
         run(entry.handler(), sender, List.of(parts).subList(1, parts.length));
     }
 
+    public List<String> suggest(CommandSender sender, String line) {
+        CommandLine parsed = CommandLine.parse(line);
+        Entry entry = entries.get(normalize(parsed.label()));
+        if (entry == null || parsed.arguments().isEmpty() || !allowed(entry.handler(), sender)) {
+            return List.of();
+        }
+        return entry.handler().suggest(sender, parsed.arguments());
+    }
+
+    private void offer(Command command, CommandSender sender, Suggestion suggestion) {
+        if (!allowed(command, sender)) {
+            return;
+        }
+        String input = suggestion.getInput();
+        CommandLine parsed = CommandLine.parse(input.endsWith(" ") ? input.substring(0, input.length() - 1) : input);
+        if (parsed.arguments().isEmpty()) {
+            return;
+        }
+        suggestion.setStart(parsed.currentStart() + 1);
+        suggestion.setLength(parsed.current().length());
+        command.suggest(sender, parsed.arguments()).forEach(option -> suggestion.addEntry(new SuggestionEntry(option)));
+    }
+
+    private static boolean allowed(Command command, CommandSender sender) {
+        return command.permission() == null || sender.hasPermission(command.permission());
+    }
+
     private static void run(Command command, CommandSender sender, List<String> args) {
-        String permission = command.permission();
-        if (permission != null && !sender.hasPermission(permission)) {
+        if (!allowed(command, sender)) {
             sender.sendMessage(MiniMessage.miniMessage().deserialize(NO_PERMISSION));
             return;
         }
