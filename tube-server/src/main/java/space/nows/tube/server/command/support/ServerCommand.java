@@ -39,14 +39,21 @@ public abstract class ServerCommand implements Command {
 
     @Override
     public final void execute(CommandSender sender, List<String> args) {
+        space.nows.tube.api.command.CommandInput input = new CommandInput(args, usage);
         try {
-            run(sender, new CommandInput(args, usage));
-        } catch (CommandFailure | IllegalArgumentException failure) {
+            run(sender, input);
+        } catch (space.nows.tube.api.command.CommandFailure | IllegalArgumentException failure) {
             sender.sendMessage(failure.getMessage());
         }
     }
 
-    protected abstract void run(CommandSender sender, CommandInput input);
+    protected void run(CommandSender sender, space.nows.tube.api.command.CommandInput input) {
+        run(sender, (CommandInput) input);
+    }
+
+    protected void run(CommandSender sender, CommandInput input) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public List<String> suggest(CommandSender sender, List<String> args) {
