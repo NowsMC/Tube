@@ -47,9 +47,22 @@ final class TeleportCommand extends ServerCommand {
     @Override
     public List<String> suggest(CommandSender sender, List<String> args) {
         String typed = Typing.current(args);
-        if (typed.startsWith("~") || !typed.isEmpty() && (Character.isDigit(typed.charAt(0)) || typed.charAt(0) == '-')) {
+        int position = Typing.position(args);
+        if (Positions.isCoordinate(typed)) {
             return List.of();
         }
-        return Typing.position(args) <= 1 ? Suggestions.matching(typed, targets.playerOptions()) : List.of();
+        if (position > 0 && Positions.isCoordinate(Typing.word(args, 0))) {
+            return Positions.suggest(args, 0);
+        }
+        if (position == 0) {
+            List<String> options = new java.util.ArrayList<>(targets.suggestPlayers(typed));
+            options.addAll(Positions.suggest(args, 0));
+            return options;
+        }
+        List<String> options = new java.util.ArrayList<>(Positions.suggest(args, 1));
+        if (position == 1) {
+            options.addAll(targets.suggestPlayers(typed));
+        }
+        return options;
     }
 }

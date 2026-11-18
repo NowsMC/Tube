@@ -7,6 +7,8 @@ import space.nows.tube.server.command.support.Positions;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
 
+import java.util.List;
+
 final class SetWorldSpawnCommand extends ServerCommand {
 
     private final Targets targets;
@@ -24,5 +26,10 @@ final class SetWorldSpawnCommand extends ServerCommand {
         input.end();
         origin.world().setSpawn(new Location(origin.world(), block.x() + 0.5, block.y(), block.z() + 0.5));
         sender.sendMessage("Set the world spawn point to " + block.x() + ", " + block.y() + ", " + block.z());
+    }
+
+    @Override
+    public List<String> suggest(CommandSender sender, List<String> args) {
+        return Positions.suggest(args, 0);
     }
 }

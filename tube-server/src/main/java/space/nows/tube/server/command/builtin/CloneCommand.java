@@ -76,6 +76,9 @@ final class CloneCommand extends ServerCommand {
 
     @Override
     public List<String> suggest(CommandSender sender, List<String> args) {
-        return Typing.position(args) == 9 ? Suggestions.matching(Typing.current(args), "masked", "replace") : List.of();
+        if (Typing.position(args) == 9) {
+            return Suggestions.matching(Typing.current(args), "masked", "replace");
+        }
+        return Positions.suggest(args, Typing.position(args) < 3 ? 0 : Typing.position(args) < 6 ? 3 : 6);
     }
 }

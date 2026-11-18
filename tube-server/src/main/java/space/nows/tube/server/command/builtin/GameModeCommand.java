@@ -37,7 +37,7 @@ final class GameModeCommand extends ServerCommand {
         String typed = Typing.current(args);
         return switch (Typing.position(args)) {
             case 0 -> Suggestions.matching(typed, GameModes.NAMES);
-            case 1 -> Suggestions.matching(typed, targets.playerOptions());
+            case 1 -> targets.suggestPlayers(typed);
             default -> List.of();
         };
     }

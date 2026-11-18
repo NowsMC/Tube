@@ -73,7 +73,7 @@ final class FillCommand extends ServerCommand {
             case 6 -> Suggestions.matching(typed, RegistryNames.blocks());
             case 7 -> Suggestions.matching(typed, MODES);
             case 8 -> Typing.word(args, 7).equalsIgnoreCase("replace") ? Suggestions.matching(typed, RegistryNames.blocks()) : List.of();
-            default -> List.of();
+            default -> Positions.suggest(args, 0);
         };
     }
 }

@@ -33,6 +33,6 @@ final class SummonCommand extends ServerCommand {
 
     @Override
     public List<String> suggest(CommandSender sender, List<String> args) {
-        return Typing.position(args) == 0 ? Suggestions.matching(Typing.current(args), RegistryNames.entities()) : List.of();
+        return Typing.position(args) == 0 ? Suggestions.matching(Typing.current(args), RegistryNames.entities()) : Positions.suggest(args, 1);
     }
 }

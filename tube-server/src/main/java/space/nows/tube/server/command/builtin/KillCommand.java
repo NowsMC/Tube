@@ -40,6 +40,6 @@ final class KillCommand extends ServerCommand {
 
     @Override
     public List<String> suggest(CommandSender sender, List<String> args) {
-        return Typing.position(args) == 0 ? Suggestions.matching(Typing.current(args), targets.entityOptions()) : List.of();
+        return Typing.position(args) == 0 ? targets.suggestEntities(Typing.current(args)) : List.of();
     }
 }

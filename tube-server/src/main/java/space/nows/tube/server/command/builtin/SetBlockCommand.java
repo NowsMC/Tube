@@ -47,7 +47,7 @@ final class SetBlockCommand extends ServerCommand {
         return switch (Typing.position(args)) {
             case 3 -> Suggestions.matching(typed, RegistryNames.blocks());
             case 4 -> Suggestions.matching(typed, "keep", "replace");
-            default -> List.of();
+            default -> Positions.suggest(args, 0);
         };
     }
 }

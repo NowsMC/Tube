@@ -52,7 +52,7 @@ final class ClearCommand extends ServerCommand {
     public List<String> suggest(CommandSender sender, List<String> args) {
         String typed = Typing.current(args);
         return switch (Typing.position(args)) {
-            case 0 -> Suggestions.matching(typed, targets.playerOptions());
+            case 0 -> targets.suggestPlayers(typed);
             case 1 -> Suggestions.matching(typed, RegistryNames.items());
             default -> List.of();
         };

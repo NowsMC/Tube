@@ -34,8 +34,17 @@ final class SpawnPointCommand extends ServerCommand {
         }
     }
 
+    private List<String> merged(String typed) {
+        List<String> options = new java.util.ArrayList<>(targets.suggestPlayers(typed));
+        options.addAll(Positions.suggest(List.of(typed), 0));
+        return options;
+    }
+
     @Override
     public List<String> suggest(CommandSender sender, List<String> args) {
-        return Typing.position(args) == 0 ? Suggestions.matching(Typing.current(args), targets.playerOptions()) : List.of();
+        if (Typing.position(args) > 0 && Positions.isCoordinate(Typing.word(args, 0))) {
+            return Positions.suggest(args, 0);
+        }
+        return Typing.position(args) == 0 ? merged(Typing.current(args)) : Positions.suggest(args, 1);
     }
 }

@@ -69,7 +69,7 @@ final class ExperienceCommand extends ServerCommand {
         boolean query = Typing.word(args, 0).equalsIgnoreCase("query");
         return switch (Typing.position(args)) {
             case 0 -> Suggestions.matching(typed, ACTIONS);
-            case 1 -> Suggestions.matching(typed, query ? targets.playerNames() : targets.playerOptions());
+            case 1 -> query ? Suggestions.matching(typed, targets.playerNames()) : targets.suggestPlayers(typed);
             case 2 -> query ? Suggestions.matching(typed, UNITS) : List.of();
             case 3 -> query ? List.of() : Suggestions.matching(typed, UNITS);
             default -> List.of();

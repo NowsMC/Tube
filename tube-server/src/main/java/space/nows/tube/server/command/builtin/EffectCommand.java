@@ -81,7 +81,7 @@ final class EffectCommand extends ServerCommand {
         String typed = Typing.current(args);
         return switch (Typing.position(args)) {
             case 0 -> Suggestions.matching(typed, "clear", "give");
-            case 1 -> Suggestions.matching(typed, targets.playerOptions());
+            case 1 -> targets.suggestPlayers(typed);
             case 2 -> Suggestions.matching(typed, RegistryNames.effects());
             case 5 -> Typing.word(args, 0).equalsIgnoreCase("give") ? Suggestions.matching(typed, "false", "true") : List.of();
             default -> List.of();
