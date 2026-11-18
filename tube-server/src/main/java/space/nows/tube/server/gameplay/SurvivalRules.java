@@ -61,6 +61,7 @@ public final class SurvivalRules {
         new Beds(worlds).install(handler);
         Archery.install(handler);
         Throwing.install(handler);
+        new SpawnEggs(worlds).install(handler);
         Mobs.install(handler);
         Hazards.install();
         NetherPortals portals = new NetherPortals(worlds);
