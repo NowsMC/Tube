@@ -1,5 +1,7 @@
 package space.nows.tube.server.command.support;
 
+import space.nows.tube.api.command.CommandFailure;
+
 public final class Durations {
 
     private static final int TICKS_PER_SECOND = 20;

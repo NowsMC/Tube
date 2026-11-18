@@ -1,5 +1,6 @@
 package space.nows.tube.server.command.support;
 
+import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.world.Block;
 import space.nows.tube.server.world.BlockMapper;
 
