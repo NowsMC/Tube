@@ -5,6 +5,17 @@
 ### Builds
 
 - The Snapshot workflow, started by hand from the Actions tab, deploys the `-SNAPSHOT` version to files.nows.space under `snapshots/tube` and keeps the server jars as a workflow artifact for 14 days, so fixes between releases do not need a new version.
+- Every push to `main` and every pull request is built and tested by the CI workflow. ([`0ccdad7`](https://github.com/NowsMC/Tube/commit/0ccdad7defb2f85e290960cb3cf9f2f21f70c2c2))
+
+### Chat
+
+- Plugins can build chat text with colours, hover text and click actions through `Chat` and `ChatText` in the API: copy to the clipboard, open a web link (http and https only), run or suggest a command, and insert text on shift click. `Chat.linkify` turns the links inside a text into clickable ones. ([`4bec423`](https://github.com/NowsMC/Tube/commit/4bec42392d5446662f4f6310b876771e835f0854))
+- A player's name in chat can be clicked to start a private message, and a plugin can set the whole chat line with `PlayerChatEvent.setFormatted`. What players type is still plain text. ([`1a7a38a`](https://github.com/NowsMC/Tube/commit/1a7a38a716c7f85a2a23f2f0d5c17684a58934ed))
+- A whisper shows the sender's name as a click to reply. ([`2e3c3bd`](https://github.com/NowsMC/Tube/commit/2e3c3bd1c5a39be090ec6f058007aa2e11c9a200))
+
+### Loot
+
+- Drops from blocks, mobs, explosions and fishing are rolled by one engine that reads the vanilla loot tables, so every system that gives items can share it. It replaces the single class that did this before and the separate fishing code. ([`ca99bc8`](https://github.com/NowsMC/Tube/commit/ca99bc83a51962e57e1a11b501911cecee42cb98), [`a5c2d53`](https://github.com/NowsMC/Tube/commit/a5c2d53d60514919324e8d80b3bd448d7f22b5f9), [`c6f89d2`](https://github.com/NowsMC/Tube/commit/c6f89d2b0f88d3300f9bf1f836b9067d10674d0d), [`7fac211`](https://github.com/NowsMC/Tube/commit/7fac21106ae4e1a6aa775c79bc46700e59fc034b))
 
 ### Items
 
