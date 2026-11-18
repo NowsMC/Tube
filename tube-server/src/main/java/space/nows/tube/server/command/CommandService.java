@@ -9,6 +9,7 @@ import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.command.CommandInfo;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
@@ -199,7 +200,14 @@ public final class CommandService implements CommandRegistry {
             sender.sendMessage(custom == null || custom.isBlank() ? MiniMessage.miniMessage().deserialize(NO_PERMISSION) : Markup.parse(LEGACY_AMPERSAND.matcher(custom).replaceAll("§$1")));
             return;
         }
-        command.execute(sender, args);
+        try {
+            command.execute(sender, args);
+        } catch (CommandFailure failure) {
+            sender.sendMessage(failure.getMessage());
+        } catch (RuntimeException e) {
+            LOGGER.error("Command failed for {}", sender.name(), e);
+            sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>An internal error occurred while trying to perform this command."));
+        }
     }
 
     private CommandSender wrap(net.minestom.server.command.CommandSender sender) {
