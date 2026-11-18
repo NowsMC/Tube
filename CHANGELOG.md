@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2611.2 - 2026-11-18
+
+### Worlds
+
+- Chunks near flower meadows are no longer missing from normal worlds. ([`e1b3a25`](https://github.com/NowsMC/Tube/commit/e1b3a25b9a5ccd6f859d8fdcd86dba97801cc870))
+- A feature that cannot be read is skipped with one warning instead of leaving whole chunks empty. ([`d1a2e49`](https://github.com/NowsMC/Tube/commit/d1a2e4949e95ae17ab0e7a5d0533e0975e826195))
+- Trees are no longer cut in half at chunk borders: every chunk's features are placed once and shared with its neighbours, which also makes generation faster. ([`605eb02`](https://github.com/NowsMC/Tube/commit/605eb027f9f4dab243043e655b39f9c2bd80826c))
+
 ## 0.2611.1 - 2026-11-17
 
 ### Server
