@@ -17,6 +17,7 @@ public final class NaturalSpawning {
 
     private static final int HOSTILE_CAP = 16;
     private static final int ANIMAL_CAP = 10;
+    private static final int FISH_CAP = 15;
     private static final double CAP_RANGE = 128;
     private static final double CALM_RANGE = 32;
     private static final int FAR_DESPAWN_ONE_IN = 40;
@@ -69,9 +70,12 @@ public final class NaturalSpawning {
     private static void populate(Instance instance, Player player, List<Creature> creatures, Difficulty difficulty, ThreadLocalRandom random) {
         int hostiles = 0;
         int animals = 0;
+        int fish = 0;
         for (Creature creature : creatures) {
             if (creature.getPosition().distanceSquared(player.getPosition()) < CAP_RANGE * CAP_RANGE) {
-                if (creature.kind().disposition().hostile()) {
+                if (creature.kind().aquatic()) {
+                    fish++;
+                } else if (creature.kind().disposition().hostile()) {
                     hostiles++;
                 } else {
                     animals++;
@@ -83,6 +87,9 @@ public final class NaturalSpawning {
         }
         if (animals < ANIMAL_CAP && random.nextInt(4) == 0) {
             HerdSpawner.attempt(instance, player, random);
+        }
+        if (fish < FISH_CAP && random.nextInt(2) == 0) {
+            FishSpawner.attempt(instance, player, random);
         }
     }
 }
