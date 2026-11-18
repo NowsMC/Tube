@@ -2,6 +2,10 @@
 
 ## 0.2611.4 - 2026-11-18
 
+### Builds
+
+- The Snapshot workflow, started by hand from the Actions tab, deploys the `-SNAPSHOT` version to files.nows.space under `snapshots/tube` and keeps the server jars as a workflow artifact for 14 days, so fixes between releases do not need a new version.
+
 ### Commands
 
 - A player who is made an operator, or loses it, or is granted or denied a permission, sees the right commands at once instead of after rejoining. Operators also get the operator level on the client. ([`19eabf3`](https://github.com/NowsMC/Tube/commit/19eabf31b2e353a65b7033a5695139f6c55c0dad))
