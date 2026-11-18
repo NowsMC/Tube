@@ -11,6 +11,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.instance.block.BlockManager;
 import net.minestom.server.instance.block.BlockFace;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -28,10 +29,21 @@ class PlacementTest {
 
     private void join(Env env, float yaw) {
         BlockInteractions.install(MinecraftServer.getGlobalEventHandler());
+        BlockInteractions.registerRules(listenerBlockManager());
         instance = env.createFlatInstance();
         instance.loadChunk(0, 0).join();
         player = env.createPlayer(instance, new Pos(8, 40, 0, yaw, 0));
         player.setGameMode(GameMode.SURVIVAL);
+    }
+
+    private static BlockManager listenerBlockManager() {
+        try {
+            var field = BlockPlacementListener.class.getDeclaredField("BLOCK_MANAGER");
+            field.setAccessible(true);
+            return (BlockManager) field.get(null);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private void place(Material material, Vec against, BlockFace face, float cursorY) {

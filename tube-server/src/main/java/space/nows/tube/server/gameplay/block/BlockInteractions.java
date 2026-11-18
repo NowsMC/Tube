@@ -20,7 +20,10 @@ public final class BlockInteractions {
     }
 
     public static void registerRules() {
-        var manager = MinecraftServer.getBlockManager();
+        registerRules(MinecraftServer.getBlockManager());
+    }
+
+    public static void registerRules(net.minestom.server.instance.block.BlockManager manager) {
         for (Block block : Block.values()) {
             if (PlacementRule.applies(block)) {
                 manager.registerBlockPlacementRule(new PlacementRule(block));
