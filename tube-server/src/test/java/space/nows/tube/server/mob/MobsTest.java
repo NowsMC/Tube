@@ -1,9 +1,10 @@
-package space.nows.tube.server.gameplay.mob;
+package space.nows.tube.server.mob;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
+import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
@@ -14,6 +15,9 @@ import net.minestom.server.item.Material;
 import net.minestom.testing.Env;
 import net.minestom.testing.EnvTest;
 import org.junit.jupiter.api.Test;
+import space.nows.tube.server.gameplay.Archery;
+import space.nows.tube.server.gameplay.TestHooks;
+import space.nows.tube.server.mob.loot.MobLoot;
 
 @EnvTest
 class MobsTest {
@@ -23,7 +27,8 @@ class MobsTest {
 
     private void setup(Env env) {
         Mobs.install(MinecraftServer.getGlobalEventHandler());
-        CombatAccess.install();
+        TestHooks.installCombat(MinecraftServer.getGlobalEventHandler());
+        Archery.install(MinecraftServer.getGlobalEventHandler());
         instance = env.createFlatInstance();
         for (int x = -2; x <= 2; x++) {
             for (int z = -2; z <= 2; z++) {
@@ -35,6 +40,12 @@ class MobsTest {
         player.setGameMode(GameMode.SURVIVAL);
     }
 
+    private Creature spawn(EntityType type, Pos at) {
+        Creature creature = new Creature(CreatureKinds.of(type).orElseThrow());
+        CreatureKinds.spawn(creature, instance, at).join();
+        return creature;
+    }
+
     private static void ticks(Env env, int count) {
         for (int i = 0; i < count; i++) {
             env.tick();
@@ -44,10 +55,17 @@ class MobsTest {
     @Test
     void zombiesWalkUpAndHit(Env env) {
         setup(env);
-        Mob zombie = new Mob(Mob.Kind.ZOMBIE);
-        zombie.setInstance(instance, new Pos(5, 40, 0)).join();
+        Creature zombie = spawn(EntityType.ZOMBIE, new Pos(5, 40, 0));
         ticks(env, 200);
         assertTrue(player.getHealth() < 20, () -> "health " + player.getHealth() + " zombie at " + zombie.getPosition());
+    }
+
+    @Test
+    void skeletonsShootFromRange(Env env) {
+        setup(env);
+        Creature skeleton = spawn(EntityType.SKELETON, new Pos(8, 40, 0));
+        ticks(env, 200);
+        assertTrue(player.getHealth() < 20, () -> "health " + player.getHealth() + " skeleton at " + skeleton.getPosition());
     }
 
     @Test
@@ -55,8 +73,7 @@ class MobsTest {
         setup(env);
         player.setEquipment(EquipmentSlot.CHESTPLATE, ItemStack.of(Material.DIAMOND_CHESTPLATE));
         player.setEquipment(EquipmentSlot.LEGGINGS, ItemStack.of(Material.DIAMOND_LEGGINGS));
-        Mob zombie = new Mob(Mob.Kind.ZOMBIE);
-        zombie.setInstance(instance, new Pos(1, 40, 0)).join();
+        Creature zombie = spawn(EntityType.ZOMBIE, new Pos(1, 40, 0));
         player.damage(Damage.fromEntity(zombie, 10));
         float taken = 20 - player.getHealth();
         assertTrue(taken < 10 && taken > 0, () -> "took " + taken);
@@ -65,8 +82,7 @@ class MobsTest {
     @Test
     void creepersExplode(Env env) {
         setup(env);
-        Mob creeper = new Mob(Mob.Kind.CREEPER);
-        creeper.setInstance(instance, new Pos(2, 40, 0)).join();
+        Creature creeper = spawn(EntityType.CREEPER, new Pos(2, 40, 0));
         ticks(env, 120);
         assertTrue(creeper.isRemoved());
         assertTrue(player.getHealth() < 20);
@@ -85,9 +101,8 @@ class MobsTest {
     @Test
     void cowsDropMeat(Env env) {
         setup(env);
-        Mob cow = new Mob(Mob.Kind.COW);
-        cow.setInstance(instance, new Pos(10, 40, 10)).join();
-        boolean beef = Mobs.loot(cow).items().stream().anyMatch(item -> item.material() == Material.BEEF);
+        Creature cow = spawn(EntityType.COW, new Pos(10, 40, 10));
+        boolean beef = MobLoot.of(cow).items().stream().anyMatch(item -> item.material() == Material.BEEF);
         assertTrue(beef);
     }
 }
