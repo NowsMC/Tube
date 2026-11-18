@@ -377,11 +377,11 @@ final class PlacementRule extends BlockPlacementRule {
             case NONE -> true;
             case FLOOR -> below.registry().collisionShape().isFaceFull(BlockFace.TOP) || below.key().value().endsWith("_slab") && !"bottom".equals(below.getProperty("type"));
             case ANY_FLOOR -> !below.air();
-            case SOIL -> tagged(below, "#minecraft:dirt") || below.compare(Block.FARMLAND) || "lower".equals(half) && tagged(below, "#minecraft:dirt");
+            case SOIL -> tagged(below, "#minecraft:supports_vegetation");
             case FARMLAND -> below.compare(Block.FARMLAND);
-            case SAND_OR_SOIL -> tagged(below, "#minecraft:dirt") || tagged(below, "#minecraft:sand") || tagged(below, "#minecraft:terracotta");
-            case SUGAR_CANE -> below.compare(Block.SUGAR_CANE) || (tagged(below, "#minecraft:dirt") || tagged(below, "#minecraft:sand")) && waterBeside(world, position.add(0, -1, 0));
-            case CACTUS -> (below.compare(Block.CACTUS) || tagged(below, "#minecraft:sand")) && clearSides(world, position);
+            case SAND_OR_SOIL -> tagged(below, "#minecraft:supports_dry_vegetation");
+            case SUGAR_CANE -> below.compare(Block.SUGAR_CANE) || tagged(below, "#minecraft:supports_sugar_cane") && waterBeside(world, position.add(0, -1, 0));
+            case CACTUS -> (below.compare(Block.CACTUS) || tagged(below, "#minecraft:supports_cactus")) && clearSides(world, position);
             case WALL -> attached(world, position, block);
         };
     }
