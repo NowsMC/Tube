@@ -13,11 +13,15 @@ import space.nows.tube.api.world.World;
 import space.nows.tube.api.world.WorldBorder;
 import space.nows.tube.api.world.WorldOptions;
 import space.nows.tube.server.inventory.ItemMapper;
+import space.nows.tube.server.mob.Creature;
+import space.nows.tube.server.mob.CreatureKind;
+import space.nows.tube.server.mob.CreatureKinds;
 import space.nows.tube.server.world.effect.ParticleSpawner;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Optional;
 
 public final class MinestomWorld implements World {
 
@@ -140,6 +144,12 @@ public final class MinestomWorld implements World {
         }
         if (entityType == EntityType.PLAYER) {
             throw new IllegalArgumentException("Players cannot be spawned");
+        }
+        Optional<CreatureKind> kind = CreatureKinds.of(entityType);
+        if (kind.isPresent()) {
+            Creature creature = new Creature(kind.get());
+            CreatureKinds.spawn(creature, instance, position(location)).join();
+            return owner.wrap(creature);
         }
         net.minestom.server.entity.Entity entity = entityType.registry().shouldSendAttributes()
                 ? new EntityCreature(entityType)

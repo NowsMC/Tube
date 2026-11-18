@@ -20,7 +20,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
 import space.nows.tube.server.gameplay.loot.LootTables;
-import space.nows.tube.server.gameplay.mob.Mobs;
+import space.nows.tube.server.mob.KillCredit;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,8 +53,7 @@ public final class Archery {
             double damage = arrow.hasTag(ARROW_DAMAGE) ? arrow.getTag(ARROW_DAMAGE) : 2;
             target.damage(new Damage(DamageType.ARROW, arrow, shooter, event.getCollisionPosition(), (float) damage));
             if (shooter instanceof Player player && !(target instanceof Player)) {
-                target.setTag(Mobs.LAST_PLAYER_HIT, target.getAliveTicks());
-                target.setTag(Mobs.LAST_PLAYER, player);
+                KillCredit.hitBy(target, player);
             }
             var velocity = arrow.getVelocity();
             double length = Math.hypot(velocity.x(), velocity.z());

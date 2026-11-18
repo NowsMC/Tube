@@ -19,7 +19,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.world.Difficulty;
 import space.nows.tube.server.gameplay.loot.LootTables;
-import space.nows.tube.server.gameplay.mob.Mobs;
+import space.nows.tube.server.mob.KillCredit;
 
 import java.util.Set;
 
@@ -113,8 +113,7 @@ final class Combat {
                 target.setFireTicks(fireAspect * 80);
             }
             source = Damage.fromPlayer(player, damage);
-            target.setTag(Mobs.LAST_PLAYER_HIT, target.getAliveTicks());
-            target.setTag(Mobs.LAST_PLAYER, player);
+            KillCredit.hitBy(target, player);
         } else {
             damage = (float) attacker.getAttributeValue(Attribute.ATTACK_DAMAGE);
             source = Damage.fromEntity(attacker, damage);

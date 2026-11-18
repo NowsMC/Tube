@@ -11,7 +11,7 @@ import space.nows.tube.server.gameplay.crafting.CraftingGrids;
 import space.nows.tube.server.gameplay.crafting.Furnaces;
 import space.nows.tube.server.gameplay.crafting.RecipeBook;
 import space.nows.tube.server.gameplay.crafting.VanillaRecipes;
-import space.nows.tube.server.gameplay.mob.Mobs;
+import space.nows.tube.server.mob.Mobs;
 import space.nows.tube.server.gameplay.physics.FallingBlocks;
 import space.nows.tube.server.gameplay.physics.Fluids;
 import space.nows.tube.server.gameplay.physics.Growth;
@@ -58,6 +58,7 @@ public final class SurvivalRules {
         Hunger.install(handler);
         Experience.install(handler);
         new Beds(worlds).install(handler);
+        Archery.install(handler);
         Mobs.install(handler);
         Hazards.install();
         NetherPortals portals = new NetherPortals(worlds);
