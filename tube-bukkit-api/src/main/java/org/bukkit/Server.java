@@ -34,6 +34,8 @@ public interface Server {
 
     UnsafeValues getUnsafe();
 
+    org.bukkit.inventory.ItemFactory getItemFactory();
+
     World createWorld(WorldCreator creator);
 
     boolean unloadWorld(World world, boolean save);

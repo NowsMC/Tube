@@ -37,6 +37,16 @@ public final class BukkitWorld implements World {
     }
 
     @Override
+    public java.util.Collection<Entity> getNearbyEntities(org.bukkit.Location location, double x, double y, double z) {
+        return tube.nearbyEntities(runtime.adapters().tubeLocation(location), x, y, z).stream().map(runtime.adapters()::entity).toList();
+    }
+
+    @Override
+    public String getGameRuleValue(String rule) {
+        return space.nows.tube.api.world.GameRule.byKey(rule).map(known -> Boolean.toString(tube.gameRule(known))).orElse(null);
+    }
+
+    @Override
     public <T extends Entity> java.util.Collection<T> getEntitiesByClass(Class<T> type) {
         return tube.entities().stream().map(runtime.adapters()::entity).filter(type::isInstance).map(type::cast).toList();
     }
@@ -127,7 +137,7 @@ public final class BukkitWorld implements World {
 
     @Override
     public List<Entity> getEntities() {
-        return List.copyOf(getPlayers());
+        return tube.entities().stream().map(runtime.adapters()::entity).toList();
     }
 
     @Override

@@ -47,6 +47,10 @@ public interface World {
 
     List<Entity> getEntities();
 
+    java.util.Collection<Entity> getNearbyEntities(Location location, double x, double y, double z);
+
+    String getGameRuleValue(String rule);
+
     int getMinHeight();
 
     int getMaxHeight();

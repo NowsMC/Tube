@@ -103,7 +103,22 @@ final class BukkitServer implements Server {
 
     @Override
     public org.bukkit.UnsafeValues getUnsafe() {
-        return () -> runtime.tube().dataVersion();
+        return new org.bukkit.UnsafeValues() {
+            @Override
+            public int getDataVersion() {
+                return runtime.tube().dataVersion();
+            }
+
+            @Override
+            public int getProtocolVersion() {
+                return runtime.tube().protocolVersion();
+            }
+        };
+    }
+
+    @Override
+    public org.bukkit.inventory.ItemFactory getItemFactory() {
+        return type -> org.bukkit.Material.matchMaterial(type.getKey().getKey() + "_spawn_egg");
     }
 
     @Override

@@ -89,6 +89,10 @@ public final class Bukkit {
         return server.getUnsafe();
     }
 
+    public static org.bukkit.inventory.ItemFactory getItemFactory() {
+        return server.getItemFactory();
+    }
+
     public static org.bukkit.help.HelpMap getHelpMap() {
         return server.getHelpMap();
     }
