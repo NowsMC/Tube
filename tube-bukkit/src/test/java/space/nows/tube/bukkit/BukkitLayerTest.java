@@ -109,6 +109,21 @@ class BukkitLayerTest {
                 }
 
                 @EventHandler
+                public void onSneak(org.bukkit.event.player.PlayerToggleSneakEvent event) {
+                    log("sneak:" + event.getPlayer().getName() + ":" + event.isSneaking() + ":" + event.getPlayer().isSneaking());
+                }
+
+                @EventHandler
+                public void onSprint(org.bukkit.event.player.PlayerToggleSprintEvent event) {
+                    log("sprint:" + event.isSprinting());
+                }
+
+                @EventHandler
+                public void onGlide(org.bukkit.event.entity.EntityToggleGlideEvent event) {
+                    log("glide:" + event.getEntity().getName() + ":" + event.isGliding());
+                }
+
+                @EventHandler
                 public void onMove(PlayerMoveEvent event) {
                     event.setCancelled(event.getTo().getX() > 100);
                 }
@@ -223,6 +238,17 @@ class BukkitLayerTest {
         stub.events.post(new PlayerJoinEvent(player));
 
         assertEquals("join:Steve:true", log().getLast());
+    }
+
+    @Test
+    void sneakSprintAndGlideChangesReachBukkitListeners() throws IOException {
+        var player = stub.player("Steve");
+
+        stub.events.post(new space.nows.tube.api.event.PlayerSneakEvent(player, true));
+        stub.events.post(new space.nows.tube.api.event.PlayerSprintEvent(player, false));
+        stub.events.post(new space.nows.tube.api.event.EntityGlideEvent(player, true));
+
+        assertEquals(List.of("sneak:Steve:true:false", "sprint:false", "glide:Steve:true"), log().subList(log().size() - 3, log().size()));
     }
 
     @Test

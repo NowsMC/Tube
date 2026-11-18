@@ -7,11 +7,11 @@ import space.nows.tube.api.event.BlockPlaceEvent;
 import space.nows.tube.api.event.CommandDispatchEvent;
 import space.nows.tube.api.event.EntityDamageEvent;
 import space.nows.tube.api.event.EntityDeathEvent;
-import space.nows.tube.api.event.EntitySpawnEvent;
-import space.nows.tube.api.event.ExplosionEvent;
 import space.nows.tube.api.event.EntityPickupItemEvent;
+import space.nows.tube.api.event.EntitySpawnEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
+import space.nows.tube.api.event.ExplosionEvent;
 import space.nows.tube.api.event.InventoryClickEvent;
 import space.nows.tube.api.event.InventoryCloseEvent;
 import space.nows.tube.api.event.InventoryDragEvent;
@@ -32,11 +32,10 @@ import space.nows.tube.bukkit.inventory.BukkitInventory;
 import space.nows.tube.bukkit.inventory.BukkitInventoryView;
 import space.nows.tube.bukkit.inventory.ItemConverter;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class EventBridge {
 
@@ -49,6 +48,12 @@ public final class EventBridge {
     }
 
     public void install(EventBus bus, List<Subscription> subscriptions) {
+        subscriptions.add(bus.subscribe(space.nows.tube.api.event.PlayerSneakEvent.class, EventPriority.NORMAL, false,
+                event -> runtime.pluginManager().callEvent(new org.bukkit.event.player.PlayerToggleSneakEvent(runtime.adapters().player(event.player()), event.sneaking()))));
+        subscriptions.add(bus.subscribe(space.nows.tube.api.event.PlayerSprintEvent.class, EventPriority.NORMAL, false,
+                event -> runtime.pluginManager().callEvent(new org.bukkit.event.player.PlayerToggleSprintEvent(runtime.adapters().player(event.player()), event.sprinting()))));
+        subscriptions.add(bus.subscribe(space.nows.tube.api.event.EntityGlideEvent.class, EventPriority.NORMAL, false,
+                event -> runtime.pluginManager().callEvent(new org.bukkit.event.entity.EntityToggleGlideEvent((org.bukkit.entity.LivingEntity) runtime.adapters().entity(event.entity()), event.gliding()))));
         subscriptions.add(bus.subscribe(PlayerJoinEvent.class, EventPriority.NORMAL, false, this::join));
         subscriptions.add(bus.subscribe(PlayerQuitEvent.class, EventPriority.NORMAL, false, this::quit));
         subscriptions.add(bus.subscribe(PlayerChatEvent.class, EventPriority.NORMAL, false, this::chat));
