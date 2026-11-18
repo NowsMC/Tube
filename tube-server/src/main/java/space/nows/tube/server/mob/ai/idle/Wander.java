@@ -15,22 +15,28 @@ public final class Wander extends Goal {
     private final double speed;
     private final int interval;
     private final boolean avoidWater;
+    private final float anywhereChance;
     private Point wanted;
 
-    private Wander(Creature creature, double speed, int interval, boolean avoidWater) {
+    private Wander(Creature creature, double speed, int interval, boolean avoidWater, float anywhereChance) {
         super(Control.MOVE);
         this.creature = creature;
         this.speed = speed;
         this.interval = interval;
         this.avoidWater = avoidWater;
+        this.anywhereChance = anywhereChance;
     }
 
     public static Wander anywhere(Creature creature, double speed) {
-        return new Wander(creature, speed, DEFAULT_INTERVAL, false);
+        return new Wander(creature, speed, DEFAULT_INTERVAL, false, 1f);
     }
 
     public static Wander onLand(Creature creature, double speed) {
-        return new Wander(creature, speed, DEFAULT_INTERVAL, true);
+        return new Wander(creature, speed, DEFAULT_INTERVAL, true, WATER_WANDER_CHANCE);
+    }
+
+    public static Wander onLandOnly(Creature creature, double speed) {
+        return new Wander(creature, speed, DEFAULT_INTERVAL, true, 0f);
     }
 
     @Override
@@ -50,7 +56,7 @@ public final class Wander extends Goal {
             Point land = RandomSpot.onLand(creature, 15, 7);
             return land == null ? RandomSpot.anywhere(creature, 10, 7) : land;
         }
-        return creature.random().nextFloat() >= WATER_WANDER_CHANCE ? RandomSpot.onLand(creature, 10, 7) : RandomSpot.anywhere(creature, 10, 7);
+        return creature.random().nextFloat() >= anywhereChance ? RandomSpot.onLand(creature, 10, 7) : RandomSpot.anywhere(creature, 10, 7);
     }
 
     @Override
