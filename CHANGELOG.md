@@ -31,6 +31,14 @@
 - `/kick` and `/ban` accept selectors such as `@a` and `@r`. ([`b36544b`](https://github.com/NowsMC/Tube/commit/b36544b6e7bf23dceeabf06c4e4c980c6b9e91fc))
 - `/plugin` is gone; use `/plugins` or `/pl`. ([`eaa9f5d`](https://github.com/NowsMC/Tube/commit/eaa9f5d9ec4b84583b4206ecafab0419f5fbbb35))
 
+### Plugin API
+
+- Plugin commands can run other commands with `CommandRegistry.dispatch`, look commands up with `find`, and use the console through `Server.console()`. ([`34228e1`](https://github.com/NowsMC/Tube/commit/34228e1fe363ba8be67a6f4af80d32ffbfee0f7a))
+- A command can throw `CommandFailure` to show a message to the sender. Any other error in a command is logged and reported to the sender instead of escaping. ([`0d15c15`](https://github.com/NowsMC/Tube/commit/0d15c155139a0d8db0afd0a66e364b9fa6818c4c), [`652ff5e`](https://github.com/NowsMC/Tube/commit/652ff5ed8d37f31b5acdf9ef6d4e8810c70756b5))
+- Argument reading (`CommandInput`), coordinates (`Positions`), target selectors (`Server.targets()`) and the names of blocks, items, entities, effects, sounds and particles (`Server.registries()`) are part of the API, so plugin commands accept `@a[type=zombie]` and `~ ~ ~` like the built-in ones. ([`0d15c15`](https://github.com/NowsMC/Tube/commit/0d15c155139a0d8db0afd0a66e364b9fa6818c4c), [`b83e2f3`](https://github.com/NowsMC/Tube/commit/b83e2f3d19d7ab662bc8638104a0d2139dfee10a))
+- A plugin command whose name is already taken is registered as `plugin:command` instead of stopping the plugin from enabling, and every plugin command can be reached that way. Taken aliases are skipped with a warning. ([`367554f`](https://github.com/NowsMC/Tube/commit/367554fa378fa7c9528efa3713ab00f23b87a176))
+- A plugin can only unregister the commands it registered itself. ([`367554f`](https://github.com/NowsMC/Tube/commit/367554fa378fa7c9528efa3713ab00f23b87a176))
+
 ### Combat
 
 - Arrows hit what they fly through within a tick, so fast arrows no longer pass through players and mobs. ([`c94b6dd`](https://github.com/NowsMC/Tube/commit/c94b6dd3cd820c99a50d469aa54776622409ab53), [`e11413a`](https://github.com/NowsMC/Tube/commit/e11413a09f0f6389e777be02c271cad77dbb15ae))

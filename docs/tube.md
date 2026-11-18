@@ -20,6 +20,7 @@ Tube is a Minecraft server built on Minestom with its own API and systems. Bukki
 - Normal world generation is in `tube-server` under `world/vanilla`. It reads Mojang's world generation data, downloaded at run time.
 - Mobs are in `tube-server` under `mob`: `Creature` is the entity, each mob type is one `CreatureKind` in `mob/kind`, and goals, movement, senses and traits each have their own package.
 - The console and the log format are in `tube-server` under `console`, configured by `tube.yml`.
+- Plugins add commands through `PluginContext.commands()`. Argument reading, positions, target selectors and registry names for completion are in the API (`CommandInput`, `Positions`, `Server.targets()`, `Server.registries()`), so a plugin command parses like a built-in one.
 - Plugins shade the libraries they need into their own jar. Tube does not download libraries for plugins.
 
 ## Versions
