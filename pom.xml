@@ -64,6 +64,7 @@
     <adventure.version>5.2.0</adventure.version>
     <snakeyaml.version>2.7</snakeyaml.version>
     <gson.version>2.15.0</gson.version>
+    <jline.version>4.4.8</jline.version>
     <guava.version>33.6.0-jre</guava.version>
     <log4j.version>2.26.1</log4j.version>
     <sqlite-jdbc.version>3.51.2.0</sqlite-jdbc.version>
@@ -128,6 +129,21 @@
         <groupId>net.kyori</groupId>
         <artifactId>adventure-text-serializer-plain</artifactId>
         <version>${adventure.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.kyori</groupId>
+        <artifactId>adventure-text-serializer-ansi</artifactId>
+        <version>${adventure.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jline</groupId>
+        <artifactId>jline-reader</artifactId>
+        <version>${jline.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jline</groupId>
+        <artifactId>jline-terminal-ffm</artifactId>
+        <version>${jline.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>
