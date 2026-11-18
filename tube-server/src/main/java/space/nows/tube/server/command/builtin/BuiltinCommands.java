@@ -7,6 +7,7 @@ import space.nows.tube.server.access.Whitelist;
 import space.nows.tube.server.command.CommandService;
 import space.nows.tube.server.command.builtin.access.AccessCommands;
 import space.nows.tube.server.command.builtin.chat.ChatCommands;
+import space.nows.tube.server.command.builtin.display.DisplayCommands;
 import space.nows.tube.server.command.builtin.entity.EntityCommands;
 import space.nows.tube.server.command.builtin.info.InfoCommands;
 import space.nows.tube.server.command.builtin.player.PlayerCommands;
@@ -54,6 +55,7 @@ public final class BuiltinCommands {
         all.addAll(EntityCommands.create(targets));
         all.addAll(WorldCommands.create(targets));
         all.addAll(ServerCommands.create(server));
+        all.addAll(DisplayCommands.create(targets));
         return all;
     }
 }
