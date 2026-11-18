@@ -31,6 +31,7 @@ public final class BlockInteractions {
     public static void install(GlobalEventHandler handler) {
         registerRules();
         Signs.install(handler);
+        PickBlock.install(handler);
         handler.addListener(PlayerBlockPlaceEvent.class, BlockInteractions::placeMultiBlock);
         handler.addListener(PlayerBlockBreakEvent.class, event -> {
             if (event.isCancelled()) {
