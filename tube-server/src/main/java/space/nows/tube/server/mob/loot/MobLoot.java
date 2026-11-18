@@ -3,7 +3,8 @@ package space.nows.tube.server.mob.loot;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import space.nows.tube.server.event.DeathDrops;
-import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.loot.LootContext;
+import space.nows.tube.server.loot.LootTables;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.KillCredit;
 
@@ -20,10 +21,10 @@ public final class MobLoot {
     public static DeathDrops.Drops of(Creature creature) {
         Player killer = KillCredit.killer(creature);
         boolean byPlayer = killer != null;
-        LootTables.Context context = LootTables.Context.entity(byPlayer ? killer.getItemInMainHand() : ItemStack.AIR, byPlayer,
+        LootContext context = LootContext.mob(byPlayer ? killer.getItemInMainHand() : ItemStack.AIR, byPlayer,
                 creature.getFireTicks() > 0, ThreadLocalRandom.current());
         context = SheepLoot.describe(creature, context);
-        List<ItemStack> items = LootTables.forEntity(creature.getEntityType().key().asString(), context);
+        List<ItemStack> items = LootTables.entity(creature.getEntityType(), context);
         return new DeathDrops.Drops(items, byPlayer ? experience(creature) : 0);
     }
 
