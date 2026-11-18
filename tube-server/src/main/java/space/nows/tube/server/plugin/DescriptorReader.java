@@ -1,5 +1,7 @@
 package space.nows.tube.server.plugin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import space.nows.tube.api.PermissionDefault;
 import space.nows.tube.api.plugin.PluginCommand;
 import space.nows.tube.api.plugin.PluginDescriptor;
@@ -14,6 +16,8 @@ import java.util.regex.Pattern;
 final class DescriptorReader {
 
     static final String FILE_NAME = "tube-plugin";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("tube");
 
     private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z0-9_.-]+");
     private static final Map<String, List<String>> KEYS = Map.of(
@@ -31,6 +35,9 @@ final class DescriptorReader {
         if (!VALID_NAME.matcher(name).matches()) {
             throw new IllegalArgumentException("invalid plugin name " + name);
         }
+        if (map.containsKey("libraries")) {
+            LOGGER.warn("Plugin {} lists libraries, which Tube does not download; shade them into the plugin jar", name);
+        }
         return new PluginDescriptor(
                 name,
                 required(map, "version"),
@@ -44,7 +51,6 @@ final class DescriptorReader {
                 list(map, "load-before"),
                 text(map, "tube"),
                 list(map, "minecraft"),
-                list(map, "libraries"),
                 commands(map.get("commands")),
                 permissions(map.get("permissions")));
     }

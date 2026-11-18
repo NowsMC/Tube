@@ -2,8 +2,6 @@ package space.nows.tube.server.plugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.bootstrap.Library;
-import space.nows.tube.bootstrap.LibraryResolver;
 import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandRegistry;
@@ -34,7 +32,6 @@ import java.util.stream.Stream;
 public final class PluginManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube");
-    private static final List<String> REPOSITORIES = List.of("https://repo1.maven.org/maven2/");
 
     private record Candidate(Path jar, PluginDescriptor descriptor) {
     }
@@ -47,20 +44,14 @@ public final class PluginManager {
     private final Scheduler scheduler;
     private final EventBus events;
     private final Path directory;
-    private final Path libraries;
     private final List<Running> running = new ArrayList<>();
 
     public PluginManager(Server server, CommandRegistry commands, Scheduler scheduler, EventBus events, Path directory) {
-        this(server, commands, scheduler, events, directory, directory.toAbsolutePath().resolveSibling("libraries"));
-    }
-
-    public PluginManager(Server server, CommandRegistry commands, Scheduler scheduler, EventBus events, Path directory, Path libraries) {
         this.server = server;
         this.commands = commands;
         this.scheduler = scheduler;
         this.events = events;
         this.directory = directory;
-        this.libraries = libraries;
     }
 
     public synchronized void loadAll() {
@@ -217,16 +208,6 @@ public final class PluginManager {
         return true;
     }
 
-    private URL[] classPath(Candidate candidate) throws IOException {
-        List<Library> wanted = candidate.descriptor().libraries().stream().map(Library::of).toList();
-        List<URL> urls = new ArrayList<>();
-        urls.add(candidate.jar().toUri().toURL());
-        for (Path jar : new LibraryResolver(libraries, REPOSITORIES, LOGGER::info).resolve(wanted)) {
-            urls.add(jar.toUri().toURL());
-        }
-        return urls.toArray(URL[]::new);
-    }
-
     private void define(PluginDescriptor descriptor) {
         PermissionManager permissions = server.permissions();
         if (permissions != null) {
@@ -263,7 +244,8 @@ public final class PluginManager {
         space.nows.tube.network.ScopedNetwork scopedNetwork = new space.nows.tube.network.ScopedNetwork(server.network());
         URLClassLoader loader = null;
         try {
-            loader = new URLClassLoader(classPath(candidate), PluginManager.class.getClassLoader());
+            URL url = candidate.jar().toUri().toURL();
+            loader = new URLClassLoader(new URL[] {url}, PluginManager.class.getClassLoader());
             Class<?> type = Class.forName(descriptor.main(), true, loader);
             if (!Plugin.class.isAssignableFrom(type)) {
                 throw new IllegalStateException(descriptor.main() + " does not implement Plugin");

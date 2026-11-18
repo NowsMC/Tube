@@ -16,7 +16,6 @@ public record PluginDescriptor(
         List<String> loadBefore,
         String tube,
         List<String> minecraft,
-        List<String> libraries,
         List<PluginCommand> commands,
         List<PluginPermission> permissions) {
 
@@ -29,13 +28,12 @@ public record PluginDescriptor(
         softDepends = copy(softDepends);
         loadBefore = copy(loadBefore);
         minecraft = copy(minecraft);
-        libraries = copy(libraries);
         commands = copy(commands);
         permissions = copy(permissions);
     }
 
     public PluginDescriptor(String name, String version, String main, List<String> depends) {
-        this(name, version, main, null, null, null, null, depends, null, null, null, null, null, null, null);
+        this(name, version, main, null, null, null, null, depends, null, null, null, null, null, null);
     }
 
     public String logName() {

@@ -32,10 +32,6 @@
       <artifactId>tube-network</artifactId>
     </dependency>
     <dependency>
-      <groupId>space.nows</groupId>
-      <artifactId>tube-bootstrap</artifactId>
-    </dependency>
-    <dependency>
       <groupId>net.minestom</groupId>
       <artifactId>minestom</artifactId>
       <version>${minestom.version}</version>

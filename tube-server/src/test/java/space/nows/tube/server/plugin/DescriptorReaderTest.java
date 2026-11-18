@@ -35,7 +35,6 @@ class DescriptorReaderTest {
                 load-before: [market]
                 tube: '0.2611'
                 minecraft: ['26.1.2', '26.2']
-                libraries: [com.zaxxer:HikariCP:6.3.0]
                 """);
         assertEquals("A small shop", descriptor.description());
         assertEquals(List.of("Alice", "Bob"), descriptor.authors());
@@ -46,7 +45,6 @@ class DescriptorReaderTest {
         assertEquals(List.of("market"), descriptor.loadBefore());
         assertEquals("0.2611", descriptor.tube());
         assertEquals(List.of("26.1.2", "26.2"), descriptor.minecraft());
-        assertEquals(List.of("com.zaxxer:HikariCP:6.3.0"), descriptor.libraries());
     }
 
     @Test
