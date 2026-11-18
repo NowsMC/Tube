@@ -1,13 +1,13 @@
 package space.nows.tube.server.command.builtin.server;
 
 import space.nows.tube.api.Server;
+import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.command.Suggestions;
+import space.nows.tube.api.command.Typing;
 import space.nows.tube.api.event.ServerReloadEvent;
 import space.nows.tube.server.command.builtin.Permissions;
-import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.ServerCommand;
-import space.nows.tube.server.command.support.Typing;
 
 import java.util.List;
 

@@ -1,10 +1,10 @@
 package space.nows.tube.server.command.builtin.server;
 
+import space.nows.tube.api.command.CommandFailure;
+import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.server.AutosaveGate;
 import space.nows.tube.server.command.builtin.Permissions;
-import space.nows.tube.server.command.support.CommandFailure;
-import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.ServerCommand;
 
 final class SaveOnCommand extends ServerCommand {
