@@ -5,6 +5,7 @@ import space.nows.tube.server.access.BanList;
 import space.nows.tube.server.access.Profiles;
 import space.nows.tube.server.access.Whitelist;
 import space.nows.tube.server.command.CommandService;
+import space.nows.tube.server.command.builtin.access.AccessCommands;
 import space.nows.tube.server.command.builtin.chat.ChatCommands;
 import space.nows.tube.server.command.builtin.info.InfoCommands;
 import space.nows.tube.server.command.support.ServerCommand;
@@ -45,15 +46,6 @@ public final class BuiltinCommands {
         all.add(new SaveAllCommand(server));
         all.add(new StopCommand(server));
         all.add(new SeedCommand(targets));
-        all.add(new OperatorCommand(true, server.permissions(), profiles, targets));
-        all.add(new OperatorCommand(false, server.permissions(), profiles, targets));
-        all.add(new KickCommand(targets));
-        all.add(new BanCommand(bans, profiles, targets));
-        all.add(new PardonCommand(bans));
-        all.add(new BanIpCommand(server, bans, targets));
-        all.add(new PardonIpCommand(bans));
-        all.add(new BanListCommand(bans));
-        all.add(new WhitelistCommand(server, whitelist, profiles, targets, settingsFile, enforceWhitelist));
         all.add(new GameModeCommand(targets));
         all.add(new DefaultGameModeCommand(server));
         all.add(new GiveCommand(targets));
@@ -73,6 +65,7 @@ public final class BuiltinCommands {
         all.add(new CloneCommand(targets));
         all.addAll(ChatCommands.create(server, targets));
         all.addAll(InfoCommands.create(server, commands));
+        all.addAll(AccessCommands.create(server, targets, profiles, bans, whitelist, server.permissions(), settingsFile, enforceWhitelist));
         return all;
     }
 }

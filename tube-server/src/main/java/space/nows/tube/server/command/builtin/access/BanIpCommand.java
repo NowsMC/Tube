@@ -1,4 +1,4 @@
-package space.nows.tube.server.command.builtin;
+package space.nows.tube.server.command.builtin.access;
 
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandSender;
@@ -6,6 +6,7 @@ import space.nows.tube.api.command.Suggestions;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.server.access.AccessControl;
 import space.nows.tube.server.access.BanList;
+import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.CommandFailure;
 import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.ServerCommand;
