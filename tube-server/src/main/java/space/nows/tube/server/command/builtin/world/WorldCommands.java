@@ -16,6 +16,8 @@ public final class WorldCommands {
         List<ServerCommand> commands = new ArrayList<>(List.of(
                 new SeedCommand(targets),
                 new TimeCommand(targets),
+                new WeatherCommand(targets),
+                new GameRuleCommand(targets),
                 new SetWorldSpawnCommand(targets),
                 new WorldBorderCommand(targets)));
         commands.addAll(BlockCommands.create(targets));
