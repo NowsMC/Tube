@@ -2,15 +2,14 @@ package space.nows.tube.server.command.support;
 
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.command.Suggestions;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.world.Location;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 
 public final class Targets {
 
@@ -36,13 +35,18 @@ public final class Targets {
     }
 
     public List<Player> players(CommandSender sender, String text) {
-        List<Player> found = switch (text) {
-            case "@a" -> List.copyOf(server.players());
-            case "@s" -> List.of(self(sender));
-            case "@p" -> nearest(sender).map(List::of).orElse(List.of());
-            case "@r" -> random();
-            default -> online(text).map(List::of).orElseThrow(() -> new CommandFailure("Player " + text + " is not online"));
-        };
+        List<Player> found;
+        if (!Selector.is(text)) {
+            found = online(text).map(List::of).orElseThrow(() -> new CommandFailure("Player " + text + " is not online"));
+        } else {
+            Selector selector = Selector.parse(text);
+            List<Player> candidates = switch (selector.base()) {
+                case "@a", "@p", "@r" -> List.copyOf(server.players());
+                case "@s" -> List.of(self(sender));
+                default -> throw new CommandFailure("Unknown selector " + selector.base());
+            };
+            found = selector.apply(candidates, origin(sender));
+        }
         if (found.isEmpty()) {
             throw new CommandFailure("No player was found");
         }
@@ -50,11 +54,16 @@ public final class Targets {
     }
 
     public List<Entity> entities(CommandSender sender, String text) {
-        if (!text.equals("@e")) {
+        if (!text.startsWith("@e")) {
             return List.copyOf(players(sender, text));
         }
-        List<Entity> found = new ArrayList<>();
-        server.worlds().all().forEach(world -> found.addAll(world.entities()));
+        Selector selector = Selector.parse(text);
+        if (!selector.base().equals("@e")) {
+            throw new CommandFailure("Unknown selector " + selector.base());
+        }
+        List<Entity> candidates = new ArrayList<>();
+        server.worlds().all().forEach(world -> candidates.addAll(world.entities()));
+        List<Entity> found = selector.apply(candidates, origin(sender));
         if (found.isEmpty()) {
             throw new CommandFailure("No entity was found");
         }
@@ -77,6 +86,21 @@ public final class Targets {
         return options;
     }
 
+    public List<String> suggestPlayers(String typed) {
+        return suggest(typed, PLAYER_SELECTORS, playerOptions());
+    }
+
+    public List<String> suggestEntities(String typed) {
+        return suggest(typed, ENTITY_SELECTORS, entityOptions());
+    }
+
+    private static List<String> suggest(String typed, List<String> selectors, List<String> options) {
+        if (typed.startsWith("@") && typed.indexOf('[') >= 0 || selectors.stream().anyMatch(typed::equalsIgnoreCase)) {
+            return Selector.suggest(typed, selectors, RegistryNames.entities());
+        }
+        return Suggestions.matching(typed, options);
+    }
+
     public static Player self(CommandSender sender) {
         if (sender instanceof Player player) {
             return player;
@@ -89,27 +113,5 @@ public final class Targets {
             return player.location();
         }
         return server.worlds().defaultWorld().spawn();
-    }
-
-    private Optional<Player> nearest(CommandSender sender) {
-        if (!(sender instanceof Player self)) {
-            return server.players().stream().findFirst();
-        }
-        Location from = self.location();
-        return server.players().stream()
-                .filter(player -> player.world() == from.world())
-                .min(Comparator.comparingDouble(player -> distanceSquared(player.location(), from)));
-    }
-
-    private List<Player> random() {
-        List<Player> online = List.copyOf(server.players());
-        return online.isEmpty() ? List.of() : List.of(online.get(ThreadLocalRandom.current().nextInt(online.size())));
-    }
-
-    private static double distanceSquared(Location a, Location b) {
-        double dx = a.x() - b.x();
-        double dy = a.y() - b.y();
-        double dz = a.z() - b.z();
-        return dx * dx + dy * dy + dz * dz;
     }
 }

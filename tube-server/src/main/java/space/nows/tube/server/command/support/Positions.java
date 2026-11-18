@@ -1,6 +1,9 @@
 package space.nows.tube.server.command.support;
 
+import space.nows.tube.api.command.Suggestions;
 import space.nows.tube.api.world.Location;
+
+import java.util.List;
 
 public final class Positions {
 
@@ -20,6 +23,15 @@ public final class Positions {
     public static BlockPosition readBlock(CommandInput input, Location origin) {
         Location location = read(input, origin);
         return new BlockPosition((int) Math.floor(location.x()), (int) Math.floor(location.y()), (int) Math.floor(location.z()));
+    }
+
+    public static boolean isCoordinate(String text) {
+        return text.startsWith("~") || !text.isEmpty() && (Character.isDigit(text.charAt(0)) || text.charAt(0) == '-');
+    }
+
+    public static List<String> suggest(List<String> args, int start) {
+        int index = Typing.position(args) - start;
+        return index >= 0 && index < 3 ? Suggestions.matching(Typing.current(args), "~") : List.of();
     }
 
     private static double coordinate(String text, double current) {
