@@ -6,7 +6,10 @@ import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
+import space.nows.tube.api.world.Location;
 import space.nows.tube.server.access.AccessControl;
+
+import java.util.Locale;
 
 public final class ConnectionLog {
 
@@ -17,8 +20,10 @@ public final class ConnectionLog {
 
     public static void install(EventBus events, boolean logIps) {
         events.subscribe(PlayerJoinEvent.class, EventPriority.MONITOR, false, event -> {
-            String where = logIps ? event.player().address().map(address -> "/" + AccessControl.host(address)).orElse("local") : "local";
-            LOGGER.info("{}[{}] logged in", event.player().name(), where);
+            String where = logIps ? event.player().address().map(address -> "/" + AccessControl.host(address) + ":" + address.getPort()).orElse("local") : "local";
+            Location at = event.player().location();
+            LOGGER.info("{}[{}] logged in at ([{}] {}, {}, {})", event.player().name(), where, at.world().name(),
+                    round(at.x()), round(at.y()), round(at.z()));
             if (event.joinMessage() != null) {
                 LOGGER.info("{} joined the game", event.player().name());
             }
@@ -28,5 +33,9 @@ public final class ConnectionLog {
                 LOGGER.info("{} left the game", event.player().name());
             }
         });
+    }
+
+    private static String round(double value) {
+        return String.format(Locale.ROOT, "%.1f", value);
     }
 }

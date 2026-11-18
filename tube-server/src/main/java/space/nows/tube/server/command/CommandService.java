@@ -5,6 +5,8 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.suggestion.Suggestion;
 import net.minestom.server.command.builder.suggestion.SuggestionEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import space.nows.tube.api.command.Command;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
@@ -22,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class CommandService implements CommandRegistry {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger("tube");
     static final String NO_PERMISSION = "<red>I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error.";
 
     private record Entry(String name, Command handler, net.minestom.server.command.builder.Command bridge, List<String> labels) {
@@ -51,8 +54,14 @@ public final class CommandService implements CommandRegistry {
         var args = ArgumentType.StringArray("args");
         args.setSuggestionCallback((sender, context, suggestion) -> offer(command, wrap(sender), suggestion));
         bridge.setCondition((sender, commandString) -> allowed(command, wrap(sender)));
-        bridge.setDefaultExecutor((sender, context) -> run(command, wrap(sender), List.of()));
-        bridge.addSyntax((sender, context) -> run(command, wrap(sender), List.of(context.get(args))), args);
+        bridge.setDefaultExecutor((sender, context) -> {
+            issued(sender, context.getInput());
+            run(command, wrap(sender), List.of());
+        });
+        bridge.addSyntax((sender, context) -> {
+            issued(sender, context.getInput());
+            run(command, wrap(sender), List.of(context.get(args)));
+        }, args);
         MinecraftServer.getCommandManager().register(bridge);
 
         Entry entry = new Entry(labels.getFirst(), command, bridge, List.copyOf(labels));
@@ -145,6 +154,12 @@ public final class CommandService implements CommandRegistry {
         suggestion.setStart(parsed.currentStart() + 1);
         suggestion.setLength(parsed.current().length());
         command.suggest(sender, parsed.arguments()).forEach(option -> suggestion.addEntry(new SuggestionEntry(option)));
+    }
+
+    private static void issued(net.minestom.server.command.CommandSender sender, String input) {
+        if (sender instanceof net.minestom.server.entity.Player player) {
+            LOGGER.info("{} issued server command: /{}", player.getUsername(), input);
+        }
     }
 
     private static boolean allowed(Command command, CommandSender sender) {
