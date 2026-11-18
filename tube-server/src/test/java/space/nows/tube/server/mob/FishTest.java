@@ -64,14 +64,16 @@ class FishTest {
     }
 
     @Test
-    void aFishStaysAfloatInsteadOfSinking(Env env) {
+    void aFishIsWeightlessInWaterButFallsOnLand(Env env) {
         setup(env);
         pool();
         Creature salmon = spawn(EntityType.SALMON, new Pos(0.5, 45, 0.5));
+        Creature stranded = spawn(EntityType.COD, new Pos(9.5, 40, 9.5));
 
-        ticks(env, 60);
+        ticks(env, 3);
 
-        assertTrue(salmon.getPosition().y() > 41, "the salmon sank to " + salmon.getPosition());
+        assertTrue(salmon.hasNoGravity(), "the salmon would sink");
+        assertTrue(!stranded.hasNoGravity(), "the stranded cod floats in the air");
     }
 
     @Test
