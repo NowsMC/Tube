@@ -11,13 +11,14 @@ import space.nows.tube.server.gameplay.crafting.CraftingGrids;
 import space.nows.tube.server.gameplay.crafting.Furnaces;
 import space.nows.tube.server.gameplay.crafting.RecipeBook;
 import space.nows.tube.server.gameplay.crafting.VanillaRecipes;
-import space.nows.tube.server.mob.Mobs;
 import space.nows.tube.server.gameplay.physics.FallingBlocks;
 import space.nows.tube.server.gameplay.physics.Fluids;
 import space.nows.tube.server.gameplay.physics.Growth;
 import space.nows.tube.server.gameplay.physics.ItemUse;
 import space.nows.tube.server.gameplay.physics.NetherPortals;
+import space.nows.tube.server.gameplay.throwing.Throwing;
 import space.nows.tube.server.inventory.ItemMapper;
+import space.nows.tube.server.mob.Mobs;
 import space.nows.tube.server.world.WorldService;
 
 import java.nio.file.Path;
@@ -59,6 +60,7 @@ public final class SurvivalRules {
         Experience.install(handler);
         new Beds(worlds).install(handler);
         Archery.install(handler);
+        Throwing.install(handler);
         Mobs.install(handler);
         Hazards.install();
         NetherPortals portals = new NetherPortals(worlds);
