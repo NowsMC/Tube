@@ -288,7 +288,7 @@ public final class DedicatedServer implements Server {
         PluginChannelService channels = new PluginChannelService(players);
         network = new NettyNetwork(channels, Transport.choose(settings.network().nativeTransport()));
         LOGGER.info("Using {} for Tube network sockets", network.transport());
-        plugins = new PluginManager(this, commands, scheduler, events, directory.resolve("plugins"));
+        plugins = new PluginManager(this, commands, scheduler, events, directory.resolve("plugins"), directory.resolve("libraries"));
 
         var handler = MinecraftServer.getGlobalEventHandler();
         ResourcePackHandler resourcePacks = new ResourcePackHandler(settings.resourcePack(), events, players);

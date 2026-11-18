@@ -14,21 +14,28 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.function.Consumer;
 
-final class LibraryResolver {
+public final class LibraryResolver {
 
     private static final int TIMEOUT_MILLIS = 30_000;
 
     private final Path directory;
     private final List<String> repositories;
+    private final Consumer<String> notices;
     private boolean announced;
 
     LibraryResolver(Path directory, List<String> repositories) {
-        this.directory = directory;
-        this.repositories = repositories.stream().map(url -> url.endsWith("/") ? url : url + "/").toList();
+        this(directory, repositories, message -> System.out.println("[tube] " + message));
     }
 
-    List<Path> resolve(List<Library> libraries) throws IOException {
+    public LibraryResolver(Path directory, List<String> repositories, Consumer<String> notices) {
+        this.directory = directory;
+        this.repositories = repositories.stream().map(url -> url.endsWith("/") ? url : url + "/").toList();
+        this.notices = notices;
+    }
+
+    public List<Path> resolve(List<Library> libraries) throws IOException {
         List<Path> jars = new ArrayList<>();
         for (Library library : libraries) {
             jars.add(resolve(library));
@@ -57,7 +64,7 @@ final class LibraryResolver {
             }
         }
         if (Files.isRegularFile(jar) && !Files.exists(checksum)) {
-            System.err.println("[tube] Could not verify " + library.coordinates() + ", using existing file");
+            notices.accept("Could not verify " + library.coordinates() + ", using existing file");
             return jar;
         }
         throw new IOException("Could not download " + library.coordinates(), failure);
@@ -79,7 +86,7 @@ final class LibraryResolver {
         Path partial = Files.createTempFile(jar.getParent(), jar.getFileName().toString(), ".part");
         try {
             if (!announced) {
-                System.out.println("[tube] Preparing libraries...");
+                notices.accept("Preparing libraries...");
                 announced = true;
             }
             try (InputStream in = open(source)) {

@@ -1,17 +1,26 @@
 package space.nows.tube.bootstrap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-record Library(String group, String artifact, String version, String classifier) {
+public record Library(String group, String artifact, String version, String classifier) {
 
     String path() {
         String file = artifact + "-" + version + (classifier.isEmpty() ? "" : "-" + classifier) + ".jar";
         return group.replace('.', '/') + "/" + artifact + "/" + version + "/" + file;
     }
 
-    String coordinates() {
+    public String coordinates() {
         return group + ":" + artifact + ":" + version + (classifier.isEmpty() ? "" : ":" + classifier);
+    }
+
+    public static Library of(String coordinates) {
+        String[] parts = coordinates.strip().split(":");
+        if (parts.length < 3 || parts.length > 4 || Arrays.stream(parts).anyMatch(String::isBlank)) {
+            throw new IllegalArgumentException("library must be group:artifact:version, got " + coordinates);
+        }
+        return new Library(parts[0], parts[1], parts[2], parts.length == 4 ? parts[3] : "");
     }
 
     static List<Library> parse(String text) {
