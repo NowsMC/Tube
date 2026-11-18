@@ -10,6 +10,7 @@ import space.nows.tube.server.command.builtin.chat.ChatCommands;
 import space.nows.tube.server.command.builtin.entity.EntityCommands;
 import space.nows.tube.server.command.builtin.info.InfoCommands;
 import space.nows.tube.server.command.builtin.player.PlayerCommands;
+import space.nows.tube.server.command.builtin.world.WorldCommands;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
 
@@ -47,12 +48,8 @@ public final class BuiltinCommands {
         List<ServerCommand> all = new ArrayList<>();
         all.add(new SaveAllCommand(server));
         all.add(new StopCommand(server));
-        all.add(new SeedCommand(targets));
         all.add(new DefaultGameModeCommand(server));
-        all.add(new TimeCommand(targets));
-        all.add(new SetWorldSpawnCommand(targets));
         all.add(new DifficultyCommand(server));
-        all.add(new WorldBorderCommand(targets));
         all.add(new SetBlockCommand(targets));
         all.add(new FillCommand(targets));
         all.add(new CloneCommand(targets));
@@ -61,6 +58,7 @@ public final class BuiltinCommands {
         all.addAll(AccessCommands.create(server, targets, profiles, bans, whitelist, server.permissions(), settingsFile, enforceWhitelist));
         all.addAll(PlayerCommands.create(targets));
         all.addAll(EntityCommands.create(targets));
+        all.addAll(WorldCommands.create(targets));
         return all;
     }
 }
