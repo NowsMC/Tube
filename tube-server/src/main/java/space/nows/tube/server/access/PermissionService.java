@@ -10,12 +10,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 public final class PermissionService implements PermissionManager {
 
@@ -32,6 +35,7 @@ public final class PermissionService implements PermissionManager {
     private volatile Set<UUID> opView = Set.of();
     private volatile Map<UUID, Set<String>> grantView = Map.of();
     private final Map<String, Definition> definitions = new ConcurrentHashMap<>();
+    private final List<Consumer<UUID>> listeners = new CopyOnWriteArrayList<>();
 
     public PermissionService(Path directory) {
         this.opsFile = directory.resolve("ops.json");
@@ -48,6 +52,14 @@ public final class PermissionService implements PermissionManager {
         grantView = Map.copyOf(copy);
     }
 
+    public void onChange(Consumer<UUID> listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyChange(UUID uuid) {
+        listeners.forEach(listener -> listener.accept(uuid));
+    }
+
     @Override
     public boolean isOp(UUID uuid) {
         return opView.contains(uuid);
@@ -59,6 +71,7 @@ public final class PermissionService implements PermissionManager {
         if (changed) {
             publish();
             saveOps();
+            notifyChange(uuid);
         }
     }
 
@@ -116,6 +129,7 @@ public final class PermissionService implements PermissionManager {
         if (grants.computeIfAbsent(uuid, key -> new HashSet<>()).add(node)) {
             publish();
             saveGrants();
+            notifyChange(uuid);
         }
     }
 
@@ -128,6 +142,7 @@ public final class PermissionService implements PermissionManager {
             }
             publish();
             saveGrants();
+            notifyChange(uuid);
         }
     }
 

@@ -53,6 +53,7 @@ import space.nows.tube.server.event.DefaultEventBus;
 import space.nows.tube.server.event.EventBridge;
 import space.nows.tube.server.gameplay.SurvivalRules;
 import space.nows.tube.server.inventory.MinestomInventory;
+import space.nows.tube.server.player.CommandAccess;
 import space.nows.tube.server.player.IdleKicker;
 import space.nows.tube.server.player.PlayerDataStore;
 import space.nows.tube.server.player.PlayerService;
@@ -345,6 +346,7 @@ public final class DedicatedServer implements Server {
         survival.install(handler);
         bridge.setDeathDrops(survival.deathDrops());
         new SpawnProtection(settings.level().spawnProtection(), worlds, permissions).install(events);
+        new CommandAccess(permissions).install(handler);
         ConnectionLog.install(events, settings.connection().logIps());
         new PacketRateLimiter(settings.network().rateLimit(), System::nanoTime).install(handler);
         IdleKicker idleKicker = new IdleKicker(settings.gameplay().playerIdleTimeout(), System::currentTimeMillis);
