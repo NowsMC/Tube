@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2611.3 - unreleased
+## 0.2611.3 - 2026-11-18
 
 ### Mobs
 
