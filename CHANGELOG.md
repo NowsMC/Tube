@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2611.4 - 2026-11-18
+
+### Commands
+
+- A player who is made an operator, or loses it, or is granted or denied a permission, sees the right commands at once instead of after rejoining. Operators also get the operator level on the client. ([`19eabf3`](https://github.com/NowsMC/Tube/commit/19eabf31b2e353a65b7033a5695139f6c55c0dad))
+- Commands that a plugin registers or unregisters while players are online show up in their command list without rejoining. ([`1cc3047`](https://github.com/NowsMC/Tube/commit/1cc3047be8e5e5513854348d7c072e8b6699e230))
+
 ## 0.2611.3 - 2026-11-18
 
 ### Mobs
