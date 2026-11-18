@@ -9,6 +9,9 @@
 - Zombies raise their arms and burn in daylight, skeletons shoot with vanilla's damage and accuracy per difficulty and fight up close without a bow, spiders only hunt in the dark and pounce, and creepers swell and explode like vanilla. ([`7e60ef2`](https://github.com/NowsMC/Tube/commit/7e60ef29ab126322a0f88a9701b1d9b27ed15abe), [`ea5e260`](https://github.com/NowsMC/Tube/commit/ea5e2608ae2ac396b6433d5c1e60b99d9f1d2c7f), [`c7521f4`](https://github.com/NowsMC/Tube/commit/c7521f4972b0107d86c96e701731a289d9a1850a), [`d89dbdf`](https://github.com/NowsMC/Tube/commit/d89dbdfba4ef930a384c99e4d176c88bb500d2ae))
 - Cows, pigs and chickens get the warm, cold or temperate look of their biome, sheep get the wool colours of their climate, sheep regrow wool by eating grass, and chickens lay eggs and fall slowly. ([`223770d`](https://github.com/NowsMC/Tube/commit/223770d348c10850cc8d9883ef5db1866c0f12a0))
 - Mobs spawned with `/summon` or by plugins get their AI too. ([`7c4e818`](https://github.com/NowsMC/Tube/commit/7c4e81890b9d0348976ef29cf84bae0390ab6b65))
+- Cows, pigs, sheep and chickens breed when fed their food, babies take a parent's look, follow adults and grow up in 20 minutes (faster when fed), and some herds spawn with babies. ([`397b3ba`](https://github.com/NowsMC/Tube/commit/397b3ba461d361fb8f00d6e7479aeaaab83c7138), [`2d33e4b`](https://github.com/NowsMC/Tube/commit/2d33e4b008993a04c551a03bf2311929001453d8), [`06f82fa`](https://github.com/NowsMC/Tube/commit/06f82fa33687e5940b0c15b32baa5688747aa0b2), [`3bed18e`](https://github.com/NowsMC/Tube/commit/3bed18ecf02f922fcd7029200e66cba3c0a13a14), [`d620884`](https://github.com/NowsMC/Tube/commit/d620884e4f98839b6749bbe4014ad96ba938ca1b))
+- Some zombies spawn as fast babies, and zombies and skeletons can spawn with armor and zombies with iron weapons, based on local difficulty and the moon. ([`66b57a5`](https://github.com/NowsMC/Tube/commit/66b57a5a1eb73ddb25b893cf5b37423ee33f0dd4), [`b70132b`](https://github.com/NowsMC/Tube/commit/b70132b2eeee0b588baddb411dc832f03057e3d3))
+- Endermen: they get angry when a player stares at them, freeze while being looked at, teleport away from arrows, water and daylight, pick up and place blocks, and spawn at night. ([`8623fb3`](https://github.com/NowsMC/Tube/commit/8623fb3f683d0ed9f0f1ace846a2e2c3f7857bbf), [`5909adf`](https://github.com/NowsMC/Tube/commit/5909adf7c9ca58100e32f3d6701d7c2e0ea7378c), [`cbacb4c`](https://github.com/NowsMC/Tube/commit/cbacb4c385930fb676f352e2f0e72028cef8e92e))
 
 ### Combat
 
@@ -16,7 +19,7 @@
 
 ### Not implemented yet
 
-- Breeding, baby mobs, zombie equipment and reinforcements, sun-avoiding paths, vanilla path costs and natural spawning, and every mob type other than cows, pigs, sheep, chickens, zombies, skeletons, spiders and creepers.
+- Villagers, zombie reinforcements, sun-avoiding paths, vanilla path costs and natural spawning, and every mob type other than cows, pigs, sheep, chickens, zombies, skeletons, spiders, creepers and endermen.
 
 ## 0.2611.2 - 2026-11-18
 
