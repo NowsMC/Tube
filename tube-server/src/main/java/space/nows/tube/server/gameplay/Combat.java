@@ -18,7 +18,7 @@ import net.minestom.server.event.player.PlayerHandAnimationEvent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.world.Difficulty;
-import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.item.Enchantments;
 import space.nows.tube.server.mob.KillCredit;
 
 import java.util.Set;
@@ -96,7 +96,7 @@ final class Combat {
             double charge = charge(player, weapon);
             player.setTag(LAST_SWING, player.getAliveTicks());
             damage = (float) (attackDamage(weapon) * (0.2 + charge * charge * 0.8));
-            int sharpness = LootTables.level(weapon, "minecraft:sharpness");
+            int sharpness = Enchantments.level(weapon, "minecraft:sharpness");
             if (sharpness > 0) {
                 damage += (float) ((0.5 * sharpness + 0.5) * charge);
             }
@@ -107,8 +107,8 @@ final class Combat {
             if (player.isSprinting() && charge > 0.9) {
                 knockback += 0.5;
             }
-            knockback += LootTables.level(weapon, "minecraft:knockback") * 0.5;
-            int fireAspect = LootTables.level(weapon, "minecraft:fire_aspect");
+            knockback += Enchantments.level(weapon, "minecraft:knockback") * 0.5;
+            int fireAspect = Enchantments.level(weapon, "minecraft:fire_aspect");
             if (fireAspect > 0) {
                 target.setFireTicks(fireAspect * 80);
             }
@@ -178,19 +178,19 @@ final class Combat {
                 continue;
             }
             if (!type.equals("minecraft:out_of_world") && !type.equals("minecraft:starve")) {
-                points += LootTables.level(armor, "minecraft:protection");
+                points += Enchantments.level(armor, "minecraft:protection");
             }
             if (type.contains("fire") || type.equals("minecraft:lava") || type.equals("minecraft:hot_floor")) {
-                points += 2 * LootTables.level(armor, "minecraft:fire_protection");
+                points += 2 * Enchantments.level(armor, "minecraft:fire_protection");
             }
             if (type.contains("explosion")) {
-                points += 2 * LootTables.level(armor, "minecraft:blast_protection");
+                points += 2 * Enchantments.level(armor, "minecraft:blast_protection");
             }
             if (type.equals("minecraft:arrow") || type.equals("minecraft:trident") || type.equals("minecraft:mob_projectile")) {
-                points += 2 * LootTables.level(armor, "minecraft:projectile_protection");
+                points += 2 * Enchantments.level(armor, "minecraft:projectile_protection");
             }
             if (type.equals("minecraft:fall")) {
-                points += 3 * LootTables.level(armor, "minecraft:feather_falling");
+                points += 3 * Enchantments.level(armor, "minecraft:feather_falling");
             }
         }
         return amount * (1 - Math.min(20, points) / 25f);

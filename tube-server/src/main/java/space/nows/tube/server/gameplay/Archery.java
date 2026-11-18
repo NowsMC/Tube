@@ -19,7 +19,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
-import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.item.Enchantments;
 import space.nows.tube.server.mob.KillCredit;
 
 import java.util.Set;
@@ -73,7 +73,7 @@ public final class Archery {
 
     private static void shoot(Player player, ItemStack bow, long useTicks) {
         boolean creative = player.getGameMode() == GameMode.CREATIVE;
-        boolean infinity = LootTables.level(bow, "minecraft:infinity") > 0;
+        boolean infinity = Enchantments.level(bow, "minecraft:infinity") > 0;
         int arrowSlot = findArrow(player);
         if (arrowSlot < 0 && !creative) {
             return;
@@ -88,12 +88,12 @@ public final class Archery {
         boolean critical = pull >= 1;
         meta.setCritical(critical);
         double damage = 2 * 3 * pull + (critical ? Math.random() * 3 : 0);
-        int power = LootTables.level(bow, "minecraft:power");
+        int power = Enchantments.level(bow, "minecraft:power");
         if (power > 0) {
             damage += power * 0.5 + 0.5;
         }
         arrow.setTag(ARROW_DAMAGE, damage);
-        if (LootTables.level(bow, "minecraft:flame") > 0) {
+        if (Enchantments.level(bow, "minecraft:flame") > 0) {
             meta.setOnFire(true);
         }
         double speed = 3 * pull;

@@ -11,7 +11,7 @@ import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.timer.TaskSchedule;
-import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.item.Enchantments;
 
 final class Hazards {
 
@@ -71,7 +71,7 @@ final class Hazards {
             var meta = entity.getEntityMeta();
             int air = meta.getAirTicks();
             if (submerged) {
-                int respiration = LootTables.level(entity.getEquipment(net.minestom.server.entity.EquipmentSlot.HELMET), "minecraft:respiration");
+                int respiration = Enchantments.level(entity.getEquipment(net.minestom.server.entity.EquipmentSlot.HELMET), "minecraft:respiration");
                 if (respiration == 0 || java.util.concurrent.ThreadLocalRandom.current().nextInt(respiration + 1) == 0) {
                     air--;
                 }

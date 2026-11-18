@@ -7,7 +7,7 @@ import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.sound.SoundEvent;
-import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.item.Enchantments;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -39,7 +39,7 @@ public final class Durability {
         if (max == null || item.has(DataComponents.UNBREAKABLE) || amount <= 0) {
             return item;
         }
-        int unbreaking = LootTables.level(item, "minecraft:unbreaking");
+        int unbreaking = Enchantments.level(item, "minecraft:unbreaking");
         int applied = 0;
         for (int i = 0; i < amount; i++) {
             if (unbreaking == 0 || ThreadLocalRandom.current().nextInt(unbreaking + 1) == 0) {
