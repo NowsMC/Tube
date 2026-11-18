@@ -6,6 +6,7 @@ import space.nows.tube.server.access.Profiles;
 import space.nows.tube.server.access.Whitelist;
 import space.nows.tube.server.command.CommandService;
 import space.nows.tube.server.command.builtin.chat.ChatCommands;
+import space.nows.tube.server.command.builtin.info.InfoCommands;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
 
@@ -41,13 +42,8 @@ public final class BuiltinCommands {
     List<ServerCommand> all() {
         Targets targets = new Targets(server);
         List<ServerCommand> all = new ArrayList<>();
-        all.add(new HelpCommand(commands));
-        all.add(new VersionCommand(server));
-        all.add(new ListCommand(server));
-        all.add(new PluginsCommand(server));
         all.add(new SaveAllCommand(server));
         all.add(new StopCommand(server));
-        all.add(new TpsCommand(server));
         all.add(new SeedCommand(targets));
         all.add(new OperatorCommand(true, server.permissions(), profiles, targets));
         all.add(new OperatorCommand(false, server.permissions(), profiles, targets));
@@ -76,6 +72,7 @@ public final class BuiltinCommands {
         all.add(new FillCommand(targets));
         all.add(new CloneCommand(targets));
         all.addAll(ChatCommands.create(server, targets));
+        all.addAll(InfoCommands.create(server, commands));
         return all;
     }
 }
