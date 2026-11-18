@@ -1,10 +1,11 @@
-package space.nows.tube.server.command.builtin;
+package space.nows.tube.server.command.builtin.player;
 
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.command.Suggestions;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.api.inventory.ItemStack;
+import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.RegistryNames;
 import space.nows.tube.server.command.support.ServerCommand;
