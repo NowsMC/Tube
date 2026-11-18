@@ -6,7 +6,8 @@ import net.minestom.server.entity.ItemEntity;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
-import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.loot.LootContext;
+import space.nows.tube.server.loot.LootTables;
 
 import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;
@@ -17,7 +18,7 @@ public final class BlockDropper {
     }
 
     public static void drop(Instance instance, Point position, Block block) {
-        for (ItemStack item : LootTables.forBlock(block, LootTables.Context.block(block, ItemStack.AIR, ThreadLocalRandom.current()))) {
+        for (ItemStack item : LootTables.block(block, LootContext.block(block, ItemStack.AIR, ThreadLocalRandom.current()))) {
             spawn(instance, position.add(0.5, 0.25, 0.5), item);
         }
     }

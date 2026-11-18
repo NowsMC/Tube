@@ -19,7 +19,8 @@ import net.minestom.server.tag.Tag;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.ExplosionEvent;
 import space.nows.tube.api.world.Location;
-import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.loot.LootContext;
+import space.nows.tube.server.loot.LootTables;
 import space.nows.tube.server.world.WorldService;
 
 import java.util.ArrayList;
@@ -90,8 +91,8 @@ public final class Explosions {
                 }
             }
             if (random.nextFloat() < 1f / strength) {
-                LootTables.Context context = new LootTables.Context(ItemStack.AIR, block, false, false, false, null, false, random);
-                for (ItemStack drop : LootTables.forBlock(block, context)) {
+                LootContext context = LootContext.block(block, ItemStack.AIR, random);
+                for (ItemStack drop : LootTables.block(block, context)) {
                     Drops.spawn(instance, point.add(0.5, 0.5, 0.5), drop);
                 }
             }

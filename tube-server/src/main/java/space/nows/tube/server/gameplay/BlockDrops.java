@@ -10,7 +10,9 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import space.nows.tube.server.event.BlockBreakDrops;
 import space.nows.tube.server.gameplay.block.BlockDropper;
-import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.item.Enchantments;
+import space.nows.tube.server.loot.LootContext;
+import space.nows.tube.server.loot.LootTables;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -60,11 +62,11 @@ final class BlockDrops {
                 return List.of();
             }
         }
-        return LootTables.forBlock(block, LootTables.Context.block(block, tool, ThreadLocalRandom.current()));
+        return LootTables.block(block, LootContext.block(block, tool, ThreadLocalRandom.current()));
     }
 
     static int experienceFor(Block block, ItemStack tool) {
-        if (LootTables.level(tool, "minecraft:silk_touch") > 0 || dropsFor(block, tool).isEmpty() && block.registry().requiresTool()) {
+        if (Enchantments.level(tool, "minecraft:silk_touch") > 0 || dropsFor(block, tool).isEmpty() && block.registry().requiresTool()) {
             return 0;
         }
         String key = block.key().value().replace("deepslate_", "");
