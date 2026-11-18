@@ -1,17 +1,17 @@
 package space.nows.tube.server.command.builtin;
 
-final class Permissions {
+public final class Permissions {
 
-    static final String ADMIN = "tube.admin";
-    static final String OP = "tube.op";
-    static final String KICK = "tube.kick";
-    static final String BAN = "tube.ban";
-    static final String WHITELIST = "tube.whitelist";
+    public static final String ADMIN = "tube.admin";
+    public static final String OP = "tube.op";
+    public static final String KICK = "tube.kick";
+    public static final String BAN = "tube.ban";
+    public static final String WHITELIST = "tube.whitelist";
 
     private Permissions() {
     }
 
-    static String command(String name) {
+    public static String command(String name) {
         return "tube.command." + name;
     }
 }
