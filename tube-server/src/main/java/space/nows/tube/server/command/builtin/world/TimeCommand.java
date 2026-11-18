@@ -1,14 +1,14 @@
 package space.nows.tube.server.command.builtin.world;
 
+import space.nows.tube.api.command.CommandFailure;
+import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.command.Suggestions;
+import space.nows.tube.api.command.Typing;
 import space.nows.tube.api.world.World;
 import space.nows.tube.server.command.builtin.Permissions;
-import space.nows.tube.server.command.support.CommandFailure;
-import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
-import space.nows.tube.server.command.support.Typing;
 
 import java.util.List;
 import java.util.Map;

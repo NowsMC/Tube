@@ -1,17 +1,17 @@
 package space.nows.tube.server.command.builtin.world.block;
 
+import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.command.Positions;
 import space.nows.tube.api.command.Suggestions;
+import space.nows.tube.api.command.Typing;
 import space.nows.tube.api.world.Block;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.BlockText;
-import space.nows.tube.server.command.support.CommandInput;
-import space.nows.tube.server.command.support.Positions;
 import space.nows.tube.server.command.support.RegistryNames;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
-import space.nows.tube.server.command.support.Typing;
 
 import java.util.List;
 
