@@ -1,6 +1,7 @@
 package space.nows.tube.server.world.vanilla.feature.choice;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import space.nows.tube.server.world.vanilla.block.BlockState;
 import space.nows.tube.server.world.vanilla.block.BlockStates;
@@ -40,9 +41,9 @@ final class NoiseBlockChoice {
         PairedNoise noise = noise(json);
         double scale = json.get("scale").getAsDouble();
         BlockState[] states = states(json.getAsJsonArray("states"));
-        JsonObject variety = json.getAsJsonObject("variety");
-        int fewest = variety.has("min_inclusive") ? variety.get("min_inclusive").getAsInt() : 1;
-        int most = variety.has("max_inclusive") ? variety.get("max_inclusive").getAsInt() : 1;
+        JsonElement variety = json.get("variety");
+        int fewest = bound(variety, 0, "min_inclusive");
+        int most = bound(variety, 1, "max_inclusive");
         PairedNoise slow = WorldNoises.create(new Xoroshiro(json.get("seed").getAsLong() + 1), json.getAsJsonObject("slow_noise"));
         double slowScale = json.get("slow_scale").getAsDouble();
         return (random, area, x, y, z) -> {
@@ -54,6 +55,20 @@ final class NoiseBlockChoice {
             }
             return along(palette, noise.value(x * scale, y * scale, z * scale));
         };
+    }
+
+    private static int bound(JsonElement range, int index, String name) {
+        if (range == null) {
+            return 1;
+        }
+        if (range.isJsonArray()) {
+            return range.getAsJsonArray().get(index).getAsInt();
+        }
+        if (range.isJsonObject()) {
+            JsonObject object = range.getAsJsonObject();
+            return object.has(name) ? object.get(name).getAsInt() : 1;
+        }
+        return range.getAsInt();
     }
 
     private static PairedNoise noise(JsonObject json) {
