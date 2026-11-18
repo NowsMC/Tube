@@ -9,7 +9,7 @@ import net.minestom.server.instance.Instance;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-final class Experience {
+public final class Experience {
 
     private Experience() {
     }
@@ -18,7 +18,7 @@ final class Experience {
         handler.addListener(PickupExperienceEvent.class, event -> add(event.getPlayer(), event.getExperienceOrb().getExperienceCount()));
     }
 
-    static void spawn(Instance instance, Point position, int amount) {
+    public static void spawn(Instance instance, Point position, int amount) {
         while (amount > 0) {
             int orb = Math.min(amount, amount >= 37 ? 37 : amount >= 17 ? 17 : amount >= 7 ? 7 : amount >= 3 ? 3 : 1);
             amount -= orb;
