@@ -39,6 +39,11 @@
 - A plugin command whose name is already taken is registered as `plugin:command` instead of stopping the plugin from enabling, and every plugin command can be reached that way. Taken aliases are skipped with a warning. ([`367554f`](https://github.com/NowsMC/Tube/commit/367554fa378fa7c9528efa3713ab00f23b87a176))
 - A plugin can only unregister the commands it registered itself. ([`367554f`](https://github.com/NowsMC/Tube/commit/367554fa378fa7c9528efa3713ab00f23b87a176))
 
+### Blocks
+
+- Breaking a plant or placing a block next to one no longer removes the plants around it. Grass, flowers, saplings, dead bushes, sugar cane and cactus now stay on every soil vanilla allows, such as grass blocks, podzol, mycelium and moss. ([`cae15e6`](https://github.com/NowsMC/Tube/commit/cae15e6320d6fdd014432f3dc93584a73cc1d17d))
+- Middle click picks a block in creative mode: it selects the item if it is in the hotbar, and otherwise puts it in the first free hotbar slot. In survival it brings an item you already carry to the hotbar. ([`bb9a1f6`](https://github.com/NowsMC/Tube/commit/bb9a1f6a18b192576ccf6fc83720fe8451181f8c))
+
 ### Combat
 
 - Arrows hit what they fly through within a tick, so fast arrows no longer pass through players and mobs. ([`c94b6dd`](https://github.com/NowsMC/Tube/commit/c94b6dd3cd820c99a50d469aa54776622409ab53), [`e11413a`](https://github.com/NowsMC/Tube/commit/e11413a09f0f6389e777be02c271cad77dbb15ae))
