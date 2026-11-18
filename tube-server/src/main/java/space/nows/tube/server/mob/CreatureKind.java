@@ -2,6 +2,7 @@ package space.nows.tube.server.mob;
 
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.damage.Damage;
 import space.nows.tube.server.mob.ai.GoalSelector;
 
 import java.util.random.RandomGenerator;
@@ -21,6 +22,13 @@ public interface CreatureKind {
     }
 
     default void prepare(Creature creature, RandomGenerator random) {
+    }
+
+    default boolean acceptsDamage(Creature creature, Damage damage) {
+        return true;
+    }
+
+    default void damaged(Creature creature, Damage damage) {
     }
 
     default boolean ambientSounds() {

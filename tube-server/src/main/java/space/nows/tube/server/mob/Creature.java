@@ -149,9 +149,13 @@ public final class Creature extends EntityCreature {
 
     @Override
     public boolean damage(Damage damage) {
+        if (!kind.acceptsDamage(this, damage)) {
+            return false;
+        }
         boolean hurt = super.damage(damage);
         if (hurt) {
             harm.record(damage, getAliveTicks());
+            kind.damaged(this, damage);
         }
         return hurt;
     }
