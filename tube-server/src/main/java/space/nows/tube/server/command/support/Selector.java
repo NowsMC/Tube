@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class Selector {
 
-    private static final List<String> KEYS = List.of("type=", "name=", "limit=", "distance=", "sort=");
+    private static final List<String> KEYS = List.of("type=", "name=", "tag=", "limit=", "distance=", "sort=");
     private static final List<String> SORTS = List.of("nearest", "furthest", "random", "arbitrary");
     private static final String NAMESPACE = "minecraft:";
 
@@ -64,7 +64,7 @@ public final class Selector {
     }
 
     public <T extends Entity> List<T> apply(List<T> candidates, Location origin) {
-        List<T> found = new ArrayList<>(candidates.stream().filter(this::matchesType).filter(this::matchesName)
+        List<T> found = new ArrayList<>(candidates.stream().filter(this::matchesType).filter(this::matchesName).filter(this::matchesTag)
                 .filter(entity -> matchesDistance(entity, origin)).toList());
         switch (sort()) {
             case "nearest" -> found.sort(Comparator.comparingDouble(entity -> distance(entity, origin)));
@@ -126,6 +126,21 @@ public final class Selector {
         String actual = entity instanceof Player player ? player.name()
                 : entity.customName().map(component -> PlainTextComponentSerializer.plainText().serialize(component)).orElse("");
         return actual.equals(wanted) != inverted;
+    }
+
+    private boolean matchesTag(Entity entity) {
+        String tag = arguments.get("tag");
+        if (tag == null) {
+            return true;
+        }
+        if (tag.isEmpty()) {
+            return entity.tags().isEmpty();
+        }
+        boolean inverted = tag.startsWith("!");
+        if (inverted && tag.length() == 1) {
+            return !entity.tags().isEmpty();
+        }
+        return entity.tags().contains(inverted ? tag.substring(1) : tag) != inverted;
     }
 
     private boolean matchesDistance(Entity entity, Location origin) {

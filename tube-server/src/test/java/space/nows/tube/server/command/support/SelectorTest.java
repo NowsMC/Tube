@@ -19,7 +19,7 @@ class SelectorTest {
 
     @Test
     void offersOptionKeysInsideTheBracket() {
-        assertEquals(List.of("@e[distance=", "@e[limit=", "@e[name=", "@e[sort=", "@e[type="), Selector.suggest("@e[", BASES, TYPES));
+        assertEquals(List.of("@e[distance=", "@e[limit=", "@e[name=", "@e[sort=", "@e[tag=", "@e[type="), Selector.suggest("@e[", BASES, TYPES));
         assertEquals(List.of("@e[type="), Selector.suggest("@e[ty", BASES, TYPES));
     }
 
