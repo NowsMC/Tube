@@ -6,6 +6,7 @@ import space.nows.tube.api.event.CraftItemEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.server.event.DeathDrops;
 import space.nows.tube.server.gameplay.block.BlockInteractions;
+import space.nows.tube.server.gameplay.block.PlaceSound;
 import space.nows.tube.server.gameplay.crafting.CraftingGrids;
 import space.nows.tube.server.gameplay.crafting.Furnaces;
 import space.nows.tube.server.gameplay.crafting.RecipeBook;
@@ -45,6 +46,7 @@ public final class SurvivalRules {
     public void install(GlobalEventHandler handler) {
         Thread.ofVirtual().name("tube-recipes").start(() -> recipes = VanillaRecipes.load(cache, minecraftVersion));
         BlockInteractions.install(handler);
+        PlaceSound.install(handler);
         BlockDrops.install(handler);
         Containers.install(handler);
         Explosions.configure(events, worlds);
