@@ -218,7 +218,10 @@ final class StubServer {
             case "removeTag" -> tags.remove((String) args[0]);
             case "loginMode" -> space.nows.tube.api.entity.LoginMode.OFFLINE;
             case "skin", "clientBrand" -> Optional.empty();
-            case "latency", "protocolVersion", "heldSlot" -> 0;
+            case "latency", "protocolVersion", "heldSlot", "fireTicks" -> 0;
+            case "isSneaking", "isSprinting", "isSwimming", "isGlowing", "isGliding" -> false;
+            case "eyeHeight" -> 1.62;
+            case "openedInventory" -> Optional.empty();
             case "name" -> name;
             case "uuid" -> uuid;
             case "hasPermission" -> ops.contains(uuid);

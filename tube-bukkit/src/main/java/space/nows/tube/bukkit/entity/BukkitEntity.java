@@ -73,6 +73,28 @@ public class BukkitEntity extends BukkitPermissible implements Entity {
     }
 
     @Override
+    public boolean isGlowing() {
+        return tube.isGlowing();
+    }
+
+    @Override
+    public void setGlowing(boolean flag) {
+        tube.setGlowing(flag);
+    }
+
+    @Override
+    public int getFireTicks() {
+        return tube instanceof space.nows.tube.api.entity.LivingEntity living ? living.fireTicks() : 0;
+    }
+
+    @Override
+    public void setFireTicks(int ticks) {
+        if (tube instanceof space.nows.tube.api.entity.LivingEntity living) {
+            living.setFireTicks(ticks);
+        }
+    }
+
+    @Override
     public Location getLocation() {
         return runtime.adapters().location(tube.location());
     }

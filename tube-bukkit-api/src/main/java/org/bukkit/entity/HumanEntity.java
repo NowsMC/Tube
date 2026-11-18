@@ -16,5 +16,7 @@ public interface HumanEntity extends LivingEntity, InventoryHolder {
 
     ItemStack getItemInHand();
 
+    org.bukkit.inventory.InventoryView getOpenInventory();
+
     void setItemInHand(ItemStack item);
 }

@@ -65,6 +65,25 @@ public final class BukkitPlayer extends BukkitLivingEntity implements Player {
     }
 
     @Override
+    public boolean isSneaking() {
+        return tube.isSneaking();
+    }
+
+    @Override
+    public boolean isSprinting() {
+        return tube.isSprinting();
+    }
+
+    @Override
+    public org.bukkit.inventory.InventoryView getOpenInventory() {
+        org.bukkit.inventory.Inventory own = getInventory();
+        return tube.openedInventory()
+                .<org.bukkit.inventory.InventoryView>map(open -> new space.nows.tube.bukkit.inventory.BukkitInventoryView(tube, this,
+                        new space.nows.tube.bukkit.inventory.BukkitInventory(open), own, org.bukkit.event.inventory.InventoryType.CHEST, "Chest"))
+                .orElseGet(() -> new space.nows.tube.bukkit.inventory.BukkitInventoryView(tube, this, own, own, org.bukkit.event.inventory.InventoryType.CRAFTING, "Crafting"));
+    }
+
+    @Override
     public GameMode getGameMode() {
         return GameMode.valueOf(tube.gameMode().name());
     }

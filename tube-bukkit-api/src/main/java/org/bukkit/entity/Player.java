@@ -6,6 +6,11 @@ import java.net.InetSocketAddress;
 
 public interface Player extends HumanEntity, OfflinePlayer {
 
+    boolean isSneaking();
+
+    boolean isSprinting();
+
+
     String getDisplayName();
 
     String getPlayerListName();

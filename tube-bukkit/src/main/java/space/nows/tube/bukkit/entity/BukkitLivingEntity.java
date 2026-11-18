@@ -30,6 +30,26 @@ public class BukkitLivingEntity extends BukkitEntity implements LivingEntity {
     }
 
     @Override
+    public org.bukkit.Location getEyeLocation() {
+        return runtime.adapters().location(tube.eyeLocation());
+    }
+
+    @Override
+    public double getEyeHeight() {
+        return tube.eyeHeight();
+    }
+
+    @Override
+    public boolean isSwimming() {
+        return tube.isSwimming();
+    }
+
+    @Override
+    public boolean isGliding() {
+        return tube.isGliding();
+    }
+
+    @Override
     public double getHealth() {
         return tube.health();
     }

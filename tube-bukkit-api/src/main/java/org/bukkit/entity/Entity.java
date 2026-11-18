@@ -27,6 +27,14 @@ public interface Entity extends CommandSender {
 
     boolean isValid();
 
+    boolean isGlowing();
+
+    void setGlowing(boolean flag);
+
+    int getFireTicks();
+
+    void setFireTicks(int ticks);
+
     boolean isDead();
 
     void remove();
