@@ -8,6 +8,7 @@ import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.entity.metadata.AgeableMobMeta;
 import net.minestom.server.entity.metadata.MobMeta;
+import net.minestom.server.entity.metadata.monster.zombie.ZombieMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import space.nows.tube.server.mob.ai.GoalSelector;
@@ -103,7 +104,8 @@ public final class Creature extends EntityCreature {
     }
 
     public boolean isBaby() {
-        return getEntityMeta() instanceof AgeableMobMeta ageable && ageable.isBaby();
+        return getEntityMeta() instanceof AgeableMobMeta ageable && ageable.isBaby()
+                || getEntityMeta() instanceof ZombieMeta zombie && zombie.isBaby();
     }
 
     public void jump() {

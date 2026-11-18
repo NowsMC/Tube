@@ -16,8 +16,10 @@ import space.nows.tube.server.mob.ai.idle.Wander;
 import space.nows.tube.server.mob.ai.idle.WatchNearby;
 import space.nows.tube.server.mob.ai.target.HuntNearest;
 import space.nows.tube.server.mob.ai.target.Retaliate;
+import space.nows.tube.server.mob.kind.monster.ArmorRoll;
 import space.nows.tube.server.mob.kind.monster.Monster;
 import space.nows.tube.server.mob.kind.monster.Turtles;
+import space.nows.tube.server.mob.spawn.LocalDifficulty;
 import space.nows.tube.server.mob.trait.SunBurn;
 
 import java.util.random.RandomGenerator;
@@ -58,6 +60,7 @@ public final class Skeleton extends Monster {
 
     @Override
     public void prepare(Creature creature, RandomGenerator random) {
+        ArmorRoll.dress(creature, LocalDifficulty.at(creature.getInstance(), 0), random);
         creature.setItemInMainHand(ItemStack.of(Material.BOW));
     }
 }
