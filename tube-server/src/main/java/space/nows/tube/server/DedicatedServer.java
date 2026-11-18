@@ -314,7 +314,7 @@ public final class DedicatedServer implements Server {
 
         Profiles profiles = new Profiles(this::players, userCache);
         new BuiltinCommands(this, commands, profiles, bans, whitelist, propertiesFile, settings.access().enforceWhitelist(),
-                new ServerControls(autosaveGate, idleKicker)).registerAll();
+                new ServerControls(autosaveGate, idleKicker, whitelist, bans, plugins::reloadAll)).registerAll();
         LOGGER.info("Default game mode: {}, difficulty: {}", defaultGameMode.name().toLowerCase(Locale.ROOT),
                 settings.gameplay().difficulty().name().toLowerCase(Locale.ROOT));
         long worldStart = System.nanoTime();

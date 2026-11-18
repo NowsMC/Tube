@@ -37,6 +37,13 @@ public final class BanList {
         read(ipsFile, "ip", "ip", ips);
     }
 
+    public synchronized void reload() {
+        players.clear();
+        ips.clear();
+        read(playersFile, "uuid", "name", players);
+        read(ipsFile, "ip", "ip", ips);
+    }
+
     synchronized Optional<Ban> player(UUID uuid) {
         return players.stream().filter(ban -> ban.key().equals(uuid.toString()) && ban.active()).findFirst();
     }

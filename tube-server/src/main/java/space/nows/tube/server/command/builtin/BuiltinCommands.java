@@ -34,7 +34,7 @@ public final class BuiltinCommands {
 
     public BuiltinCommands(Server server, CommandService commands, Profiles profiles, BanList bans, Whitelist whitelist, Path settingsFile,
                            boolean enforceWhitelist) {
-        this(server, commands, profiles, bans, whitelist, settingsFile, enforceWhitelist, ServerControls.inert());
+        this(server, commands, profiles, bans, whitelist, settingsFile, enforceWhitelist, ServerControls.inert(whitelist, bans));
     }
 
     public BuiltinCommands(Server server, CommandService commands, Profiles profiles, BanList bans, Whitelist whitelist, Path settingsFile,

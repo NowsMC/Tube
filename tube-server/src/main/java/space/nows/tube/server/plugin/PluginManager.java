@@ -90,6 +90,12 @@ public final class PluginManager {
         running.clear();
     }
 
+    public synchronized int reloadAll() {
+        disableAll();
+        loadAll();
+        return running.size();
+    }
+
     public synchronized Collection<PluginDescriptor> descriptors() {
         return running.stream().map(Running::descriptor).toList();
     }
