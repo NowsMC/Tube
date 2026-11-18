@@ -7,8 +7,10 @@ import net.minestom.server.entity.metadata.monster.EndermanMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockFace;
+import space.nows.tube.api.world.GameRule;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.ai.Goal;
+import space.nows.tube.server.world.rule.RuleBook;
 
 final class PlaceBlock extends Goal {
 
@@ -23,7 +25,7 @@ final class PlaceBlock extends Goal {
     @Override
     public boolean canStart() {
         return enderman.getEntityMeta() instanceof EndermanMeta meta && meta.getCarriedBlock() != null
-                && enderman.random().nextInt(halved(CHANCE)) == 0;
+                && RuleBook.enabled(enderman.getInstance(), GameRule.MOB_GRIEFING) && enderman.random().nextInt(halved(CHANCE)) == 0;
     }
 
     @Override

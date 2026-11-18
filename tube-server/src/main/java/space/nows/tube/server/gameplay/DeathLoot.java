@@ -4,9 +4,11 @@ import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.utils.inventory.PlayerInventoryUtils;
+import space.nows.tube.api.world.GameRule;
 import space.nows.tube.server.event.DeathDrops;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.loot.MobLoot;
+import space.nows.tube.server.world.rule.RuleBook;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,7 @@ final class DeathLoot implements DeathDrops {
         if (entity instanceof Creature creature) {
             return MobLoot.of(creature);
         }
-        if (entity instanceof Player player && Falling.affected(player)) {
+        if (entity instanceof Player player && Falling.affected(player) && !RuleBook.enabled(player.getInstance(), GameRule.KEEP_INVENTORY)) {
             return playerDrops(player);
         }
         return new Drops(List.of(), 0);
