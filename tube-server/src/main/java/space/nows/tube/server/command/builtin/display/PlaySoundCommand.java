@@ -2,18 +2,18 @@ package space.nows.tube.server.command.builtin.display;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import space.nows.tube.api.command.CommandFailure;
+import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.command.Positions;
 import space.nows.tube.api.command.Suggestions;
+import space.nows.tube.api.command.Typing;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.server.command.builtin.Permissions;
-import space.nows.tube.server.command.support.CommandFailure;
-import space.nows.tube.server.command.support.CommandInput;
-import space.nows.tube.server.command.support.Positions;
 import space.nows.tube.server.command.support.RegistryNames;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
-import space.nows.tube.server.command.support.Typing;
 
 import java.util.Arrays;
 import java.util.List;
