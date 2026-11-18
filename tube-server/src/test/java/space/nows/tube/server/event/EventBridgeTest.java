@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.BlockVec;
@@ -89,6 +90,38 @@ class EventBridgeTest {
         var blocked = new net.minestom.server.event.player.PlayerChatEvent(player, recipients, "a secret");
         EventDispatcher.call(blocked);
         assertTrue(blocked.isCancelled());
+    }
+
+    @Test
+    void chatNamesCanBeClickedToMessageAndMessagesStayPlainText(Env env) {
+        install();
+        var player = env.createPlayer(instance(), new Pos(0, 42, 0));
+        var recipients = (Collection<net.minestom.server.entity.Player>) List.of(player);
+
+        var chat = new net.minestom.server.event.player.PlayerChatEvent(player, recipients, "<red>hello &6there");
+        EventDispatcher.call(chat);
+
+        Component formatted = chat.getFormattedMessage();
+        assertEquals("<" + player.getUsername() + "> <red>hello &6there", PlainTextComponentSerializer.plainText().serialize(formatted));
+        Component name = formatted.children().get(0);
+        assertEquals(net.kyori.adventure.text.event.ClickEvent.Action.SUGGEST_COMMAND, name.clickEvent().action());
+        assertEquals("/msg " + player.getUsername() + " ", ((net.kyori.adventure.text.event.ClickEvent.Payload.Text) name.clickEvent().payload()).value());
+        assertEquals(player.getUsername(), name.insertion());
+    }
+
+    @Test
+    void aPluginCanFormatTheChatLineItself(Env env) {
+        install();
+        var player = env.createPlayer(instance(), new Pos(0, 42, 0));
+        var recipients = (Collection<net.minestom.server.entity.Player>) List.of(player);
+        bus.subscribe(space.nows.tube.api.event.PlayerChatEvent.class, event ->
+                event.setFormatted(space.nows.tube.api.chat.Chat.text("[VIP] " + event.message()).copyOnClick(event.message()).build()));
+
+        var chat = new net.minestom.server.event.player.PlayerChatEvent(player, recipients, "hi");
+        EventDispatcher.call(chat);
+
+        assertEquals("[VIP] hi", PlainTextComponentSerializer.plainText().serialize(chat.getFormattedMessage()));
+        assertEquals(net.kyori.adventure.text.event.ClickEvent.Action.COPY_TO_CLIPBOARD, chat.getFormattedMessage().clickEvent().action());
     }
 
     @Test

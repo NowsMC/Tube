@@ -1,13 +1,16 @@
 package space.nows.tube.api.event;
 
+import net.kyori.adventure.text.Component;
 import space.nows.tube.api.entity.Player;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class PlayerChatEvent implements Cancellable {
 
     private final Player player;
     private String message;
+    private Component formatted;
     private boolean cancelled;
 
     public PlayerChatEvent(Player player, String message) {
@@ -25,6 +28,14 @@ public final class PlayerChatEvent implements Cancellable {
 
     public void setMessage(String message) {
         this.message = Objects.requireNonNull(message, "message");
+    }
+
+    public Optional<Component> formatted() {
+        return Optional.ofNullable(formatted);
+    }
+
+    public void setFormatted(Component formatted) {
+        this.formatted = formatted;
     }
 
     @Override

@@ -99,9 +99,7 @@ public final class EventBridge {
                 event.setCancelled(true);
                 return;
             }
-            if (!posted.message().equals(event.getRawMessage())) {
-                event.setFormattedMessage(Component.text("<" + player.name() + "> " + posted.message()));
-            }
+            event.setFormattedMessage(posted.formatted().orElseGet(() -> ChatFormat.of(player, posted.message())));
         });
 
         node.addListener(PlayerBlockBreakEvent.class, event -> {
