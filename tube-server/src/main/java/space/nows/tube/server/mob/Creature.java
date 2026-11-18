@@ -22,6 +22,7 @@ import space.nows.tube.server.mob.trait.Trait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.random.RandomGenerator;
 
@@ -90,6 +91,15 @@ public final class Creature extends EntityCreature {
 
     public void addTrait(Trait trait) {
         traits.add(trait);
+    }
+
+    public <T extends Trait> Optional<T> trait(Class<T> type) {
+        for (Trait trait : traits) {
+            if (type.isInstance(trait)) {
+                return Optional.of(type.cast(trait));
+            }
+        }
+        return Optional.empty();
     }
 
     public boolean isBaby() {

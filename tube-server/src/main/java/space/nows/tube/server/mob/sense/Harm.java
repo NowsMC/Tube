@@ -24,10 +24,12 @@ public final class Harm {
     private LivingEntity attacker;
     private long attackedAt;
     private int attackCount;
+    private int damageCount;
 
     public void record(Damage damage, long now) {
         lastType = damage.getType().key().asString();
         lastDamagedAt = now;
+        damageCount++;
         Entity source = damage.getAttacker();
         if (source instanceof LivingEntity living) {
             attacker = living;
@@ -49,5 +51,9 @@ public final class Harm {
 
     public int attackCount() {
         return attackCount;
+    }
+
+    public int damageCount() {
+        return damageCount;
     }
 }
