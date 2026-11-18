@@ -12,6 +12,7 @@ import space.nows.tube.server.command.builtin.entity.EntityCommands;
 import space.nows.tube.server.command.builtin.info.InfoCommands;
 import space.nows.tube.server.command.builtin.player.PlayerCommands;
 import space.nows.tube.server.command.builtin.server.ServerCommands;
+import space.nows.tube.server.command.builtin.server.ServerControls;
 import space.nows.tube.server.command.builtin.world.WorldCommands;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
@@ -29,9 +30,15 @@ public final class BuiltinCommands {
     private final Whitelist whitelist;
     private final Path settingsFile;
     private final boolean enforceWhitelist;
+    private final ServerControls controls;
 
     public BuiltinCommands(Server server, CommandService commands, Profiles profiles, BanList bans, Whitelist whitelist, Path settingsFile,
                            boolean enforceWhitelist) {
+        this(server, commands, profiles, bans, whitelist, settingsFile, enforceWhitelist, ServerControls.inert());
+    }
+
+    public BuiltinCommands(Server server, CommandService commands, Profiles profiles, BanList bans, Whitelist whitelist, Path settingsFile,
+                           boolean enforceWhitelist, ServerControls controls) {
         this.server = server;
         this.commands = commands;
         this.profiles = profiles;
@@ -39,6 +46,7 @@ public final class BuiltinCommands {
         this.whitelist = whitelist;
         this.settingsFile = settingsFile;
         this.enforceWhitelist = enforceWhitelist;
+        this.controls = controls;
     }
 
     public void registerAll() {
@@ -48,13 +56,13 @@ public final class BuiltinCommands {
     List<ServerCommand> all() {
         Targets targets = new Targets(server);
         List<ServerCommand> all = new ArrayList<>();
-        all.addAll(ChatCommands.create(server, targets));
         all.addAll(InfoCommands.create(server, commands));
+        all.addAll(ServerCommands.create(server, controls, settingsFile));
         all.addAll(AccessCommands.create(server, targets, profiles, bans, whitelist, server.permissions(), settingsFile, enforceWhitelist));
+        all.addAll(ChatCommands.create(server, targets));
         all.addAll(PlayerCommands.create(targets));
         all.addAll(EntityCommands.create(targets));
         all.addAll(WorldCommands.create(targets));
-        all.addAll(ServerCommands.create(server));
         all.addAll(DisplayCommands.create(targets));
         return all;
     }

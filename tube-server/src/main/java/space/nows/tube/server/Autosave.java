@@ -17,7 +17,7 @@ final class Autosave implements AutoCloseable {
         this.executor = executor;
     }
 
-    static Autosave start(int intervalSeconds, Runnable saveWorlds, Runnable savePlayersOnTick) {
+    static Autosave start(int intervalSeconds, AutosaveGate gate, Runnable saveWorlds, Runnable savePlayersOnTick) {
         if (intervalSeconds <= 0) {
             return new Autosave(null);
         }
@@ -27,6 +27,9 @@ final class Autosave implements AutoCloseable {
             return thread;
         });
         executor.scheduleWithFixedDelay(() -> {
+            if (!gate.enabled()) {
+                return;
+            }
             try {
                 saveWorlds.run();
                 savePlayersOnTick.run();

@@ -31,6 +31,7 @@ import space.nows.tube.server.access.Profiles;
 import space.nows.tube.server.access.UserCache;
 import space.nows.tube.server.access.Whitelist;
 import space.nows.tube.server.command.builtin.BuiltinCommands;
+import space.nows.tube.server.command.builtin.server.ServerControls;
 import space.nows.tube.server.command.CommandService;
 import space.nows.tube.server.config.ServerProperties;
 import space.nows.tube.server.config.ServerSettings;
@@ -94,6 +95,7 @@ public final class DedicatedServer implements Server {
     private NettyNetwork network;
     private RemoteAccess remoteAccess;
     private Autosave autosave;
+    private final AutosaveGate autosaveGate = new AutosaveGate();
     private TickWatchdog watchdog;
     private Path propertiesFile;
     private volatile GameMode defaultGameMode;
@@ -310,7 +312,8 @@ public final class DedicatedServer implements Server {
         channels.install(handler);
 
         Profiles profiles = new Profiles(this::players, userCache);
-        new BuiltinCommands(this, commands, profiles, bans, whitelist, propertiesFile, settings.access().enforceWhitelist()).registerAll();
+        new BuiltinCommands(this, commands, profiles, bans, whitelist, propertiesFile, settings.access().enforceWhitelist(),
+                new ServerControls(autosaveGate)).registerAll();
         LOGGER.info("Default game mode: {}, difficulty: {}", defaultGameMode.name().toLowerCase(Locale.ROOT),
                 settings.gameplay().difficulty().name().toLowerCase(Locale.ROOT));
         long worldStart = System.nanoTime();
@@ -323,7 +326,7 @@ public final class DedicatedServer implements Server {
         remoteAccess.start(network);
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "tube-shutdown"));
-        autosave = Autosave.start(settings.level().autosaveSeconds(), worlds::saveAll,
+        autosave = Autosave.start(settings.level().autosaveSeconds(), autosaveGate, worlds::saveAll,
                 () -> scheduler.runSync(() -> MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(this::savePlayer)));
         if (console != null) {
             console.start(scheduler, commands);
