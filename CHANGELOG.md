@@ -15,8 +15,9 @@
 
 ### Commands
 
-- Selectors take options in brackets, such as `@e[type=zombie,limit=2,distance=..10,sort=nearest]`, with `type`, `name`, `limit`, `distance` and `sort`, and tab completion offers the option names and their values.
-- Coordinates complete to `~` for `/tp`, `/setblock`, `/fill`, `/clone`, `/summon`, `/spawnpoint` and `/setworldspawn`.
+- Selectors take options in brackets, such as `@e[type=zombie,limit=2,distance=..10,sort=nearest]`, with `type`, `name`, `limit`, `distance` and `sort`, and tab completion offers the option names and their values. ([`7f75fbb`](https://github.com/NowsMC/Tube/commit/7f75fbb4e507b353febcd3f0758871839127f06d), [`e9e58e3`](https://github.com/NowsMC/Tube/commit/e9e58e3b629db50850523b0cdb7bc24e44e6c935))
+- `@p` run by a player picks the nearest player in that player's world instead of one in another world. ([`13cfe2a`](https://github.com/NowsMC/Tube/commit/13cfe2aebf67569b7e948424e675ccdfb520e4c5))
+- Coordinates complete to `~` for `/tp`, `/setblock`, `/fill`, `/clone`, `/summon`, `/spawnpoint` and `/setworldspawn`. ([`7f75fbb`](https://github.com/NowsMC/Tube/commit/7f75fbb4e507b353febcd3f0758871839127f06d), [`e9e58e3`](https://github.com/NowsMC/Tube/commit/e9e58e3b629db50850523b0cdb7bc24e44e6c935))
 
 ### Combat
 
