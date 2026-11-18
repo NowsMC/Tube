@@ -3,6 +3,7 @@ package space.nows.tube.server.console;
 import ch.qos.logback.classic.Level;
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.ansi.ColorLevel;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -12,6 +13,7 @@ final class Paint {
     private static final String RESET = "\u001B[0m";
     private static final String GRAY = "\u001B[90m";
     private static final String CYAN = "\u001B[36m";
+    private static final ANSIComponentSerializer ANSI = ANSIComponentSerializer.builder().colorLevel(ColorLevel.TRUE_COLOR).build();
     private static final Pattern SECTION_CODE = Pattern.compile("(?i)§[0-9a-fk-orx]");
     private static final Map<Level, String> LEVELS = Map.of(
             Level.ERROR, "\u001B[31m",
@@ -40,7 +42,7 @@ final class Paint {
 
     static String message(Level level, String text) {
         String body = text.indexOf('§') < 0 ? text
-                : ANSIComponentSerializer.ansi().serialize(LegacyComponentSerializer.legacySection().deserialize(text));
+                : ANSI.serialize(LegacyComponentSerializer.legacySection().deserialize(text));
         String tint = MESSAGES.get(level);
         return tint == null ? body : tint + body + RESET;
     }
