@@ -1,6 +1,6 @@
 package org.bukkit.entity;
 
-public interface LivingEntity extends Damageable {
+public interface LivingEntity extends Damageable, org.bukkit.attribute.Attributable {
 
     org.bukkit.Location getEyeLocation();
 
@@ -9,6 +9,8 @@ public interface LivingEntity extends Damageable {
     boolean isSwimming();
 
     boolean isGliding();
+
+    boolean hasLineOfSight(Entity other);
 
     boolean addPotionEffect(org.bukkit.potion.PotionEffect effect);
 

@@ -45,6 +45,16 @@ public class BukkitLivingEntity extends BukkitEntity implements LivingEntity {
     }
 
     @Override
+    public org.bukkit.attribute.AttributeInstance getAttribute(org.bukkit.attribute.Attribute attribute) {
+        return new BukkitAttributeInstance(tube, attribute);
+    }
+
+    @Override
+    public boolean hasLineOfSight(org.bukkit.entity.Entity other) {
+        return other instanceof BukkitEntity entity && tube.hasLineOfSight(entity.tube());
+    }
+
+    @Override
     public boolean isGliding() {
         return tube.isGliding();
     }
