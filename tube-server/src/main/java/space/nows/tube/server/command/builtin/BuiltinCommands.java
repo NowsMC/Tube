@@ -5,6 +5,7 @@ import space.nows.tube.server.access.BanList;
 import space.nows.tube.server.access.Profiles;
 import space.nows.tube.server.access.Whitelist;
 import space.nows.tube.server.command.CommandService;
+import space.nows.tube.server.command.builtin.chat.ChatCommands;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
 
@@ -57,9 +58,6 @@ public final class BuiltinCommands {
         all.add(new PardonIpCommand(bans));
         all.add(new BanListCommand(bans));
         all.add(new WhitelistCommand(server, whitelist, profiles, targets, settingsFile, enforceWhitelist));
-        all.add(new SayCommand(server));
-        all.add(new MeCommand(server));
-        all.add(new MessageCommand(targets));
         all.add(new GameModeCommand(targets));
         all.add(new DefaultGameModeCommand(server));
         all.add(new GiveCommand(targets));
@@ -77,6 +75,7 @@ public final class BuiltinCommands {
         all.add(new SetBlockCommand(targets));
         all.add(new FillCommand(targets));
         all.add(new CloneCommand(targets));
+        all.addAll(ChatCommands.create(server, targets));
         return all;
     }
 }

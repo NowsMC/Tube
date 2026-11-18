@@ -1,4 +1,4 @@
-package space.nows.tube.server.command.builtin;
+package space.nows.tube.server.command.builtin.chat;
 
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.command.Suggestions;

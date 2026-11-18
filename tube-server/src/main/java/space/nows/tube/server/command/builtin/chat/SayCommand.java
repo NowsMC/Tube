@@ -1,21 +1,22 @@
-package space.nows.tube.server.command.builtin;
+package space.nows.tube.server.command.builtin.chat;
 
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.ServerCommand;
 
-final class MeCommand extends ServerCommand {
+final class SayCommand extends ServerCommand {
 
     private final Server server;
 
-    MeCommand(Server server) {
-        super("me", null, "me <action>");
+    SayCommand(Server server) {
+        super("say", Permissions.command("say"), "say <message>");
         this.server = server;
     }
 
     @Override
     protected void run(CommandSender sender, CommandInput input) {
-        server.broadcast("* " + sender.name() + " " + input.rest());
+        server.broadcast("[" + sender.name() + "] " + input.rest());
     }
 }
