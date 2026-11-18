@@ -13,6 +13,11 @@
 - Some zombies spawn as fast babies, and zombies and skeletons can spawn with armor and zombies with iron weapons, based on local difficulty and the moon. ([`66b57a5`](https://github.com/NowsMC/Tube/commit/66b57a5a1eb73ddb25b893cf5b37423ee33f0dd4), [`b70132b`](https://github.com/NowsMC/Tube/commit/b70132b2eeee0b588baddb411dc832f03057e3d3))
 - Endermen: they get angry when a player stares at them, freeze while being looked at, teleport away from arrows, water and daylight, pick up and place blocks, and spawn at night. ([`8623fb3`](https://github.com/NowsMC/Tube/commit/8623fb3f683d0ed9f0f1ace846a2e2c3f7857bbf), [`5909adf`](https://github.com/NowsMC/Tube/commit/5909adf7c9ca58100e32f3d6701d7c2e0ea7378c), [`cbacb4c`](https://github.com/NowsMC/Tube/commit/cbacb4c385930fb676f352e2f0e72028cef8e92e))
 
+### Commands
+
+- Selectors take options in brackets, such as `@e[type=zombie,limit=2,distance=..10,sort=nearest]`, with `type`, `name`, `limit`, `distance` and `sort`, and tab completion offers the option names and their values.
+- Coordinates complete to `~` for `/tp`, `/setblock`, `/fill`, `/clone`, `/summon`, `/spawnpoint` and `/setworldspawn`.
+
 ### Combat
 
 - Arrows hit what they fly through within a tick, so fast arrows no longer pass through players and mobs. ([`c94b6dd`](https://github.com/NowsMC/Tube/commit/c94b6dd3cd820c99a50d469aa54776622409ab53), [`e11413a`](https://github.com/NowsMC/Tube/commit/e11413a09f0f6389e777be02c271cad77dbb15ae))
