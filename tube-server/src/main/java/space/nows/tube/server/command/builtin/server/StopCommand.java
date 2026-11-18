@@ -1,7 +1,8 @@
-package space.nows.tube.server.command.builtin;
+package space.nows.tube.server.command.builtin.server;
 
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.ServerCommand;
 
