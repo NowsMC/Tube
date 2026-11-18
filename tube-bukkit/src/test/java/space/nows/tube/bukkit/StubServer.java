@@ -198,6 +198,7 @@ final class StubServer {
                 });
             });
             case "scheduler" -> scheduler;
+            case "scoreboards" -> scoreboards();
             case "permissions" -> permissions;
             case "worlds" -> worlds;
             case "players" -> List.copyOf(players);
@@ -205,6 +206,32 @@ final class StubServer {
                 broadcasts.add(String.valueOf(args[0]));
                 yield null;
             }
+            default -> null;
+        });
+    }
+
+    final List<String> scoreboardLog = new ArrayList<>();
+
+    private space.nows.tube.api.scoreboard.Scoreboards scoreboards() {
+        ClassLoader loader = getClass().getClassLoader();
+        return (space.nows.tube.api.scoreboard.Scoreboards) Proxy.newProxyInstance(loader, new Class<?>[] {space.nows.tube.api.scoreboard.Scoreboards.class}, (proxy, method, args) -> switch (method.getName()) {
+            case "createSidebar" -> Proxy.newProxyInstance(loader, new Class<?>[] {space.nows.tube.api.scoreboard.Sidebar.class}, (p, m, a) -> switch (m.getName()) {
+                case "show", "hide" -> scoreboardLog.add("sidebar." + m.getName() + ":" + ((Player) a[0]).name());
+                case "setLine" -> scoreboardLog.add("sidebar.line:" + a[0] + "=" + a[2]);
+                case "removeLine" -> scoreboardLog.add("sidebar.remove:" + a[0]);
+                case "setTitle" -> scoreboardLog.add("sidebar.title");
+                case "lines" -> List.of();
+                case "viewers" -> Set.of();
+                default -> null;
+            });
+            case "createTeam" -> Proxy.newProxyInstance(loader, new Class<?>[] {space.nows.tube.api.scoreboard.Team.class}, (p, m, a) -> {
+                if (m.getName().startsWith("set") || m.getName().endsWith("Member")) {
+                    scoreboardLog.add("team." + m.getName() + ":" + a[0]);
+                }
+                return null;
+            });
+            case "team" -> Optional.empty();
+            case "teams" -> List.of();
             default -> null;
         });
     }
