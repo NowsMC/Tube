@@ -45,7 +45,7 @@ final class DefaultPluginContext implements PluginContext {
         this.scheduler = scheduler;
         this.events = events;
         this.network = network;
-        this.logger = LoggerFactory.getLogger(descriptor.name());
+        this.logger = LoggerFactory.getLogger(descriptor.logName());
     }
 
     @Override

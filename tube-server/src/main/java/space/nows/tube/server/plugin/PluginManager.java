@@ -26,15 +26,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public final class PluginManager {
 
-    static final String DESCRIPTOR_NAME = "tube-plugin";
-
     private static final Logger LOGGER = LoggerFactory.getLogger("tube");
-    private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z0-9_.-]+");
 
     private record Candidate(Path jar, PluginDescriptor descriptor) {
     }
@@ -131,30 +127,15 @@ public final class PluginManager {
 
     static PluginDescriptor readDescriptor(Path jar) throws IOException {
         try (JarFile file = new JarFile(jar.toFile())) {
-            var entry = Jars.findByBaseName(file, DESCRIPTOR_NAME);
+            var entry = Jars.findByBaseName(file, DescriptorReader.FILE_NAME);
             if (entry == null) {
-                throw new IllegalArgumentException("missing " + DESCRIPTOR_NAME + ".yml, .json or .toml");
+                throw new IllegalArgumentException("missing " + DescriptorReader.FILE_NAME + ".yml, .json or .toml");
             }
-            Map<String, Object> map;
             try (InputStream in = file.getInputStream(entry)) {
                 String text = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-                map = ConfigFormat.ofFileName(entry.getName()).orElseThrow().parse(text);
+                return DescriptorReader.read(ConfigFormat.ofFileName(entry.getName()).orElseThrow().parse(text));
             }
-            String name = required(map, "name");
-            if (!VALID_NAME.matcher(name).matches()) {
-                throw new IllegalArgumentException("invalid plugin name " + name);
-            }
-            List<String> depends = map.get("depends") instanceof List<?> list ? list.stream().map(String::valueOf).toList() : List.of();
-            return new PluginDescriptor(name, required(map, "version"), required(map, "main"), depends);
         }
-    }
-
-    private static String required(Map<?, ?> map, String key) {
-        Object value = map.get(key);
-        if (value == null || String.valueOf(value).isBlank()) {
-            throw new IllegalArgumentException(DESCRIPTOR_NAME + " is missing " + key);
-        }
-        return String.valueOf(value);
     }
 
     private List<Candidate> order(Map<String, Candidate> candidates) {
