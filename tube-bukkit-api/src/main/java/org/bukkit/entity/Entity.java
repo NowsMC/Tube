@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.UUID;
 
-public interface Entity extends CommandSender {
+public interface Entity extends CommandSender, org.bukkit.metadata.Metadatable {
 
     Location getLocation();
 

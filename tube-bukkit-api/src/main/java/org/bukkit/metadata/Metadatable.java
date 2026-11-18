@@ -6,5 +6,7 @@ public interface Metadatable {
 
     java.util.List<org.bukkit.metadata.MetadataValue> getMetadata(java.lang.String p0);
 
+    boolean hasMetadata(java.lang.String p0);
+
     void removeMetadata(java.lang.String p0, org.bukkit.plugin.Plugin p1);
 }

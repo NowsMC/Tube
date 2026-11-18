@@ -94,6 +94,30 @@ public class BukkitEntity extends BukkitPermissible implements Entity {
         }
     }
 
+    space.nows.tube.api.entity.Entity tube() {
+        return tube;
+    }
+
+    @Override
+    public void setMetadata(String key, org.bukkit.metadata.MetadataValue value) {
+        runtime.metadata().set(tube.uuid(), key, value);
+    }
+
+    @Override
+    public java.util.List<org.bukkit.metadata.MetadataValue> getMetadata(String key) {
+        return runtime.metadata().get(tube.uuid(), key);
+    }
+
+    @Override
+    public boolean hasMetadata(String key) {
+        return !runtime.metadata().get(tube.uuid(), key).isEmpty();
+    }
+
+    @Override
+    public void removeMetadata(String key, org.bukkit.plugin.Plugin plugin) {
+        runtime.metadata().remove(tube.uuid(), key, plugin);
+    }
+
     @Override
     public Location getLocation() {
         return runtime.adapters().location(tube.location());

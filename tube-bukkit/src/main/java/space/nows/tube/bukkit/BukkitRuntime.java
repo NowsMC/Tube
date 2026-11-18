@@ -35,6 +35,7 @@ public final class BukkitRuntime {
     private final BukkitServicesManager services = new BukkitServicesManager();
     private final BukkitMessenger messenger = new BukkitMessenger(this);
     private final Adapters adapters;
+    private final space.nows.tube.bukkit.entity.MetadataStore metadata = new space.nows.tube.bukkit.entity.MetadataStore();
     private final CommandBridge commands;
     private final BukkitPluginManager pluginManager;
     private final Server server;
@@ -101,6 +102,10 @@ public final class BukkitRuntime {
 
     public BukkitMessenger messenger() {
         return messenger;
+    }
+
+    public space.nows.tube.bukkit.entity.MetadataStore metadata() {
+        return metadata;
     }
 
     public Adapters adapters() {
