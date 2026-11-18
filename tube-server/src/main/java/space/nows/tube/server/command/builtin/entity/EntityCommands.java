@@ -15,6 +15,7 @@ public final class EntityCommands {
                 new KillCommand(targets),
                 new SummonCommand(targets),
                 new TeleportCommand(targets),
-                new EffectCommand(targets));
+                new EffectCommand(targets),
+                new TagCommand(targets));
     }
 }
