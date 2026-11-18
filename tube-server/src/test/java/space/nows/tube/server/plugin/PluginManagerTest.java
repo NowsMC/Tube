@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandInfo;
 import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.plugin.PluginDescriptor;
 import space.nows.tube.api.scheduler.ScheduledTask;
 import space.nows.tube.api.scheduler.Scheduler;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -59,6 +62,18 @@ class PluginManagerTest {
         @Override
         public Collection<String> names() {
             return names;
+        }
+
+        @Override
+        public Optional<CommandInfo> find(String label) {
+            String key = label.toLowerCase(Locale.ROOT);
+            boolean known = names.contains(key) || aliases.values().stream().anyMatch(list -> list.contains(key));
+            return known ? Optional.of(new CommandInfo(key, List.of(), null, null, null)) : Optional.empty();
+        }
+
+        @Override
+        public boolean dispatch(CommandSender sender, String line) {
+            return false;
         }
     }
 

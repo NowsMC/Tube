@@ -9,6 +9,7 @@ import net.minestom.server.command.builder.suggestion.SuggestionEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandInfo;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.event.CommandDispatchEvent;
@@ -105,7 +106,7 @@ public final class CommandService implements CommandRegistry {
         return entries.containsKey(normalize(label));
     }
 
-    public Optional<Command> find(String label) {
+    public Optional<Command> handler(String label) {
         return Optional.ofNullable(entries.get(normalize(label))).map(Entry::handler);
     }
 
@@ -122,12 +123,13 @@ public final class CommandService implements CommandRegistry {
         dispatch(console, line);
     }
 
-    public void dispatch(CommandSender sender, String line) {
+    @Override
+    public boolean dispatch(CommandSender sender, String line) {
         EventBus bus = events;
         if (bus != null) {
             var posted = bus.post(new CommandDispatchEvent(sender, line));
             if (posted.isCancelled()) {
-                return;
+                return false;
             }
             line = posted.line();
         }
@@ -136,15 +138,26 @@ public final class CommandService implements CommandRegistry {
             trimmed = trimmed.substring(1);
         }
         if (trimmed.isEmpty()) {
-            return;
+            return false;
         }
         String[] parts = trimmed.split("\\s+");
         Entry entry = entries.get(normalize(parts[0]));
         if (entry == null) {
             sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Unknown command: <command>. Type \"help\" for help.", Placeholder.unparsed("command", parts[0])));
-            return;
+            return false;
         }
         run(entry.handler(), sender, List.of(parts).subList(1, parts.length));
+        return true;
+    }
+
+    @Override
+    public Optional<CommandInfo> find(String label) {
+        Entry entry = entries.get(normalize(label));
+        if (entry == null) {
+            return Optional.empty();
+        }
+        Command handler = entry.handler();
+        return Optional.of(new CommandInfo(entry.name(), entry.labels().subList(1, entry.labels().size()), handler.description(), handler.usage(), handler.permission()));
     }
 
     public List<String> suggest(CommandSender sender, String line) {

@@ -1,6 +1,7 @@
 package space.nows.tube.api.command;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface CommandRegistry {
 
@@ -9,4 +10,8 @@ public interface CommandRegistry {
     void unregister(String name);
 
     Collection<String> names();
+
+    Optional<CommandInfo> find(String label);
+
+    boolean dispatch(CommandSender sender, String line);
 }

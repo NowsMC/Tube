@@ -1,7 +1,9 @@
 package space.nows.tube.server.command;
 
 import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandInfo;
 import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.plugin.PluginCommand;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -51,6 +54,16 @@ public final class ScopedCommands implements CommandRegistry {
     @Override
     public Collection<String> names() {
         return delegate.names();
+    }
+
+    @Override
+    public Optional<CommandInfo> find(String label) {
+        return delegate.find(label);
+    }
+
+    @Override
+    public boolean dispatch(CommandSender sender, String line) {
+        return delegate.dispatch(sender, line);
     }
 
     public synchronized List<String> declaredButMissing() {

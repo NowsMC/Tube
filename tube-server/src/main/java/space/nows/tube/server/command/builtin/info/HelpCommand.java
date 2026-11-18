@@ -24,14 +24,14 @@ final class HelpCommand extends ServerCommand {
         if (!input.hasNext()) {
             sender.sendMessage("Commands:");
             for (String name : commands.availableTo(sender)) {
-                String description = commands.find(name).map(Command::description).orElse(null);
+                String description = commands.handler(name).map(Command::description).orElse(null);
                 sender.sendMessage(description == null || description.isBlank() ? "/" + name : "/" + name + " - " + description);
             }
             return;
         }
         String label = input.word();
         input.end();
-        Optional<Command> found = commands.find(label);
+        Optional<Command> found = commands.handler(label);
         if (found.isEmpty() || !visible(sender, found.get())) {
             sender.sendMessage("Unknown command: " + label);
             return;

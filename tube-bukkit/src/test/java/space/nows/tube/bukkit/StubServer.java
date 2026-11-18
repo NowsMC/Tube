@@ -120,6 +120,16 @@ final class StubServer {
         public Collection<String> names() {
             return commands.keySet();
         }
+
+        @Override
+        public java.util.Optional<space.nows.tube.api.command.CommandInfo> find(String label) {
+            return commands.containsKey(label) ? java.util.Optional.of(new space.nows.tube.api.command.CommandInfo(label, List.of(), null, null, null)) : java.util.Optional.empty();
+        }
+
+        @Override
+        public boolean dispatch(CommandSender sender, String line) {
+            return false;
+        }
     }
 
     final Registry commands = new Registry();
