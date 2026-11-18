@@ -20,6 +20,12 @@ public final class Positions {
         return new Location(origin.world(), x, y, z, origin.yaw(), origin.pitch());
     }
 
+    public static double[] readColumn(CommandInput input, Location origin) {
+        double x = coordinate(input.word(), origin.x());
+        double z = coordinate(input.word(), origin.z());
+        return new double[]{x, z};
+    }
+
     public static BlockPosition readBlock(CommandInput input, Location origin) {
         Location location = read(input, origin);
         return new BlockPosition((int) Math.floor(location.x()), (int) Math.floor(location.y()), (int) Math.floor(location.z()));

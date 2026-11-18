@@ -4,7 +4,9 @@ import net.kyori.adventure.key.Keyed;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.Material;
+import net.minestom.server.particle.Particle;
 import net.minestom.server.potion.PotionEffect;
+import net.minestom.server.sound.SoundEvent;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +17,8 @@ public final class RegistryNames {
     private static volatile List<String> blocks;
     private static volatile List<String> entities;
     private static volatile List<String> effects;
+    private static volatile List<String> sounds;
+    private static volatile List<String> particles;
 
     private RegistryNames() {
     }
@@ -49,6 +53,20 @@ public final class RegistryNames {
             effects = keys(PotionEffect.values());
         }
         return effects;
+    }
+
+    public static List<String> sounds() {
+        if (sounds == null) {
+            sounds = keys(SoundEvent.values());
+        }
+        return sounds;
+    }
+
+    public static List<String> particles() {
+        if (particles == null) {
+            particles = keys(Particle.values());
+        }
+        return particles;
     }
 
     private static List<String> keys(Collection<? extends Keyed> values) {
