@@ -2,6 +2,8 @@ package space.nows.tube.server.command.builtin.chat;
 
 import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.command.CommandInput;
+import net.kyori.adventure.text.Component;
+import space.nows.tube.api.chat.Chat;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.command.Suggestions;
 import space.nows.tube.api.command.Typing;
@@ -26,7 +28,8 @@ final class MessageCommand extends ServerCommand {
         String text = input.rest();
         Player target = targets.online(name).orElseThrow(() -> new CommandFailure("Player " + name + " is not online"));
         sender.sendMessage("You whisper to " + target.name() + ": " + text);
-        target.sendMessage(sender.name() + " whispers to you: " + text);
+        Component from = Chat.text(sender.name()).hover("Click to reply to " + sender.name()).suggestCommand("msg " + sender.name() + " ").insertOnShiftClick(sender.name()).build();
+        target.sendMessage(Chat.join(from, Component.text(" whispers to you: " + text)));
     }
 
     @Override
