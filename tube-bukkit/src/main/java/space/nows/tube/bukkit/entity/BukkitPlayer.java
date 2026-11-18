@@ -23,6 +23,8 @@ public final class BukkitPlayer extends BukkitLivingEntity implements Player {
     private final space.nows.tube.api.entity.Player tube;
     private String playerListHeader;
     private String playerListFooter;
+    private String playerListName;
+    private org.bukkit.scoreboard.Scoreboard scoreboard;
 
     public BukkitPlayer(BukkitRuntime runtime, space.nows.tube.api.entity.Player tube) {
         super(runtime, tube);
@@ -46,7 +48,32 @@ public final class BukkitPlayer extends BukkitLivingEntity implements Player {
 
     @Override
     public String getPlayerListName() {
-        return tube.name();
+        return playerListName == null ? tube.name() : playerListName;
+    }
+
+    @Override
+    public void setPlayerListName(String name) {
+        this.playerListName = name;
+        var component = name == null ? null : legacy(name);
+        for (var viewer : runtime.tube().players()) {
+            if (component == null) {
+                viewer.tabList().resetDisplayName(tube);
+            } else {
+                viewer.tabList().setDisplayName(tube, component);
+            }
+        }
+    }
+
+    @Override
+    public org.bukkit.scoreboard.Scoreboard getScoreboard() {
+        return scoreboard == null ? runtime.scoreboards().main() : scoreboard;
+    }
+
+    @Override
+    public void setScoreboard(org.bukkit.scoreboard.Scoreboard scoreboard) {
+        ((space.nows.tube.bukkit.scoreboard.BukkitScoreboard) getScoreboard()).detach(tube);
+        this.scoreboard = scoreboard;
+        ((space.nows.tube.bukkit.scoreboard.BukkitScoreboard) scoreboard).attach(tube);
     }
 
     @Override

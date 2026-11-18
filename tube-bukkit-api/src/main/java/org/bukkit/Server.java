@@ -96,6 +96,8 @@ public interface Server {
 
     String getMinecraftVersion();
 
+    org.bukkit.scoreboard.ScoreboardManager getScoreboardManager();
+
     double[] getTPS();
 
     double getAverageTickTime();

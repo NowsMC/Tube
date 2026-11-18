@@ -80,6 +80,7 @@ public final class EventBridge {
 
     private void join(PlayerJoinEvent event) {
         var player = runtime.adapters().player(event.player());
+        runtime.scoreboards().playerJoined(event.player());
         var address = event.player().address().map(java.net.InetSocketAddress::getAddress).orElse(null);
         var login = new org.bukkit.event.player.PlayerLoginEvent(player, "", address);
         runtime.pluginManager().callEvent(login);

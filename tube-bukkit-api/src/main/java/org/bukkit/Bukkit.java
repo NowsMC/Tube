@@ -181,6 +181,10 @@ public final class Bukkit {
         return server.broadcast(message, permission);
     }
 
+    public static org.bukkit.scoreboard.ScoreboardManager getScoreboardManager() {
+        return server.getScoreboardManager();
+    }
+
     public static String getMinecraftVersion() {
         return server.getMinecraftVersion();
     }

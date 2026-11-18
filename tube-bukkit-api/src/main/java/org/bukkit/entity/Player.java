@@ -20,6 +20,12 @@ public interface Player extends HumanEntity, OfflinePlayer {
 
     boolean canSee(Player other);
 
+    org.bukkit.scoreboard.Scoreboard getScoreboard();
+
+    void setScoreboard(org.bukkit.scoreboard.Scoreboard scoreboard);
+
+    void setPlayerListName(String name);
+
 
     String getDisplayName();
 

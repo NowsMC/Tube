@@ -314,6 +314,11 @@ final class BukkitServer implements Server {
     }
 
     @Override
+    public org.bukkit.scoreboard.ScoreboardManager getScoreboardManager() {
+        return runtime.scoreboards();
+    }
+
+    @Override
     public String getMinecraftVersion() {
         return runtime.tube().minecraftVersion();
     }

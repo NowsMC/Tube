@@ -35,6 +35,7 @@ public final class BukkitRuntime {
     private final BukkitServicesManager services = new BukkitServicesManager();
     private final BukkitMessenger messenger = new BukkitMessenger(this);
     private final Adapters adapters;
+    private final space.nows.tube.bukkit.scoreboard.BukkitScoreboardManager scoreboards;
     private final space.nows.tube.bukkit.entity.MetadataStore metadata = new space.nows.tube.bukkit.entity.MetadataStore();
     private final CommandBridge commands;
     private final BukkitPluginManager pluginManager;
@@ -49,6 +50,7 @@ public final class BukkitRuntime {
         this.pluginsDirectory = pluginsDirectory.toFile();
         this.scheduler = new BukkitTaskScheduler(tube.scheduler());
         this.adapters = new Adapters(this);
+        this.scoreboards = new space.nows.tube.bukkit.scoreboard.BukkitScoreboardManager(this);
         this.server = new BukkitServer(this);
         this.commands = new CommandBridge(this);
         this.pluginManager = new BukkitPluginManager(this);
@@ -106,6 +108,10 @@ public final class BukkitRuntime {
 
     public space.nows.tube.bukkit.entity.MetadataStore metadata() {
         return metadata;
+    }
+
+    public space.nows.tube.bukkit.scoreboard.BukkitScoreboardManager scoreboards() {
+        return scoreboards;
     }
 
     public Adapters adapters() {
