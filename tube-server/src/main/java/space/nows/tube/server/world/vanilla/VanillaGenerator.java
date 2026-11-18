@@ -11,7 +11,6 @@ import space.nows.tube.server.world.vanilla.block.Heightmap;
 import space.nows.tube.server.world.vanilla.carver.CaveCarving;
 import space.nows.tube.server.world.vanilla.density.DensityReader;
 import space.nows.tube.server.world.vanilla.feature.ChunkDecorator;
-import space.nows.tube.server.world.vanilla.feature.DecorationArea;
 import space.nows.tube.server.world.vanilla.feature.FeatureRegistry;
 import space.nows.tube.server.world.vanilla.noise.WorldNoises;
 import space.nows.tube.server.world.vanilla.surface.SurfacePainter;
@@ -27,13 +26,15 @@ import java.util.Set;
 public final class VanillaGenerator implements WorldGenerator {
 
     private static final int CACHED_CHUNKS = 160;
+    private static final int OPEN_DRAFTS = 512;
+    private static final int DECORATED_SOURCES = 65536;
     private static final double LAND_FROM = -0.11;
     private static final double RIVER_WITHIN = 0.16;
 
     private final TerrainSettings settings;
     private final TerrainCache terrain;
     private final FeatureRegistry features;
-    private final ChunkDecorator decorator;
+    private final DecoratedChunks decorated;
 
     public VanillaGenerator(WorldgenData data, long seed) {
         WorldNoises noises = new WorldNoises(data, seed);
@@ -49,22 +50,13 @@ public final class VanillaGenerator implements WorldGenerator {
                 (draft, density, water) -> carving.carve(draft, water));
         this.terrain = new TerrainCache(builder, CACHED_CHUNKS);
         this.features = new FeatureRegistry(data, settings.minY(), settings.height());
-        this.decorator = new ChunkDecorator(seed, biomes, features, settings.seaLevel());
+        ChunkDecorator decorator = new ChunkDecorator(seed, biomes, features, settings.seaLevel());
+        this.decorated = new DecoratedChunks(terrain, decorator, OPEN_DRAFTS, DECORATED_SOURCES);
     }
 
     @Override
     public void generate(ChunkBuilder chunk) {
-        int chunkX = chunk.chunkX();
-        int chunkZ = chunk.chunkZ();
-        int across = DecorationArea.CHUNKS_ACROSS;
-        ChunkDraft[] area = new ChunkDraft[across * across];
-        for (int row = 0; row < across; row++) {
-            for (int column = 0; column < across; column++) {
-                area[row * across + column] = terrain.get(chunkX + column - 1, chunkZ + row - 1).copy();
-            }
-        }
-        decorator.decorate(area, chunkX, chunkZ);
-        DraftWriter.write(area[area.length / 2], chunk);
+        DraftWriter.write(decorated.finish(chunk.chunkX(), chunk.chunkZ()), chunk);
     }
 
     @Override

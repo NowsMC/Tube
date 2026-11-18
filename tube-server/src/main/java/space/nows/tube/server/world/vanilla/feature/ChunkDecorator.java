@@ -4,7 +4,6 @@ import space.nows.tube.server.world.vanilla.biome.BiomeInfo;
 import space.nows.tube.server.world.vanilla.random.Xoroshiro;
 import space.nows.tube.server.world.vanilla.terrain.ChunkDraft;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -30,16 +29,13 @@ public final class ChunkDecorator {
         this.seaLevel = seaLevel;
     }
 
-    public void decorate(ChunkDraft[] area, int chunkX, int chunkZ) {
-        DecorationPass pass = new DecorationPass(new DecorationArea(area, chunkX, chunkZ, seaLevel, biomes), chunkX, chunkZ);
-        List<Set<BiomeInfo>> present = new ArrayList<>();
-        for (ChunkDraft source : area) {
-            present.add(biomesIn(source));
-        }
+    public void decorate(ChunkDraft[] area) {
+        ChunkDraft source = area[area.length / 2];
+        DecorationArea region = new DecorationArea(area, source.chunkX, source.chunkZ, seaLevel, biomes);
+        DecorationPass pass = new DecorationPass(region, source.chunkX, source.chunkZ);
+        Set<BiomeInfo> present = biomesIn(source);
         for (int step = 0; step < order.size(); step++) {
-            for (int i = 0; i < area.length; i++) {
-                decorateStep(pass, area[i], present.get(i), step);
-            }
+            decorateStep(pass, source, present, step);
         }
     }
 
