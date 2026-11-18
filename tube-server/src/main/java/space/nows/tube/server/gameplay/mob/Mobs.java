@@ -45,6 +45,7 @@ public final class Mobs {
 
     public static void install(GlobalEventHandler handler) {
         Archery.install(handler);
+        HurtSound.install(handler);
         handler.addListener(EntityDamageEvent.class, event -> {
             if (!event.isCancelled() && event.getEntity() instanceof Mob mob) {
                 mob.panic(event.getDamage().getAttacker());

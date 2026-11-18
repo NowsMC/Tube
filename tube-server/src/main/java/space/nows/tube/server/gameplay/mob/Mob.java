@@ -26,27 +26,29 @@ import java.util.function.Predicate;
 public final class Mob extends EntityCreature {
 
     public enum Kind {
-        COW(EntityType.COW, 10, 0.2, 0, false),
-        PIG(EntityType.PIG, 10, 0.25, 0, false),
-        SHEEP(EntityType.SHEEP, 8, 0.23, 0, false),
-        CHICKEN(EntityType.CHICKEN, 4, 0.25, 0, false),
-        ZOMBIE(EntityType.ZOMBIE, 20, 0.23, 3, true),
-        SKELETON(EntityType.SKELETON, 20, 0.25, 2, true),
-        SPIDER(EntityType.SPIDER, 16, 0.3, 2, true),
-        CREEPER(EntityType.CREEPER, 20, 0.25, 0, true);
+        COW(EntityType.COW, 10, 0.2, 0, false, true),
+        PIG(EntityType.PIG, 10, 0.25, 0, false, true),
+        SHEEP(EntityType.SHEEP, 8, 0.23, 0, false, true),
+        CHICKEN(EntityType.CHICKEN, 4, 0.25, 0, false, true),
+        ZOMBIE(EntityType.ZOMBIE, 20, 0.23, 3, true, true),
+        SKELETON(EntityType.SKELETON, 20, 0.25, 2, true, true),
+        SPIDER(EntityType.SPIDER, 16, 0.3, 2, true, true),
+        CREEPER(EntityType.CREEPER, 20, 0.25, 0, true, false);
 
         final EntityType type;
         final double health;
         final double speed;
         final double damage;
         final boolean hostile;
+        final boolean ambient;
 
-        Kind(EntityType type, double health, double speed, double damage, boolean hostile) {
+        Kind(EntityType type, double health, double speed, double damage, boolean hostile, boolean ambient) {
             this.type = type;
             this.health = health;
             this.speed = speed;
             this.damage = damage;
             this.hostile = hostile;
+            this.ambient = ambient;
         }
 
         public boolean hostile() {
@@ -120,9 +122,16 @@ public final class Mob extends EntityCreature {
     @Override
     public void update(long time) {
         super.update(time);
+        AmbientSound.tick(this);
         if (panicUntil > 0 && getAliveTicks() > panicUntil) {
             panicUntil = 0;
         }
+    }
+
+    @Override
+    public void kill() {
+        super.kill();
+        DeathEffect.play(this);
     }
 
     boolean targets(LivingEntity entity) {
