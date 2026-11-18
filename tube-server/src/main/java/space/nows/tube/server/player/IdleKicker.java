@@ -22,7 +22,7 @@ public final class IdleKicker {
 
     private static final long CHECK_PERIOD_TICKS = 20;
 
-    private final long timeoutMillis;
+    private volatile long timeoutMillis;
     private final LongSupplier clock;
     private final Map<UUID, Long> lastActive = new ConcurrentHashMap<>();
 
@@ -31,10 +31,11 @@ public final class IdleKicker {
         this.clock = clock;
     }
 
+    public void setTimeoutMinutes(int minutes) {
+        this.timeoutMillis = minutes * 60_000L;
+    }
+
     public void install(Server server) {
-        if (timeoutMillis <= 0) {
-            return;
-        }
         EventBus events = server.events();
         events.subscribe(PlayerJoinEvent.class, EventPriority.MONITOR, false, event -> active(event.player()));
         events.subscribe(PlayerQuitEvent.class, EventPriority.MONITOR, false, event -> lastActive.remove(event.player().uuid()));
@@ -57,7 +58,8 @@ public final class IdleKicker {
 
     public boolean isIdle(Player player) {
         long last = lastActive.getOrDefault(player.uuid(), Long.MIN_VALUE);
-        return last != Long.MIN_VALUE && clock.getAsLong() - last >= timeoutMillis;
+        long timeout = timeoutMillis;
+        return timeout > 0 && last != Long.MIN_VALUE && clock.getAsLong() - last >= timeout;
     }
 
     private void kickIfIdle(Player player) {

@@ -18,6 +18,7 @@ public final class ServerCommands {
                 new SaveOffCommand(controls.autosave()),
                 new StopCommand(server),
                 new DefaultGameModeCommand(server),
-                new DifficultyCommand(server));
+                new DifficultyCommand(server),
+                new SetIdleTimeoutCommand(controls.idleKicker(), propertiesFile));
     }
 }

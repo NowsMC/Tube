@@ -308,12 +308,13 @@ public final class DedicatedServer implements Server {
         new SpawnProtection(settings.level().spawnProtection(), worlds, permissions).install(events);
         ConnectionLog.install(events, settings.connection().logIps());
         new PacketRateLimiter(settings.network().rateLimit(), System::nanoTime).install(handler);
-        new IdleKicker(settings.gameplay().playerIdleTimeout(), System::currentTimeMillis).install(this);
+        IdleKicker idleKicker = new IdleKicker(settings.gameplay().playerIdleTimeout(), System::currentTimeMillis);
+        idleKicker.install(this);
         channels.install(handler);
 
         Profiles profiles = new Profiles(this::players, userCache);
         new BuiltinCommands(this, commands, profiles, bans, whitelist, propertiesFile, settings.access().enforceWhitelist(),
-                new ServerControls(autosaveGate)).registerAll();
+                new ServerControls(autosaveGate, idleKicker)).registerAll();
         LOGGER.info("Default game mode: {}, difficulty: {}", defaultGameMode.name().toLowerCase(Locale.ROOT),
                 settings.gameplay().difficulty().name().toLowerCase(Locale.ROOT));
         long worldStart = System.nanoTime();
