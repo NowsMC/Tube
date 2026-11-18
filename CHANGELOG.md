@@ -6,6 +6,11 @@
 
 - The Snapshot workflow, started by hand from the Actions tab, deploys the `-SNAPSHOT` version to files.nows.space under `snapshots/tube` and keeps the server jars as a workflow artifact for 14 days, so fixes between releases do not need a new version.
 
+### Items
+
+- Fishing rods can be cast and reeled in. The bobber floats on water, dips with a splash when something bites, and reeling in during a bite catches fish, junk or treasure from the vanilla fishing loot tables: Lure shortens the wait, Luck of the Sea shifts the odds, treasure needs open water, and a catch gives 1 to 6 experience. Reeling in a bobber hooked to a mob or an item pulls it toward the player. A reel costs durability as in vanilla: 1 for a catch, 2 on the ground, 3 for an item and 5 for a mob. Enchanted treasure gets one random enchantment. ([`ecabfb5`](https://github.com/NowsMC/Tube/commit/ecabfb521aa65732bc5f367184622bd8209b10cd), [`aadb395`](https://github.com/NowsMC/Tube/commit/aadb3953116451784e66ad5191d4729252d91b6d))
+- Spawn eggs spawn their mob when used on a block, and use up one egg outside creative mode. Mobs Tube has a brain for behave as usual, and the others appear without one. ([`be158f7`](https://github.com/NowsMC/Tube/commit/be158f7e71b6ff0838902168a898d20036c50b85))
+
 ### Mobs
 
 - Mobs and players that overlap push each other apart instead of standing inside one another. ([`0d8ecfb`](https://github.com/NowsMC/Tube/commit/0d8ecfb50d7426a67425e767c48e5723d7a23efe))
