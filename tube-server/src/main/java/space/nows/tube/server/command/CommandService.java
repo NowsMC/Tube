@@ -130,7 +130,7 @@ public final class CommandService implements CommandRegistry {
             return;
         }
         String input = suggestion.getInput();
-        CommandLine parsed = CommandLine.parse(input.endsWith(" ") ? input.substring(0, input.length() - 1) : input);
+        CommandLine parsed = CommandLine.parse(input.endsWith("\0") ? input.substring(0, input.length() - 1) : input);
         if (parsed.arguments().isEmpty()) {
             return;
         }
