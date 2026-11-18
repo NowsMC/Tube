@@ -1,9 +1,10 @@
-package space.nows.tube.server.command.builtin;
+package space.nows.tube.server.command.builtin.world.block;
 
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.command.Suggestions;
 import space.nows.tube.api.world.Block;
 import space.nows.tube.api.world.Location;
+import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.BlockText;
 import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.Positions;

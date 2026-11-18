@@ -50,9 +50,6 @@ public final class BuiltinCommands {
         all.add(new StopCommand(server));
         all.add(new DefaultGameModeCommand(server));
         all.add(new DifficultyCommand(server));
-        all.add(new SetBlockCommand(targets));
-        all.add(new FillCommand(targets));
-        all.add(new CloneCommand(targets));
         all.addAll(ChatCommands.create(server, targets));
         all.addAll(InfoCommands.create(server, commands));
         all.addAll(AccessCommands.create(server, targets, profiles, bans, whitelist, server.permissions(), settingsFile, enforceWhitelist));
