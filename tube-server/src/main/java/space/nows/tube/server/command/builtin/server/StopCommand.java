@@ -8,16 +8,20 @@ import space.nows.tube.server.command.support.ServerCommand;
 
 final class StopCommand extends ServerCommand {
 
+    private static final String DEFAULT_REASON = "Server closed";
+
     private final Server server;
 
     StopCommand(Server server) {
-        super("stop", Permissions.ADMIN, "stop");
+        super("stop", Permissions.ADMIN, "stop [reason]");
         this.server = server;
     }
 
     @Override
     protected void run(CommandSender sender, CommandInput input) {
+        String reason = input.hasNext() ? input.rest() : DEFAULT_REASON;
         sender.sendMessage("Stopping");
+        ShutdownNotice.kickEveryone(server, reason);
         server.stop();
     }
 }

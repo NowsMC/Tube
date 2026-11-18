@@ -36,6 +36,11 @@ final class RunCommand implements Callable<Integer> {
             System.err.println("Unsupported version " + version + ". Supported: " + String.join(", ", SupportedVersions.minecraft()));
             return 2;
         }
-        return new LaunchSpec(java, jar, dir, jvmArgs).start().waitFor();
+        LaunchSpec spec = new LaunchSpec(java, jar, dir, jvmArgs);
+        int exit;
+        do {
+            exit = spec.start().waitFor();
+        } while (exit == LaunchSpec.RESTART_EXIT_CODE);
+        return exit;
     }
 }

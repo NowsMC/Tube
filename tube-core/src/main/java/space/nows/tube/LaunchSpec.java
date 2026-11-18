@@ -9,6 +9,9 @@ import java.util.Objects;
 
 public record LaunchSpec(Path java, Path jar, Path workDir, List<String> jvmArgs) {
 
+    public static final int RESTART_EXIT_CODE = 100;
+    public static final String RESTART_PROPERTY = "tube.restart.exit";
+
     public LaunchSpec {
         Objects.requireNonNull(java, "java");
         Objects.requireNonNull(jar, "jar");
@@ -19,6 +22,7 @@ public record LaunchSpec(Path java, Path jar, Path workDir, List<String> jvmArgs
     public List<String> command() {
         List<String> command = new ArrayList<>();
         command.add(java.toString());
+        command.add("-D" + RESTART_PROPERTY + "=" + RESTART_EXIT_CODE);
         command.addAll(jvmArgs);
         command.add("-jar");
         command.add(jar.toAbsolutePath().toString());

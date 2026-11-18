@@ -75,6 +75,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class DedicatedServer implements Server {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube");
+    private static final String RESTART_PROPERTY = "tube.restart.exit";
 
     private final VersionProfile profile;
     private final Path directory;
@@ -252,6 +253,22 @@ public final class DedicatedServer implements Server {
         thread.start();
     }
 
+    private final Restarter restarter = new Restarter() {
+        @Override
+        public boolean available() {
+            return Integer.getInteger(RESTART_PROPERTY) != null;
+        }
+
+        @Override
+        public void restart() {
+            int code = Integer.getInteger(RESTART_PROPERTY);
+            new Thread(() -> {
+                shutdown();
+                Runtime.getRuntime().exit(code);
+            }, "tube-restart").start();
+        }
+    };
+
     public void start() {
         if (!Eula.isAccepted(directory)) {
             LOGGER.error("You need to agree to the EULA in order to run the server. Go to {} for more info.", Eula.FILE_NAME);
@@ -314,7 +331,7 @@ public final class DedicatedServer implements Server {
 
         Profiles profiles = new Profiles(this::players, userCache);
         new BuiltinCommands(this, commands, profiles, bans, whitelist, propertiesFile, settings.access().enforceWhitelist(),
-                new ServerControls(autosaveGate, idleKicker, whitelist, bans, plugins::reloadAll)).registerAll();
+                new ServerControls(autosaveGate, idleKicker, whitelist, bans, plugins::reloadAll, restarter)).registerAll();
         LOGGER.info("Default game mode: {}, difficulty: {}", defaultGameMode.name().toLowerCase(Locale.ROOT),
                 settings.gameplay().difficulty().name().toLowerCase(Locale.ROOT));
         long worldStart = System.nanoTime();
