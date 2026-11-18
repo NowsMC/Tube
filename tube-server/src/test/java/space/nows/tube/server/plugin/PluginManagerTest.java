@@ -1,6 +1,7 @@
 package space.nows.tube.server.plugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,10 +24,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
@@ -35,15 +39,21 @@ class PluginManagerTest {
     private static final class MapRegistry implements CommandRegistry {
 
         private final Set<String> names = new TreeSet<>();
+        private final Map<String, Command> commands = new HashMap<>();
+        private final Map<String, List<String>> aliases = new HashMap<>();
 
         @Override
         public void register(String name, Command command, String... aliases) {
             names.add(name.toLowerCase(Locale.ROOT));
+            commands.put(name.toLowerCase(Locale.ROOT), command);
+            this.aliases.put(name.toLowerCase(Locale.ROOT), List.of(aliases));
         }
 
         @Override
         public void unregister(String name) {
             names.remove(name.toLowerCase(Locale.ROOT));
+            commands.remove(name.toLowerCase(Locale.ROOT));
+            aliases.remove(name.toLowerCase(Locale.ROOT));
         }
 
         @Override
@@ -151,6 +161,38 @@ class PluginManagerTest {
         PluginManager manager = new PluginManager(serverWith(new PermissionService(directory)), registry, scheduler, new DefaultEventBus(), directory);
         manager.loadAll();
         assertEquals(List.of("settled"), manager.descriptors().stream().map(PluginDescriptor::name).toList());
+    }
+
+    @Test
+    void appliesDeclaredCommandsAndPermissions() throws IOException {
+        writeRaw("a.jar", """
+                name: a
+                version: 1
+                main: %s
+                commands:
+                  cmd-a:
+                    description: Does a
+                    usage: /<command> <thing>
+                    aliases: [ca]
+                    permission: a.use
+                  never-registered:
+                permissions:
+                  a.use:
+                    default: true
+                """.formatted(RecordingPlugin.class.getName()));
+        PermissionService permissions = new PermissionService(directory);
+        PluginManager manager = new PluginManager(serverWith(permissions), registry, scheduler, new DefaultEventBus(), directory);
+        manager.loadAll();
+
+        Command command = registry.commands.get("cmd-a");
+        assertEquals("a.use", command.permission());
+        assertEquals("Does a", command.description());
+        assertEquals("/<command> <thing>", command.usage());
+        assertEquals(List.of("ca"), registry.aliases.get("cmd-a"));
+        assertTrue(permissions.has(UUID.randomUUID(), "a.use"));
+
+        manager.disableAll();
+        assertFalse(permissions.has(UUID.randomUUID(), "a.use"));
     }
 
     private Server serverWith(PermissionService permissions) {

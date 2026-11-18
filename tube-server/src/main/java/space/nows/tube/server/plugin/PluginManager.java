@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.bootstrap.Library;
 import space.nows.tube.bootstrap.LibraryResolver;
+import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.event.EventBus;
@@ -88,6 +89,7 @@ public final class PluginManager {
             plugin.scheduler().cancelAll();
             plugin.events().cancelAll();
             plugin.network().closeAll();
+            undefine(plugin.descriptor());
             try {
                 plugin.loader().close();
             } catch (IOException e) {
@@ -225,6 +227,20 @@ public final class PluginManager {
         return urls.toArray(URL[]::new);
     }
 
+    private void define(PluginDescriptor descriptor) {
+        PermissionManager permissions = server.permissions();
+        if (permissions != null) {
+            descriptor.permissions().forEach(permission -> permissions.define(permission.node(), permission.fallback(), permission.children()));
+        }
+    }
+
+    private void undefine(PluginDescriptor descriptor) {
+        PermissionManager permissions = server.permissions();
+        if (permissions != null) {
+            descriptor.permissions().forEach(permission -> permissions.undefine(permission.node()));
+        }
+    }
+
     private static boolean isOrdered(String name, List<Candidate> ordered) {
         return ordered.stream().anyMatch(candidate -> candidate.descriptor().name().equals(name));
     }
@@ -241,7 +257,7 @@ public final class PluginManager {
             return;
         }
 
-        ScopedCommands scoped = new ScopedCommands(commands);
+        ScopedCommands scoped = new ScopedCommands(commands, descriptor.commands());
         ScopedScheduler scopedScheduler = new ScopedScheduler(scheduler);
         ScopedEvents scopedEvents = new ScopedEvents(events);
         space.nows.tube.network.ScopedNetwork scopedNetwork = new space.nows.tube.network.ScopedNetwork(server.network());
@@ -254,15 +270,20 @@ public final class PluginManager {
             }
             Plugin plugin = (Plugin) type.getDeclaredConstructor().newInstance();
             Path dataFolder = directory.resolve(descriptor.name());
+            define(descriptor);
             plugin.onEnable(new DefaultPluginContext(server, descriptor, candidate.jar(), dataFolder, scoped, scopedScheduler, scopedEvents, scopedNetwork));
             running.add(new Running(descriptor, plugin, loader, scoped, scopedScheduler, scopedEvents, scopedNetwork));
             LOGGER.info("Enabled {} {}", descriptor.name(), descriptor.version());
+            for (String missing : scoped.declaredButMissing()) {
+                LOGGER.warn("Plugin {} declares command {} but does not register it", descriptor.name(), missing);
+            }
         } catch (Throwable e) {
             LOGGER.error("Could not enable {}", descriptor.name(), e);
             scoped.unregisterAll();
             scopedScheduler.cancelAll();
             scopedEvents.cancelAll();
             scopedNetwork.closeAll();
+            undefine(descriptor);
             if (loader != null) {
                 try {
                     loader.close();
