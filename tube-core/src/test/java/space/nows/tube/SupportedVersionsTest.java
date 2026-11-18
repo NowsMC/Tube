@@ -36,6 +36,6 @@ class SupportedVersionsTest {
     @Test
     void buildsLaunchCommand() {
         LaunchSpec spec = new LaunchSpec(Path.of("java"), Path.of("server.jar"), Path.of("srv"), List.of("-Xmx2G"));
-        assertEquals(List.of("java", "-Xmx2G", "-jar", Path.of("server.jar").toAbsolutePath().toString(), "nogui"), spec.command());
+        assertEquals(List.of("java", "-D" + LaunchSpec.RESTART_PROPERTY + "=" + LaunchSpec.RESTART_EXIT_CODE, "-Xmx2G", "-jar", Path.of("server.jar").toAbsolutePath().toString(), "nogui"), spec.command());
     }
 }
