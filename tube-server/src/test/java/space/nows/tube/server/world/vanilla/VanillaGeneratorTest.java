@@ -19,6 +19,7 @@ import space.nows.tube.server.vanilla.MojangServerJar;
 import space.nows.tube.server.world.MinestomWorld;
 import space.nows.tube.server.world.WorldService;
 import space.nows.tube.server.world.generator.SpawnSearch;
+import space.nows.tube.server.world.vanilla.feature.FeatureRegistry;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +36,11 @@ class VanillaGeneratorTest {
     @BeforeAll
     static void load(@TempDir Path directory) throws Exception {
         MinecraftServer.init(new Auth.Offline());
+        String extracted = System.getProperty("tube.worldgenZip");
+        if (extracted != null && Files.isRegularFile(Path.of(extracted))) {
+            data = WorldgenData.read(Path.of(extracted));
+            return;
+        }
         String jar = System.getProperty("tube.vanillaJar");
         if (jar == null || !Files.isRegularFile(Path.of(jar))) {
             return;
@@ -173,6 +179,18 @@ class VanillaGeneratorTest {
         assertEquals("minecraft:bedrock", world.block(spawnX, -64, spawnZ).key());
         MinestomWorld minestom = (MinestomWorld) world;
         List.copyOf(minestom.instance().getChunks()).forEach(minestom.instance()::unloadChunk);
+    }
+
+    @Test
+    void readsEveryPlacedFeature() {
+        assumeTrue(data != null);
+        FeatureRegistry features = new FeatureRegistry(data, -64, 384);
+        for (String id : data.names("placed_feature")) {
+            features.placed(id);
+        }
+        for (String reason : features.skipped()) {
+            assertFalse(reason.contains("Exception"), reason);
+        }
     }
 
     @Test
