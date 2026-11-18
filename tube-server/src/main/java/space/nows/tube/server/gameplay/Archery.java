@@ -84,7 +84,7 @@ public final class Archery {
         if (pull < 0.1) {
             return;
         }
-        EntityProjectile arrow = new EntityProjectile(player, EntityType.ARROW);
+        EntityProjectile arrow = new SweptArrow(player);
         ArrowMeta meta = (ArrowMeta) arrow.getEntityMeta();
         boolean critical = pull >= 1;
         meta.setCritical(critical);
