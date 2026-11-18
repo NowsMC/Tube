@@ -1,7 +1,7 @@
 package space.nows.tube.server.command;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.command.CommandSender;
@@ -22,6 +22,6 @@ final class ConsoleSender implements CommandSender {
 
     @Override
     public void sendMessage(Component message) {
-        LOGGER.info(PlainTextComponentSerializer.plainText().serialize(message));
+        LOGGER.info(LegacyComponentSerializer.legacySection().serialize(message));
     }
 }

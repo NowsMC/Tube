@@ -1,6 +1,7 @@
 package space.nows.tube.server.command;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.suggestion.Suggestion;
@@ -127,7 +128,7 @@ public final class CommandService implements CommandRegistry {
         String[] parts = trimmed.split("\\s+");
         Entry entry = entries.get(normalize(parts[0]));
         if (entry == null) {
-            sender.sendMessage("Unknown command: " + parts[0]);
+            sender.sendMessage(MiniMessage.miniMessage().deserialize("<red>Unknown command: <command>. Type \"help\" for help.", Placeholder.unparsed("command", parts[0])));
             return;
         }
         run(entry.handler(), sender, List.of(parts).subList(1, parts.length));
