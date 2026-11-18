@@ -134,6 +134,29 @@ class PluginManagerTest {
         assertTrue(manager.descriptors().isEmpty());
     }
 
+    @Test
+    void ordersBySoftDependsAndLoadBefore() throws IOException {
+        writeRaw("a.jar", "name: a\nversion: 1\nmain: " + RecordingPlugin.class.getName() + "\nsoftdepend: [b, missing]\n");
+        writeRaw("b.jar", "name: b\nversion: 1\nmain: " + RecordingPlugin.class.getName() + "\n");
+        writeRaw("c.jar", "name: c\nversion: 1\nmain: " + RecordingPlugin.class.getName() + "\nload-before: [b]\n");
+        new PluginManager(server, registry, scheduler, new DefaultEventBus(), directory).loadAll();
+        assertEquals(List.of("enable:c:none", "enable:b:none", "enable:a:none"), RecordingPlugin.EVENTS);
+    }
+
+    private void writeRaw(String fileName, String descriptor) throws IOException {
+        try (OutputStream out = Files.newOutputStream(directory.resolve(fileName)); JarOutputStream jar = new JarOutputStream(out)) {
+            jar.putNextEntry(new JarEntry("tube-plugin.yml"));
+            jar.write(descriptor.getBytes(StandardCharsets.UTF_8));
+            jar.closeEntry();
+            String classFile = RecordingPlugin.class.getName().replace('.', '/') + ".class";
+            try (InputStream in = RecordingPlugin.class.getClassLoader().getResourceAsStream(classFile)) {
+                jar.putNextEntry(new JarEntry(classFile));
+                jar.write(in.readAllBytes());
+                jar.closeEntry();
+            }
+        }
+    }
+
     private void writePlugin(String fileName, String name, List<String> depends, String config) throws IOException {
         writePlugin(fileName, name, depends, config, "config.yml", "yml");
     }

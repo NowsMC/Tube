@@ -172,9 +172,24 @@ public final class PluginManager {
                 return false;
             }
         }
+        for (String earlier : loadsAfter(candidate, candidates)) {
+            if (!state.containsKey(earlier)) {
+                visit(earlier, candidates, state, ordered);
+            }
+        }
         ordered.add(candidate);
         state.put(name, true);
         return true;
+    }
+
+    private static List<String> loadsAfter(Candidate candidate, Map<String, Candidate> candidates) {
+        List<String> names = new ArrayList<>();
+        candidate.descriptor().softDepends().stream().filter(candidates::containsKey).forEach(names::add);
+        candidates.values().stream()
+                .filter(other -> other.descriptor().loadBefore().contains(candidate.descriptor().name()))
+                .map(other -> other.descriptor().name())
+                .forEach(names::add);
+        return names;
     }
 
     private static boolean isOrdered(String name, List<Candidate> ordered) {
