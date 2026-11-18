@@ -21,6 +21,7 @@ import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.world.Difficulty;
 import space.nows.tube.server.event.DeathDrops;
+import space.nows.tube.server.gameplay.Archery;
 import space.nows.tube.server.gameplay.Durability;
 import space.nows.tube.server.gameplay.block.BlockDropper;
 import space.nows.tube.server.gameplay.loot.LootTables;

@@ -18,6 +18,7 @@ import net.minestom.server.entity.ai.target.LastEntityDamagerTarget;
 import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.metadata.projectile.ArrowMeta;
 import net.minestom.server.entity.EntityProjectile;
+import space.nows.tube.server.gameplay.Archery;
 
 import java.time.Duration;
 import java.util.concurrent.ThreadLocalRandom;

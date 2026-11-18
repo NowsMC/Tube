@@ -1,4 +1,4 @@
-package space.nows.tube.server.gameplay.mob;
+package space.nows.tube.server.gameplay;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
@@ -19,8 +19,8 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
-import space.nows.tube.server.gameplay.Durability;
 import space.nows.tube.server.gameplay.loot.LootTables;
+import space.nows.tube.server.gameplay.mob.Mobs;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
