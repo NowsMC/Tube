@@ -178,6 +178,34 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     }
 
     @Override
+    public void openBook(net.kyori.adventure.inventory.Book book) {
+        player.openBook(book);
+    }
+
+    @Override
+    public void hidePlayer(space.nows.tube.api.entity.Player other) {
+        service.visibility().hide(uuid(), other.uuid());
+        refreshViewers(other);
+    }
+
+    @Override
+    public void showPlayer(space.nows.tube.api.entity.Player other) {
+        service.visibility().show(uuid(), other.uuid());
+        refreshViewers(other);
+    }
+
+    @Override
+    public boolean canSee(space.nows.tube.api.entity.Player other) {
+        return service.visibility().canSee(uuid(), other.uuid());
+    }
+
+    private static void refreshViewers(space.nows.tube.api.entity.Player target) {
+        if (target instanceof MinestomPlayer minestom) {
+            minestom.player.updateViewableRule();
+        }
+    }
+
+    @Override
     public void closeInventory() {
         player.closeInventory();
     }

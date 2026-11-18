@@ -18,6 +18,7 @@ public final class PlayerService {
     private volatile space.nows.tube.api.event.EventBus events;
     private final Map<UUID, LoginMode> loginModes = new ConcurrentHashMap<>();
     private final Map<UUID, MinestomPlayer> players = new ConcurrentHashMap<>();
+    private final PlayerVisibility visibility = new PlayerVisibility();
 
     public PlayerService(WorldService worlds, PermissionService permissions) {
         this.worlds = worlds;
@@ -34,10 +35,18 @@ public final class PlayerService {
     }
 
     public MinestomPlayer wrap(net.minestom.server.entity.Player handle) {
-        return players.computeIfAbsent(handle.getUuid(), uuid -> new MinestomPlayer(handle, worlds, permissions, this));
+        return players.computeIfAbsent(handle.getUuid(), uuid -> {
+            handle.updateViewableRule(viewer -> visibility.canSee(viewer.getUuid(), uuid));
+            return new MinestomPlayer(handle, worlds, permissions, this);
+        });
+    }
+
+    PlayerVisibility visibility() {
+        return visibility;
     }
 
     public void remove(net.minestom.server.entity.Player handle) {
+        visibility.forget(handle.getUuid());
         players.remove(handle.getUuid());
         loginModes.remove(handle.getUuid());
     }

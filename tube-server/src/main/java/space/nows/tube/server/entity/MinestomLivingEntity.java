@@ -43,6 +43,44 @@ public class MinestomLivingEntity extends MinestomEntity implements LivingEntity
     }
 
     @Override
+    public double attribute(String key) {
+        return minestom().getAttributeValue(attribute(key, true));
+    }
+
+    @Override
+    public double baseAttribute(String key) {
+        return minestom().getAttribute(attribute(key, true)).getBaseValue();
+    }
+
+    @Override
+    public double defaultAttribute(String key) {
+        return attribute(key, true).defaultValue();
+    }
+
+    @Override
+    public void setBaseAttribute(String key, double value) {
+        minestom().getAttribute(attribute(key, true)).setBaseValue(value);
+    }
+
+    private static net.minestom.server.entity.attribute.Attribute attribute(String key, boolean required) {
+        net.minestom.server.entity.attribute.Attribute attribute = net.minestom.server.entity.attribute.Attribute.fromKey(key.indexOf(':') < 0 ? "minecraft:" + key : key);
+        if (attribute == null && required) {
+            throw new IllegalArgumentException("Unknown attribute " + key);
+        }
+        return attribute;
+    }
+
+    @Override
+    public boolean hasLineOfSight(space.nows.tube.api.entity.Entity other) {
+        if (!(other instanceof MinestomEntity target) || target.minestom().getInstance() != minestom().getInstance() || minestom().getInstance() == null) {
+            return false;
+        }
+        net.minestom.server.coordinate.Point from = minestom().getPosition().add(0, minestom().getEyeHeight(), 0);
+        net.minestom.server.coordinate.Point to = target.minestom().getPosition().add(0, target.minestom().getEyeHeight(), 0);
+        return space.nows.tube.server.world.LineOfSight.clear(minestom().getInstance(), from, to);
+    }
+
+    @Override
     public void setHealth(double health) {
         living.setHealth((float) health);
     }

@@ -13,6 +13,16 @@ public interface LivingEntity extends Entity {
 
     boolean isGliding();
 
+    double attribute(String key);
+
+    double baseAttribute(String key);
+
+    double defaultAttribute(String key);
+
+    void setBaseAttribute(String key, double value);
+
+    boolean hasLineOfSight(Entity other);
+
     void setHealth(double health);
 
     double maxHealth();

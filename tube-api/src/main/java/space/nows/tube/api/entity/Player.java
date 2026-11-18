@@ -55,6 +55,14 @@ public interface Player extends LivingEntity, CommandSender {
 
     void closeInventory();
 
+    void openBook(net.kyori.adventure.inventory.Book book);
+
+    void hidePlayer(Player other);
+
+    void showPlayer(Player other);
+
+    boolean canSee(Player other);
+
     void sendActionBar(Component message);
 
     void showBossBar(net.kyori.adventure.bossbar.BossBar bar);
