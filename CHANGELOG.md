@@ -6,6 +6,16 @@
 
 - The Snapshot workflow, started by hand from the Actions tab, deploys the `-SNAPSHOT` version to files.nows.space under `snapshots/tube` and keeps the server jars as a workflow artifact for 14 days, so fixes between releases do not need a new version.
 
+### Mobs
+
+- Mobs and players that overlap push each other apart instead of standing inside one another. ([`0d8ecfb`](https://github.com/NowsMC/Tube/commit/0d8ecfb50d7426a67425e767c48e5723d7a23efe))
+- Cod and salmon spawn in schools in oceans and rivers, swim around, and die when they end up out of the water. ([`574c936`](https://github.com/NowsMC/Tube/commit/574c936dadced345ff927cf6b2e000b3b603746c), [`8a05669`](https://github.com/NowsMC/Tube/commit/8a05669c48d40fc51489d5622857ab8be159861b))
+
+### Combat
+
+- Arrows shot from a bow fly instead of dropping in front of the player: the client is now told the arrow's speed when the arrow appears. Arrows leave the bow along the crosshair as in vanilla, without the upward lift that made them arc too high, and skeletons keep vanilla's aim. ([`bfae984`](https://github.com/NowsMC/Tube/commit/bfae984389f369fa97e8704a8c3530324d042783))
+- Snowballs, eggs and ender pearls can be thrown. Snowballs and eggs knock back what they hit, an egg hatches a chick one time in eight, and an ender pearl takes the thrower to where it lands for 5 damage, with a one second wait before the next one. ([`8928592`](https://github.com/NowsMC/Tube/commit/8928592aeb5fa6b968e81c82b4a7a0db7196f60e))
+
 ### Commands
 
 - A player who is made an operator, or loses it, or is granted or denied a permission, sees the right commands at once instead of after rejoining. Operators also get the operator level on the client. ([`19eabf3`](https://github.com/NowsMC/Tube/commit/19eabf31b2e353a65b7033a5695139f6c55c0dad))
