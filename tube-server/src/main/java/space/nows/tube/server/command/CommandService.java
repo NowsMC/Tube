@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 public final class CommandService implements CommandRegistry {
@@ -40,6 +41,7 @@ public final class CommandService implements CommandRegistry {
     private final PlayerService players;
     private final ConsoleSender console = new ConsoleSender();
     private final Map<String, Entry> entries = new ConcurrentHashMap<>();
+    private final AtomicBoolean refreshing = new AtomicBoolean();
     private volatile EventBus events;
 
     public CommandService(PlayerService players) {
@@ -73,6 +75,16 @@ public final class CommandService implements CommandRegistry {
 
         Entry entry = new Entry(labels.getFirst(), command, bridge, List.copyOf(labels));
         labels.forEach(label -> entries.put(label, entry));
+        refreshClients();
+    }
+
+    private void refreshClients() {
+        if (refreshing.compareAndSet(false, true)) {
+            MinecraftServer.getSchedulerManager().scheduleNextTick(() -> {
+                refreshing.set(false);
+                MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(net.minestom.server.entity.Player::refreshCommands);
+            });
+        }
     }
 
     @Override
@@ -83,6 +95,7 @@ public final class CommandService implements CommandRegistry {
         }
         entry.labels().forEach(entries::remove);
         MinecraftServer.getCommandManager().unregister(entry.bridge());
+        refreshClients();
     }
 
     @Override
