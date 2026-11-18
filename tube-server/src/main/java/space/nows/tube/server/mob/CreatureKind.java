@@ -31,6 +31,10 @@ public interface CreatureKind {
     default void damaged(Creature creature, Damage damage) {
     }
 
+    default boolean aquatic() {
+        return false;
+    }
+
     default boolean ambientSounds() {
         return true;
     }
