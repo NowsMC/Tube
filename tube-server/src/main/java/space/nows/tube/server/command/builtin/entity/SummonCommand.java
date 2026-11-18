@@ -1,8 +1,9 @@
-package space.nows.tube.server.command.builtin;
+package space.nows.tube.server.command.builtin.entity;
 
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.command.Suggestions;
 import space.nows.tube.api.world.Location;
+import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.CommandInput;
 import space.nows.tube.server.command.support.Positions;
 import space.nows.tube.server.command.support.RegistryNames;
