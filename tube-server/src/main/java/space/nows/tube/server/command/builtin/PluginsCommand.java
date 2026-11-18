@@ -13,7 +13,7 @@ final class PluginsCommand extends ServerCommand {
     private final Server server;
 
     PluginsCommand(Server server) {
-        super("plugins", null, "plugins", "pl", "plugin");
+        super("plugins", null, "plugins", "pl");
         this.server = server;
     }
 
