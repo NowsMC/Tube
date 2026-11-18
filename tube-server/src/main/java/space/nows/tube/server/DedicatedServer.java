@@ -35,6 +35,7 @@ import space.nows.tube.server.command.CommandService;
 import space.nows.tube.server.config.ServerProperties;
 import space.nows.tube.server.config.ServerSettings;
 import space.nows.tube.server.connection.ConnectionLog;
+import space.nows.tube.server.console.TubeConsole;
 import space.nows.tube.server.connection.LoginGate;
 import space.nows.tube.server.connection.LoginHandler;
 import space.nows.tube.server.connection.PacketRateLimiter;
@@ -75,6 +76,7 @@ public final class DedicatedServer implements Server {
 
     private final VersionProfile profile;
     private final Path directory;
+    private final TubeConsole console;
     private final String version = readVersion();
     private final AtomicBoolean stopped = new AtomicBoolean();
     private final List<ServerExtension> extensions = new ArrayList<>();
@@ -97,8 +99,13 @@ public final class DedicatedServer implements Server {
     private final TickTracker ticks = new TickTracker(System::nanoTime);
 
     public DedicatedServer(VersionProfile profile, Path directory) {
+        this(profile, directory, null);
+    }
+
+    public DedicatedServer(VersionProfile profile, Path directory, TubeConsole console) {
         this.profile = Objects.requireNonNull(profile, "profile");
         this.directory = Objects.requireNonNull(directory, "directory");
+        this.console = console;
     }
 
     @Override
@@ -309,7 +316,9 @@ public final class DedicatedServer implements Server {
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown, "tube-shutdown"));
         autosave = Autosave.start(settings.level().autosaveSeconds(), worlds::saveAll,
                 () -> scheduler.runSync(() -> MinecraftServer.getConnectionManager().getOnlinePlayers().forEach(this::savePlayer)));
-        ConsoleReader.start(scheduler, commands);
+        if (console != null) {
+            console.start(scheduler, commands);
+        }
         server.start(settings.connection().bindAddress(), settings.connection().port());
         watchdog = TickWatchdog.start(settings.watchdog().maxTickTime(), scheduler);
     }

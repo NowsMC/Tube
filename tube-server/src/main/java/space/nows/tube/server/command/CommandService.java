@@ -83,6 +83,14 @@ public final class CommandService implements CommandRegistry {
                 .toList();
     }
 
+    public CommandSender console() {
+        return console;
+    }
+
+    public boolean has(String label) {
+        return entries.containsKey(normalize(label));
+    }
+
     public void attachEvents(EventBus events) {
         this.events = events;
     }
