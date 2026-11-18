@@ -1,5 +1,6 @@
 package space.nows.tube.api.world;
 
+import net.kyori.adventure.sound.Sound;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.inventory.ItemStack;
 
@@ -49,4 +50,8 @@ public interface World {
     List<ChunkPos> loadedChunks();
 
     void save();
+
+    void playSound(Sound sound, double x, double y, double z);
+
+    void spawnParticle(String particle, double x, double y, double z, int count, double spreadX, double spreadY, double spreadZ, double speed);
 }

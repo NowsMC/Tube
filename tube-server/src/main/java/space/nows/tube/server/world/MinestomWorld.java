@@ -13,6 +13,8 @@ import space.nows.tube.api.world.World;
 import space.nows.tube.api.world.WorldBorder;
 import space.nows.tube.api.world.WorldOptions;
 import space.nows.tube.server.inventory.ItemMapper;
+import space.nows.tube.server.world.effect.ParticleSpawner;
+import space.nows.tube.server.world.effect.SoundPlayer;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -164,6 +166,18 @@ public final class MinestomWorld implements World {
         owner.saveState(this);
         instance.saveInstance().join();
         instance.saveChunksToStorage().join();
+    }
+
+    @Override
+    public void playSound(net.kyori.adventure.sound.Sound sound, double x, double y, double z) {
+        SoundPlayer.play(instance, sound, x, y, z);
+    }
+
+    @Override
+    public void spawnParticle(String particle, double x, double y, double z, int count, double spreadX, double spreadY, double spreadZ, double speed) {
+        if (!ParticleSpawner.spawn(instance, particle, x, y, z, count, spreadX, spreadY, spreadZ, speed)) {
+            throw new IllegalArgumentException("Unknown particle " + particle);
+        }
     }
 
     private void requireHere(Location location) {
