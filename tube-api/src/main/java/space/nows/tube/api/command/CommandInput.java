@@ -3,7 +3,7 @@ package space.nows.tube.api.command;
 import java.util.List;
 import java.util.Locale;
 
-public class CommandInput {
+public final class CommandInput {
 
     private final List<String> words;
     private final String usage;

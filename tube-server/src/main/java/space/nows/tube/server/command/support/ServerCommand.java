@@ -1,6 +1,8 @@
 package space.nows.tube.server.command.support;
 
 import space.nows.tube.api.command.Command;
+import space.nows.tube.api.command.CommandFailure;
+import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
 
 import java.util.List;
@@ -39,21 +41,14 @@ public abstract class ServerCommand implements Command {
 
     @Override
     public final void execute(CommandSender sender, List<String> args) {
-        space.nows.tube.api.command.CommandInput input = new CommandInput(args, usage);
         try {
-            run(sender, input);
-        } catch (space.nows.tube.api.command.CommandFailure | IllegalArgumentException failure) {
+            run(sender, new CommandInput(args, usage));
+        } catch (CommandFailure | IllegalArgumentException failure) {
             sender.sendMessage(failure.getMessage());
         }
     }
 
-    protected void run(CommandSender sender, space.nows.tube.api.command.CommandInput input) {
-        run(sender, (CommandInput) input);
-    }
-
-    protected void run(CommandSender sender, CommandInput input) {
-        throw new UnsupportedOperationException();
-    }
+    protected abstract void run(CommandSender sender, CommandInput input);
 
     @Override
     public List<String> suggest(CommandSender sender, List<String> args) {

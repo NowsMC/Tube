@@ -1,6 +1,6 @@
 package space.nows.tube.api.command;
 
-public class CommandFailure extends RuntimeException {
+public final class CommandFailure extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
