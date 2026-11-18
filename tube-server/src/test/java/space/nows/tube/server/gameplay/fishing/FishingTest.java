@@ -26,6 +26,8 @@ import net.minestom.server.registry.RegistryKey;
 import net.minestom.testing.Env;
 import net.minestom.testing.EnvTest;
 import org.junit.jupiter.api.Test;
+import space.nows.tube.server.loot.LootContext;
+import space.nows.tube.server.loot.LootTables;
 
 import java.util.List;
 import java.util.Random;
@@ -76,6 +78,11 @@ class FishingTest {
 
     private List<ItemEntity> items() {
         return instance.getEntities().stream().filter(entity -> entity instanceof ItemEntity).map(ItemEntity.class::cast).toList();
+    }
+
+    private static ItemStack fish(boolean openWater, int luck, Random random) {
+        List<ItemStack> items = LootTables.gameplay("minecraft:fishing", LootContext.fishing(ItemStack.AIR, luck, openWater, random));
+        return items.isEmpty() ? ItemStack.AIR : items.getFirst();
     }
 
     private static void ticks(Env env, int count) {
@@ -187,7 +194,7 @@ class FishingTest {
         int treasure = 0;
         Random random = new Random(42);
         for (int i = 0; i < 2000; i++) {
-            ItemStack item = FishingLoot.roll(new FishingLoot.Conditions(true, 0), random);
+            ItemStack item = fish(true, 0, random);
             Material material = item.material();
             if (material == Material.COD || material == Material.SALMON || material == Material.PUFFERFISH || material == Material.TROPICAL_FISH) {
                 fish++;
@@ -208,13 +215,13 @@ class FishingTest {
         int lucky = 0;
         int plain = 0;
         for (int i = 0; i < 3000; i++) {
-            if (FishingLoot.roll(new FishingLoot.Conditions(false, 0), random).material() == Material.NAME_TAG) {
+            if (fish(false, 0, random).material() == Material.NAME_TAG) {
                 closed++;
             }
-            if (FishingLoot.roll(new FishingLoot.Conditions(true, 3), random).material() == Material.NAME_TAG) {
+            if (fish(true, 3, random).material() == Material.NAME_TAG) {
                 lucky++;
             }
-            if (FishingLoot.roll(new FishingLoot.Conditions(true, 0), random).material() == Material.NAME_TAG) {
+            if (fish(true, 0, random).material() == Material.NAME_TAG) {
                 plain++;
             }
         }
@@ -227,7 +234,7 @@ class FishingTest {
         Random random = new Random(3);
         ItemStack book = null;
         for (int i = 0; i < 20000 && book == null; i++) {
-            ItemStack item = FishingLoot.roll(new FishingLoot.Conditions(true, 3), random);
+            ItemStack item = fish(true, 3, random);
             if (item.material() == Material.ENCHANTED_BOOK) {
                 book = item;
             }

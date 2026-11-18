@@ -13,6 +13,8 @@ import net.minestom.server.entity.metadata.other.FishingHookMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.item.ItemStack;
 import space.nows.tube.server.gameplay.Experience;
+import space.nows.tube.server.loot.LootContext;
+import space.nows.tube.server.loot.LootTables;
 import space.nows.tube.server.mob.move.Liquids;
 import space.nows.tube.server.world.effect.ParticleSpawner;
 import space.nows.tube.server.world.effect.SoundPlayer;
@@ -22,6 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 final class Bobber extends Entity {
 
+    private static final String FISHING_TABLE = "minecraft:fishing";
     private static final double TICKS_PER_SECOND = 20;
     private static final double CAST_SPEED = 1.1 * TICKS_PER_SECOND;
     private static final double SCATTER = 0.0103365;
@@ -204,8 +207,8 @@ final class Bobber extends Entity {
     private void land() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         Instance level = getInstance();
-        ItemStack loot = FishingLoot.roll(new FishingLoot.Conditions(OpenWater.at(level, getPosition()), luck), random);
-        if (!loot.isAir()) {
+        LootContext context = LootContext.fishing(ItemStack.AIR, luck, OpenWater.at(level, getPosition()), random);
+        for (ItemStack loot : LootTables.gameplay(FISHING_TABLE, context)) {
             Vec toOwner = owner.getPosition().sub(getPosition()).asVec();
             ItemEntity item = new ItemEntity(loot);
             item.setPickupDelay(Duration.ofMillis(PICKUP_DELAY_MS));
