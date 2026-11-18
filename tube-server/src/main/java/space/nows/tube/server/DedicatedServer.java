@@ -60,6 +60,7 @@ import space.nows.tube.server.world.vanilla.WorldgenLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.lang.management.ManagementFactory;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -259,6 +260,9 @@ public final class DedicatedServer implements Server {
         settings = ServerProperties.load(propertiesFile);
         defaultGameMode = settings.gameplay().gamemode();
         LOGGER.info("Starting {} {} for Minecraft {}", name(), version, minecraftVersion());
+        LOGGER.info("Running Java {} ({} {}; {}) on {} {} ({})", Runtime.version().feature(),
+                System.getProperty("java.vm.name"), System.getProperty("java.vm.version"), System.getProperty("java.vm.vendor"),
+                System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"));
 
         EngineProperties.apply(settings);
 
@@ -307,7 +311,12 @@ public final class DedicatedServer implements Server {
 
         Profiles profiles = new Profiles(this::players, userCache);
         new BuiltinCommands(this, commands, profiles, bans, whitelist, propertiesFile, settings.access().enforceWhitelist()).registerAll();
+        LOGGER.info("Default game mode: {}, difficulty: {}", defaultGameMode.name().toLowerCase(Locale.ROOT),
+                settings.gameplay().difficulty().name().toLowerCase(Locale.ROOT));
+        long worldStart = System.nanoTime();
+        LOGGER.info("Preparing world \"{}\"", settings.level().name());
         worlds.defaultWorld();
+        LOGGER.info("Done preparing world \"{}\" ({})", settings.level().name(), seconds(System.nanoTime() - worldStart));
         plugins.loadAll();
         enableExtensions();
         remoteAccess = new RemoteAccess(this, settings, commands);
@@ -319,8 +328,15 @@ public final class DedicatedServer implements Server {
         if (console != null) {
             console.start(scheduler, commands);
         }
+        String serverIp = settings.connection().serverIp();
+        LOGGER.info("Starting Minecraft server on {}:{}", serverIp.isBlank() ? "*" : serverIp, settings.connection().port());
         server.start(settings.connection().bindAddress(), settings.connection().port());
         watchdog = TickWatchdog.start(settings.watchdog().maxTickTime(), scheduler);
+        LOGGER.info("Done ({})! For help, type \"help\"", seconds(ManagementFactory.getRuntimeMXBean().getUptime() * 1_000_000L));
+    }
+
+    private static String seconds(long nanos) {
+        return String.format(Locale.ROOT, "%.3fs", nanos / 1e9);
     }
 
     static WorldOptions defaultWorldOptions(ServerSettings.Level level) {
