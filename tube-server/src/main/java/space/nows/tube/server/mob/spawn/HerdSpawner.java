@@ -8,6 +8,7 @@ import net.minestom.server.instance.block.Block;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureKind;
 import space.nows.tube.server.mob.CreatureKinds;
+import space.nows.tube.server.mob.life.Lifecycle;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,6 +19,7 @@ final class HerdSpawner {
     private static final double MIN_DISTANCE = 24;
     private static final double EXTRA_DISTANCE = 40;
     private static final int SEARCH_HEIGHT = 32;
+    private static final float BABY_CHANCE = 0.05f;
 
     private HerdSpawner() {
     }
@@ -46,7 +48,14 @@ final class HerdSpawner {
                 int dx = x + random.nextInt(-2, 3);
                 int dz = z + random.nextInt(-2, 3);
                 if (SpawnSpots.standable(instance, dx, y, dz)) {
-                    CreatureKinds.spawn(new Creature(kind), instance, new Pos(dx + 0.5, y, dz + 0.5, random.nextFloat() * 360, 0));
+                    Creature creature = new Creature(kind);
+                    boolean baby = i > 0 && random.nextFloat() <= BABY_CHANCE;
+                    CreatureKinds.spawn(creature, instance, new Pos(dx + 0.5, y, dz + 0.5, random.nextFloat() * 360, 0))
+                            .thenRun(() -> {
+                                if (baby) {
+                                    creature.trait(Lifecycle.class).ifPresent(Lifecycle::makeBaby);
+                                }
+                            });
                 }
             }
             return;
