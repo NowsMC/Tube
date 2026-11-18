@@ -27,6 +27,7 @@ Tube uses the following software. The CLI jar bundles picocli. The server jar bu
 | jtoml (api, internals) | 1.8.3 | Apache-2.0 | https://github.com/WasabiThumb/jtoml |
 | SLF4J API | 2.0.20 | MIT | https://www.slf4j.org |
 | Logback (classic, core) | 1.6.5 | EPL-2.0 or LGPL-2.1 | https://logback.qos.ch |
+| JLine (reader, terminal, terminal-ffm, native) | 4.4.8 | BSD-3-Clause | https://github.com/jline/jline3 |
 | JetBrains annotations | 26.1.0 | Apache-2.0 | https://github.com/JetBrains/java-annotations |
 | JSpecify | 1.0.0 | Apache-2.0 | https://jspecify.dev |
 | Google auto-service annotations | 1.1.1 | Apache-2.0 | https://github.com/google/auto |
@@ -43,4 +44,4 @@ Tube uses the following software. The CLI jar bundles picocli. The server jar bu
 
 ## Minecraft data
 
-Tube contains no Mojang code or data. On first start it downloads the vanilla server jar from Mojang's official servers, keeps only the recipe files in `cache/`, and deletes the jar. That data stays under Mojang's terms: https://www.minecraft.net/eula
+Tube contains no Mojang code or data. On first start it downloads the vanilla server jar from Mojang's official servers, keeps only the recipe files and the world generation data (`cache/recipes-<version>.zip` and `cache/worldgen-<version>.zip`), and deletes the jar. Tube does not decompile or run Mojang's code; it reads this data with its own world generator. That data stays under Mojang's terms: https://www.minecraft.net/eula
