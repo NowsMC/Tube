@@ -11,6 +11,18 @@ public interface Command {
         return null;
     }
 
+    default String description() {
+        return null;
+    }
+
+    default String usage() {
+        return null;
+    }
+
+    default String permissionMessage() {
+        return null;
+    }
+
     default List<String> suggest(CommandSender sender, List<String> args) {
         return List.of();
     }
@@ -25,6 +37,21 @@ public interface Command {
             @Override
             public String permission() {
                 return permission;
+            }
+
+            @Override
+            public String description() {
+                return delegate.description();
+            }
+
+            @Override
+            public String usage() {
+                return delegate.usage();
+            }
+
+            @Override
+            public String permissionMessage() {
+                return delegate.permissionMessage();
             }
 
             @Override

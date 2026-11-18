@@ -33,6 +33,11 @@ public abstract class ServerCommand implements Command {
     }
 
     @Override
+    public String usage() {
+        return usage;
+    }
+
+    @Override
     public final void execute(CommandSender sender, List<String> args) {
         try {
             run(sender, new CommandInput(args, usage));

@@ -207,4 +207,21 @@ class BuiltinCommandsTest {
         assertEquals(3.5, setup.world().spawn().x());
         assertEquals(64.0, setup.world().spawn().y());
     }
+
+    @Test
+    void helpShowsUsageAndAliases(Env env) {
+        Setup setup = setup(env, true);
+
+        assertEquals(List.of("/gm", "Usage: /gamemode <survival|creative|adventure|spectator> [player]", "Aliases: gm"), run(setup, "help gm"));
+        assertTrue(run(setup, "help").contains("/gamemode"));
+        assertEquals(List.of("Unknown command: nothing"), run(setup, "help nothing"));
+    }
+
+    @Test
+    void helpHidesCommandsWithoutPermission(Env env) {
+        Setup setup = setup(env, false);
+
+        assertEquals(List.of("Unknown command: gamemode"), run(setup, "help gamemode"));
+        assertTrue(!run(setup, "help").contains("/gamemode"));
+    }
 }

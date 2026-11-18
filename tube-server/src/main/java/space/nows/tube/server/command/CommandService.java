@@ -13,6 +13,7 @@ import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.event.CommandDispatchEvent;
 import space.nows.tube.api.event.EventBus;
+import space.nows.tube.server.config.Markup;
 import space.nows.tube.server.player.PlayerService;
 
 import java.util.ArrayList;
@@ -21,11 +22,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 public final class CommandService implements CommandRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube");
+    private static final Pattern LEGACY_AMPERSAND = Pattern.compile("(?i)&([0-9a-fk-or])");
     static final String NO_PERMISSION = "<red>I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error.";
 
     private record Entry(String name, Command handler, net.minestom.server.command.builder.Command bridge, List<String> labels) {
@@ -101,6 +105,15 @@ public final class CommandService implements CommandRegistry {
         return entries.containsKey(normalize(label));
     }
 
+    public Optional<Command> find(String label) {
+        return Optional.ofNullable(entries.get(normalize(label))).map(Entry::handler);
+    }
+
+    public List<String> aliases(String label) {
+        Entry entry = entries.get(normalize(label));
+        return entry == null ? List.of() : entry.labels().subList(1, entry.labels().size());
+    }
+
     public void attachEvents(EventBus events) {
         this.events = events;
     }
@@ -169,7 +182,8 @@ public final class CommandService implements CommandRegistry {
 
     private static void run(Command command, CommandSender sender, List<String> args) {
         if (!allowed(command, sender)) {
-            sender.sendMessage(MiniMessage.miniMessage().deserialize(NO_PERMISSION));
+            String custom = command.permissionMessage();
+            sender.sendMessage(custom == null || custom.isBlank() ? MiniMessage.miniMessage().deserialize(NO_PERMISSION) : Markup.parse(LEGACY_AMPERSAND.matcher(custom).replaceAll("§$1")));
             return;
         }
         command.execute(sender, args);
