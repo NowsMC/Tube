@@ -1,6 +1,10 @@
 package space.nows.tube.server.command.builtin.entity;
 
+import space.nows.tube.api.command.CommandFailure;
+import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.command.Positions;
+import space.nows.tube.api.command.Typing;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.api.world.World;
@@ -8,12 +12,8 @@ import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.builtin.entity.spread.SpreadPlanner;
 import space.nows.tube.server.command.builtin.entity.spread.SpreadPoint;
 import space.nows.tube.server.command.builtin.entity.spread.SurfaceFinder;
-import space.nows.tube.server.command.support.CommandFailure;
-import space.nows.tube.server.command.support.CommandInput;
-import space.nows.tube.server.command.support.Positions;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
-import space.nows.tube.server.command.support.Typing;
 
 import java.util.List;
 import java.util.OptionalInt;
