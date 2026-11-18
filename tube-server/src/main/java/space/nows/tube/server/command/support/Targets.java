@@ -41,7 +41,10 @@ public final class Targets {
         } else {
             Selector selector = Selector.parse(text);
             List<Player> candidates = switch (selector.base()) {
-                case "@a", "@p", "@r" -> List.copyOf(server.players());
+                case "@a", "@r" -> List.copyOf(server.players());
+                case "@p" -> sender instanceof Player self
+                        ? server.players().stream().filter(player -> player.world() == self.world()).toList()
+                        : List.copyOf(server.players());
                 case "@s" -> List.of(self(sender));
                 default -> throw new CommandFailure("Unknown selector " + selector.base());
             };
