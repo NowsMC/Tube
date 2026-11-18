@@ -1,4 +1,7 @@
-target/
+/target/
+/*/target/
+/versions/*/target/
+/tools/*/target/
 .idea/
 .vscode/
 *.iml
@@ -12,4 +15,5 @@ libs/
 # files that real plugins write into the working directory during tests
 tube-bukkit/wepif.yml
 tube-bukkit/logs/
-logs/
+/logs/
+/*/logs/
