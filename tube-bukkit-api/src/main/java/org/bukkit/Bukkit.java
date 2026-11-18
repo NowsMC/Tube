@@ -181,6 +181,18 @@ public final class Bukkit {
         return server.broadcast(message, permission);
     }
 
+    public static String getMinecraftVersion() {
+        return server.getMinecraftVersion();
+    }
+
+    public static double[] getTPS() {
+        return server.getTPS();
+    }
+
+    public static double getAverageTickTime() {
+        return server.getAverageTickTime();
+    }
+
     public static boolean isPrimaryThread() {
         return server.isPrimaryThread();
     }

@@ -314,6 +314,22 @@ final class BukkitServer implements Server {
     }
 
     @Override
+    public String getMinecraftVersion() {
+        return runtime.tube().minecraftVersion();
+    }
+
+    @Override
+    public double[] getTPS() {
+        var ticks = runtime.tube().ticks();
+        return new double[] {ticks.lastFiveSeconds(), ticks.lastMinute(), ticks.lastFiveMinutes()};
+    }
+
+    @Override
+    public double getAverageTickTime() {
+        return runtime.tube().ticks().averageMillis();
+    }
+
+    @Override
     public boolean isPrimaryThread() {
         return runtime.isPrimaryThread();
     }

@@ -94,6 +94,12 @@ public interface Server {
 
     boolean isPrimaryThread();
 
+    String getMinecraftVersion();
+
+    double[] getTPS();
+
+    double getAverageTickTime();
+
     boolean isStopping();
 
     void shutdown();
