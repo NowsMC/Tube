@@ -8,6 +8,18 @@
 - A feature that cannot be read is skipped with one warning instead of leaving whole chunks empty. ([`d1a2e49`](https://github.com/NowsMC/Tube/commit/d1a2e4949e95ae17ab0e7a5d0533e0975e826195))
 - Trees are no longer cut in half at chunk borders: every chunk's features are placed once and shared with its neighbours, which also makes generation faster. ([`605eb02`](https://github.com/NowsMC/Tube/commit/605eb027f9f4dab243043e655b39f9c2bd80826c))
 
+### Console
+
+- The console keeps its input line at the bottom while logs print above it, completes commands and their arguments with Tab, shows known commands in green and unknown ones in red, remembers earlier commands, and stops the server on Ctrl+C. ([`13156dd`](https://github.com/NowsMC/Tube/commit/13156dd293d5faa99a475e984fc0af65d60edb2f), [`db6ebf9`](https://github.com/NowsMC/Tube/commit/db6ebf924bc56ebfcb76035ebbe08fa62e3604e5))
+- Log levels, color codes and plugin names are colored in the console and kept plain in `logs/latest.log`. ([`8b6cfd8`](https://github.com/NowsMC/Tube/commit/8b6cfd8f8836554a4ae326a138043d762233d59b), [`663853e`](https://github.com/NowsMC/Tube/commit/663853edde78520ec52958c118b8302d09d30669))
+- `tube.yml` sets the line format, time format, level and colors of the console and the log file separately, and the prompt and history size of the console. ([`e965d0c`](https://github.com/NowsMC/Tube/commit/e965d0c85a678f3f559e5cc721ea80760d882d70), [`8b6cfd8`](https://github.com/NowsMC/Tube/commit/8b6cfd8f8836554a4ae326a138043d762233d59b))
+- The start shows the Java version and system, the default game mode and difficulty, how long the world took, the address, and `Done (…s)! For help, type "help"`. ([`20b4c54`](https://github.com/NowsMC/Tube/commit/20b4c545a76103615ef1aaf418fdb32bc26bf585))
+- Logins show the address with port and the position, commands players run are logged, and an unknown command points to `help`. ([`2144557`](https://github.com/NowsMC/Tube/commit/21445571e25b99acb4d5bcf587837f392a6b4c0d), [`663853e`](https://github.com/NowsMC/Tube/commit/663853edde78520ec52958c118b8302d09d30669))
+
+### Commands
+
+- Auto-fill offers every option as soon as a space is typed, for example `/gamemode `, instead of showing `[<args>]`. ([`c2ae326`](https://github.com/NowsMC/Tube/commit/c2ae3264a201434265c6618cd4a8b9d587a73f49))
+
 ## 0.2611.1 - 2026-11-17
 
 ### Server
