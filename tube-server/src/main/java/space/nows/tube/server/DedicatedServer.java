@@ -94,6 +94,7 @@ public final class DedicatedServer implements Server {
     private PermissionService permissions;
     private WorldService worlds;
     private PlayerService players;
+    private space.nows.tube.server.scoreboard.ScoreboardService scoreboards;
     private PlayerDataStore playerData;
     private CommandService commands;
     private SchedulerService scheduler;
@@ -183,6 +184,11 @@ public final class DedicatedServer implements Server {
     @Override
     public Network network() {
         return network;
+    }
+
+    @Override
+    public space.nows.tube.api.scoreboard.Scoreboards scoreboards() {
+        return scoreboards;
     }
 
     @Override
@@ -327,6 +333,7 @@ public final class DedicatedServer implements Server {
                 new WorldgenLoader(directory.resolve("cache"), minecraftVersion()));
         playerData = new PlayerDataStore(directory.resolve("worlds").resolve(settings.level().name()).resolve("playerdata"));
         players = new PlayerService(worlds, permissions);
+        scoreboards = new space.nows.tube.server.scoreboard.ScoreboardService(players);
         commands = new CommandService(players);
         scheduler = new SchedulerService();
         events = new DefaultEventBus();

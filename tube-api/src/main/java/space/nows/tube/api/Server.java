@@ -70,6 +70,8 @@ public interface Server {
 
     TickReport ticks();
 
+    space.nows.tube.api.scoreboard.Scoreboards scoreboards();
+
     Inventory createInventory(Component title, int rows);
 
     void broadcast(Component message);

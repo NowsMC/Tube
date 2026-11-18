@@ -79,6 +79,8 @@ public interface Player extends LivingEntity, CommandSender {
 
     void setPlayerListHeaderAndFooter(Component header, Component footer);
 
+    space.nows.tube.api.scoreboard.TabList tabList();
+
     void playSound(Sound sound, double x, double y, double z);
 
     void stopSound(SoundStop stop);

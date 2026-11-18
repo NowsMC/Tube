@@ -26,12 +26,23 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     private final PermissionService permissions;
     private final PlayerService service;
     private volatile String clientBrand;
+    private final MinestomTabList tabList;
 
     MinestomPlayer(net.minestom.server.entity.Player player, WorldService worlds, PermissionService permissions, PlayerService service) {
         super(player, worlds);
         this.player = player;
         this.permissions = permissions;
         this.service = service;
+        this.tabList = new MinestomTabList(player);
+    }
+
+    public net.minestom.server.entity.Player handle() {
+        return player;
+    }
+
+    @Override
+    public space.nows.tube.api.scoreboard.TabList tabList() {
+        return tabList;
     }
 
     @Override
@@ -241,7 +252,7 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
 
     @Override
     public void setPlayerListHeaderAndFooter(Component header, Component footer) {
-        player.sendPlayerListHeaderAndFooter(header == null ? Component.empty() : header, footer == null ? Component.empty() : footer);
+        tabList.setHeaderAndFooter(header, footer);
     }
 
     @Override
