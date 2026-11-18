@@ -83,7 +83,7 @@ public final class Archery {
         if (pull < 0.1) {
             return;
         }
-        EntityProjectile arrow = new SweptArrow(player);
+        SweptArrow arrow = new SweptArrow(player);
         ArrowMeta meta = (ArrowMeta) arrow.getEntityMeta();
         boolean critical = pull >= 1;
         meta.setCritical(critical);
@@ -100,7 +100,7 @@ public final class Archery {
         boolean consume = !creative && !infinity;
         arrow.setTag(PICKUP, consume);
         Pos eye = player.getPosition().add(0, player.getEyeHeight(), 0);
-        arrow.setInstance(player.getInstance(), eye).thenRun(() -> arrow.shoot(eye.add(eye.direction().mul(10)), speed, 1));
+        arrow.launch(player.getInstance(), eye, eye.direction(), speed, 1);
         if (consume && arrowSlot >= 0) {
             ItemStack arrows = player.getInventory().getItemStack(arrowSlot);
             player.getInventory().setItemStack(arrowSlot, arrows.consume(1));
