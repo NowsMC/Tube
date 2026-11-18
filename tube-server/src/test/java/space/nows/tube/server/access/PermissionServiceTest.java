@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import space.nows.tube.api.PermissionDefault;
 
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.UUID;
 
 class PermissionServiceTest {
@@ -56,5 +58,35 @@ class PermissionServiceTest {
         assertTrue(second.has(BOB, "shop.buy"));
         second.setOp(ALICE, "Alice", false);
         assertFalse(new PermissionService(directory).isOp(ALICE));
+    }
+
+    @Test
+    void definedPermissionsFollowTheirDefault() {
+        PermissionService service = new PermissionService(directory);
+        service.define("shop.use", PermissionDefault.TRUE, Map.of());
+        service.define("shop.admin", PermissionDefault.OP, Map.of());
+        service.define("shop.guest", PermissionDefault.NOT_OP, Map.of());
+        service.setOp(BOB, "Bob", true);
+
+        assertTrue(service.has(ALICE, "shop.use"));
+        assertFalse(service.has(ALICE, "shop.admin"));
+        assertTrue(service.has(ALICE, "shop.guest"));
+        assertTrue(service.has(BOB, "shop.admin"));
+
+        service.undefine("shop.use");
+        assertFalse(service.has(ALICE, "shop.use"));
+    }
+
+    @Test
+    void childrenFollowTheirParent() {
+        PermissionService service = new PermissionService(directory);
+        service.define("shop.staff", PermissionDefault.FALSE, Map.of("shop.sell", true, "shop.close", false));
+        service.define("shop.everyone", PermissionDefault.TRUE, Map.of("shop.buy", true));
+
+        assertTrue(service.has(ALICE, "shop.buy"));
+        assertFalse(service.has(ALICE, "shop.sell"));
+        service.grant(ALICE, "shop.staff");
+        assertTrue(service.has(ALICE, "shop.sell"));
+        assertFalse(service.has(ALICE, "shop.close"));
     }
 }

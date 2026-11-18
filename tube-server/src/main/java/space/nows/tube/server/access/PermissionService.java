@@ -3,6 +3,7 @@ package space.nows.tube.server.access;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import space.nows.tube.api.PermissionDefault;
 import space.nows.tube.api.PermissionManager;
 
 import java.nio.file.Files;
@@ -14,10 +15,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class PermissionService implements PermissionManager {
 
     private static final int OP_LEVEL = 4;
+    private static final int MAX_PARENT_DEPTH = 8;
+
+    private record Definition(PermissionDefault fallback, Map<String, Boolean> children) {
+    }
 
     private final Path opsFile;
     private final Path permissionsFile;
@@ -25,6 +31,7 @@ public final class PermissionService implements PermissionManager {
     private final Map<UUID, Set<String>> grants = new HashMap<>();
     private volatile Set<UUID> opView = Set.of();
     private volatile Map<UUID, Set<String>> grantView = Map.of();
+    private final Map<String, Definition> definitions = new ConcurrentHashMap<>();
 
     public PermissionService(Path directory) {
         this.opsFile = directory.resolve("ops.json");
@@ -60,10 +67,39 @@ public final class PermissionService implements PermissionManager {
         if (opView.contains(uuid)) {
             return true;
         }
-        Set<String> granted = grantView.get(uuid);
-        if (granted == null) {
+        return holds(grantView.getOrDefault(uuid, Set.of()), node, 0);
+    }
+
+    @Override
+    public void define(String node, PermissionDefault fallback, Map<String, Boolean> children) {
+        definitions.put(node, new Definition(fallback, Map.copyOf(children)));
+    }
+
+    @Override
+    public void undefine(String node) {
+        definitions.remove(node);
+    }
+
+    private boolean holds(Set<String> granted, String node, int depth) {
+        if (matches(granted, node)) {
+            return true;
+        }
+        Definition definition = definitions.get(node);
+        if (definition != null && definition.fallback().grants(false)) {
+            return true;
+        }
+        if (depth >= MAX_PARENT_DEPTH) {
             return false;
         }
+        for (Map.Entry<String, Definition> parent : definitions.entrySet()) {
+            if (Boolean.TRUE.equals(parent.getValue().children().get(node)) && holds(granted, parent.getKey(), depth + 1)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean matches(Set<String> granted, String node) {
         if (granted.contains(node) || granted.contains("*")) {
             return true;
         }

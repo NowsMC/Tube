@@ -1,5 +1,6 @@
 package space.nows.tube.api;
 
+import java.util.Map;
 import java.util.UUID;
 
 public interface PermissionManager {
@@ -13,4 +14,8 @@ public interface PermissionManager {
     void grant(UUID uuid, String node);
 
     void revoke(UUID uuid, String node);
+
+    void define(String node, PermissionDefault fallback, Map<String, Boolean> children);
+
+    void undefine(String node);
 }
