@@ -29,6 +29,8 @@ import java.util.Optional;
 
 public final class MinestomWorld implements World {
 
+    private static final double BOUNDING_BOX_MARGIN = 4;
+
     private final String name;
     private final InstanceContainer instance;
     private final double[] spawn;
@@ -122,6 +124,23 @@ public final class MinestomWorld implements World {
     @Override
     public void setTime(long time) {
         instance.setTime(time);
+    }
+
+    @Override
+    public Collection<Entity> nearbyEntities(Location center, double dx, double dy, double dz) {
+        double reach = Math.sqrt(dx * dx + dy * dy + dz * dz) + BOUNDING_BOX_MARGIN;
+        return instance.getNearbyEntities(position(center), reach).stream()
+                .filter(entity -> overlaps(entity, center, dx, dy, dz))
+                .map(owner::wrap)
+                .toList();
+    }
+
+    private static boolean overlaps(net.minestom.server.entity.Entity entity, Location center, double dx, double dy, double dz) {
+        var box = entity.getBoundingBox();
+        Pos at = entity.getPosition();
+        return at.x() + box.maxX() >= center.x() - dx && at.x() + box.minX() <= center.x() + dx
+                && at.y() + box.maxY() >= center.y() - dy && at.y() + box.minY() <= center.y() + dy
+                && at.z() + box.maxZ() >= center.z() - dz && at.z() + box.minZ() <= center.z() + dz;
     }
 
     @Override

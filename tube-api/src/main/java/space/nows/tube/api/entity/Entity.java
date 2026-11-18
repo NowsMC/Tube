@@ -27,6 +27,23 @@ public interface Entity {
 
     boolean isRemoved();
 
+    double eyeHeight();
+
+    default Location eyeLocation() {
+        Location at = location();
+        return new Location(at.world(), at.x(), at.y() + eyeHeight(), at.z(), at.yaw(), at.pitch());
+    }
+
+    boolean isSneaking();
+
+    boolean isSprinting();
+
+    boolean isSwimming();
+
+    boolean isGlowing();
+
+    void setGlowing(boolean glowing);
+
     Set<String> tags();
 
     boolean addTag(String tag);

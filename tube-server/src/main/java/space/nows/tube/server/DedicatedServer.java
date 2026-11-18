@@ -201,6 +201,11 @@ public final class DedicatedServer implements Server {
     }
 
     @Override
+    public int protocolVersion() {
+        return MinecraftServer.PROTOCOL_VERSION;
+    }
+
+    @Override
     public CommandSender console() {
         return commands.console();
     }

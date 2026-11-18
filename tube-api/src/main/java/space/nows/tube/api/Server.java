@@ -26,6 +26,8 @@ public interface Server {
 
     int dataVersion();
 
+    int protocolVersion();
+
     int maxPlayers();
 
     boolean onlineMode();

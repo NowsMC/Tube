@@ -83,6 +83,36 @@ public class MinestomEntity implements Entity {
     }
 
     @Override
+    public double eyeHeight() {
+        return handle.getEyeHeight();
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return handle.getEntityMeta().isSneaking();
+    }
+
+    @Override
+    public boolean isSprinting() {
+        return handle.getEntityMeta().isSprinting();
+    }
+
+    @Override
+    public boolean isSwimming() {
+        return handle.getEntityMeta().isSwimming();
+    }
+
+    @Override
+    public boolean isGlowing() {
+        return handle.isGlowing();
+    }
+
+    @Override
+    public void setGlowing(boolean glowing) {
+        handle.setGlowing(glowing);
+    }
+
+    @Override
     public void remove() {
         handle.remove();
     }

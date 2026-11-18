@@ -49,6 +49,8 @@ public interface World {
 
     Collection<Entity> entities();
 
+    Collection<Entity> nearbyEntities(Location center, double dx, double dy, double dz);
+
     boolean isChunkLoaded(int chunkX, int chunkZ);
 
     CompletableFuture<Void> loadChunk(int chunkX, int chunkZ);

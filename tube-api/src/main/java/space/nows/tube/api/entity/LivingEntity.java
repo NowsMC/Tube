@@ -7,6 +7,12 @@ public interface LivingEntity extends Entity {
 
     double health();
 
+    int fireTicks();
+
+    void setFireTicks(int ticks);
+
+    boolean isGliding();
+
     void setHealth(double health);
 
     double maxHealth();

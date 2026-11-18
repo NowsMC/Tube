@@ -28,6 +28,21 @@ public class MinestomLivingEntity extends MinestomEntity implements LivingEntity
     }
 
     @Override
+    public int fireTicks() {
+        return minestom().getFireTicks();
+    }
+
+    @Override
+    public void setFireTicks(int ticks) {
+        minestom().setFireTicks(ticks);
+    }
+
+    @Override
+    public boolean isGliding() {
+        return minestom().isFlyingWithElytra();
+    }
+
+    @Override
     public void setHealth(double health) {
         living.setHealth((float) health);
     }

@@ -51,6 +51,8 @@ public interface Player extends LivingEntity, CommandSender {
 
     void openInventory(Inventory inventory);
 
+    Optional<Inventory> openedInventory();
+
     void closeInventory();
 
     void sendActionBar(Component message);

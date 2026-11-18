@@ -173,6 +173,11 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     }
 
     @Override
+    public Optional<Inventory> openedInventory() {
+        return Optional.ofNullable(player.getOpenInventory()).map(MinestomInventory::new);
+    }
+
+    @Override
     public void closeInventory() {
         player.closeInventory();
     }
