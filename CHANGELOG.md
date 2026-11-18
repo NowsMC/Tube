@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.2611.3 - unreleased
+
+### Mobs
+
+- Mobs run on Tube's own AI with vanilla's goals and priorities: they wander toward spots they like, look at nearby players, panic when hurt, stay afloat, follow players holding their food, and hunt or retaliate like vanilla. ([`3644d60`](https://github.com/NowsMC/Tube/commit/3644d60de955a8b62fd49b18321a00731e3f0931), [`a3705ba`](https://github.com/NowsMC/Tube/commit/a3705bab1c0c0706e0d82699a9cbdd4f0cc2feae), [`306170b`](https://github.com/NowsMC/Tube/commit/306170b32606fa665b4b8fb4d38de400f371917a), [`5cbd64d`](https://github.com/NowsMC/Tube/commit/5cbd64d042fdc960a53d2b64515fd8b5b6544f47))
+- Mobs walk at vanilla speed; they used to move about twice as fast. Heads turn toward what they look at no faster than in vanilla. ([`1a1c2d4`](https://github.com/NowsMC/Tube/commit/1a1c2d461824a45a8d5e6963d56d2a8fec31142a))
+- Zombies raise their arms and burn in daylight, skeletons shoot with vanilla's damage and accuracy per difficulty and fight up close without a bow, spiders only hunt in the dark and pounce, and creepers swell and explode like vanilla. ([`7e60ef2`](https://github.com/NowsMC/Tube/commit/7e60ef29ab126322a0f88a9701b1d9b27ed15abe), [`ea5e260`](https://github.com/NowsMC/Tube/commit/ea5e2608ae2ac396b6433d5c1e60b99d9f1d2c7f), [`c7521f4`](https://github.com/NowsMC/Tube/commit/c7521f4972b0107d86c96e701731a289d9a1850a), [`d89dbdf`](https://github.com/NowsMC/Tube/commit/d89dbdfba4ef930a384c99e4d176c88bb500d2ae))
+- Cows, pigs and chickens get the warm, cold or temperate look of their biome, sheep get the wool colours of their climate, sheep regrow wool by eating grass, and chickens lay eggs and fall slowly. ([`223770d`](https://github.com/NowsMC/Tube/commit/223770d348c10850cc8d9883ef5db1866c0f12a0))
+- Mobs spawned with `/summon` or by plugins get their AI too. ([`7c4e818`](https://github.com/NowsMC/Tube/commit/7c4e81890b9d0348976ef29cf84bae0390ab6b65))
+
+### Combat
+
+- Arrows hit what they fly through within a tick, so fast arrows no longer pass through players and mobs. ([`c94b6dd`](https://github.com/NowsMC/Tube/commit/c94b6dd3cd820c99a50d469aa54776622409ab53), [`e11413a`](https://github.com/NowsMC/Tube/commit/e11413a09f0f6389e777be02c271cad77dbb15ae))
+
+### Not implemented yet
+
+- Breeding, baby mobs, zombie equipment and reinforcements, sun-avoiding paths, vanilla path costs and natural spawning, and every mob type other than cows, pigs, sheep, chickens, zombies, skeletons, spiders and creepers.
+
 ## 0.2611.2 - 2026-11-18
 
 ### Worlds
