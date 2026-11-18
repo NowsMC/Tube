@@ -1,0 +1,61 @@
+name: Snapshot
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: snapshot
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the version
+        id: version
+        run: |
+          version="$(sed -n 's:.*<revision>\(.*\)</revision>.*:\1:p' pom.xml | head -n 1)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          case "$version" in
+            *-SNAPSHOT) echo "snapshot=true" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::notice::$version is not a snapshot version, nothing to deploy" ;;
+          esac
+
+      - uses: actions/setup-java@v4
+        if: steps.version.outputs.snapshot == 'true'
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Import the signing key
+        if: steps.version.outputs.snapshot == 'true'
+        run: echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: Write the B2 key
+        if: steps.version.outputs.snapshot == 'true'
+        run: printf 'keyID=%s\nkeyName=%s\napplicationKey=%s\n' "$keyID" "$keyName" "$applicationKey" > .env
+        env:
+          keyID: ${{ secrets.KEYID }}
+          keyName: ${{ secrets.KEYNAME }}
+          applicationKey: ${{ secrets.APPLICATIONKEY }}
+
+      - name: Deploy the snapshot to files.nows.space
+        if: steps.version.outputs.snapshot == 'true'
+        run: ./mvnw -Prelease -Dtube.b2.releases=snapshots/tube deploy
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Keep the server jars of this build
+        if: steps.version.outputs.snapshot == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tube-${{ steps.version.outputs.version }}
+          path: versions/*/target/release/*.jar
+          retention-days: 14
