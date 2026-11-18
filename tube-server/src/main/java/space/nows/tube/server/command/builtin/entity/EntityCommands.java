@@ -16,6 +16,7 @@ public final class EntityCommands {
                 new SummonCommand(targets),
                 new TeleportCommand(targets),
                 new EffectCommand(targets),
-                new TagCommand(targets));
+                new TagCommand(targets),
+                new SpreadPlayersCommand(targets));
     }
 }
