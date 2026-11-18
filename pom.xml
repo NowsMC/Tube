@@ -270,6 +270,10 @@
       <id>nows-b2</id>
       <url>s3://${tube.b2.bucket}/${tube.b2.maven}</url>
     </repository>
+    <snapshotRepository>
+      <id>nows-b2</id>
+      <url>s3://${tube.b2.bucket}/${tube.b2.maven}</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <build>
