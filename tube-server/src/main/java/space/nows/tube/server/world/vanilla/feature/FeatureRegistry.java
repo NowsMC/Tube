@@ -131,6 +131,11 @@ public final class FeatureRegistry implements DecorationSource {
         } catch (IllegalArgumentException e) {
             skip(type + ": " + e.getMessage());
             return Feature.NONE;
+        } catch (RuntimeException e) {
+            if (skipped.add(type + ": " + e)) {
+                LOGGER.warn("World generation cannot read a {} feature and skips it", type, e);
+            }
+            return Feature.NONE;
         }
     }
 
