@@ -8,13 +8,14 @@ import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureKinds;
 import space.nows.tube.server.mob.sense.Daylight;
 
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 final class MonsterSpawner {
 
-    private static final List<EntityType> MONSTERS = List.of(EntityType.ZOMBIE, EntityType.ZOMBIE, EntityType.SKELETON,
-            EntityType.SKELETON, EntityType.SPIDER, EntityType.CREEPER);
+    private static final Map<EntityType, Integer> MONSTERS = Map.of(EntityType.ZOMBIE, 95, EntityType.SKELETON, 100,
+            EntityType.SPIDER, 100, EntityType.CREEPER, 100, EntityType.ENDERMAN, 10);
+    private static final int TOTAL_WEIGHT = MONSTERS.values().stream().mapToInt(Integer::intValue).sum();
     private static final double MIN_DISTANCE = 24;
     private static final int SKY_LIGHT_LIMIT = 7;
 
@@ -44,9 +45,20 @@ final class MonsterSpawner {
                     || center.distanceSquared(at) < MIN_DISTANCE * MIN_DISTANCE) {
                 return;
             }
-            EntityType type = MONSTERS.get(random.nextInt(MONSTERS.size()));
+            EntityType type = pick(random);
             CreatureKinds.of(type).ifPresent(kind -> CreatureKinds.spawn(new Creature(kind), instance, at));
             return;
         }
+    }
+
+    private static EntityType pick(ThreadLocalRandom random) {
+        int roll = random.nextInt(TOTAL_WEIGHT);
+        for (Map.Entry<EntityType, Integer> entry : MONSTERS.entrySet()) {
+            roll -= entry.getValue();
+            if (roll < 0) {
+                return entry.getKey();
+            }
+        }
+        return EntityType.ZOMBIE;
     }
 }
