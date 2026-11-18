@@ -7,6 +7,16 @@
 - The Snapshot workflow, started by hand from the Actions tab, deploys the `-SNAPSHOT` version to files.nows.space under `snapshots/tube` and keeps the server jars as a workflow artifact for 14 days, so fixes between releases do not need a new version.
 - Every push to `main` and every pull request is built and tested by the CI workflow. ([`0ccdad7`](https://github.com/NowsMC/Tube/commit/0ccdad7defb2f85e290960cb3cf9f2f21f70c2c2))
 
+### Plugin API
+
+- Entities report whether they are sneaking, sprinting, swimming, glowing or gliding, how long they will burn, and where their eyes are. `Player.openedInventory()` shows the container a player has open, and `World.nearbyEntities` finds entities in a box around a point. ([`59b9246`](https://github.com/NowsMC/Tube/commit/59b9246a7a3b618b5ae39eddbc7df970126e24b2), [`3b13912`](https://github.com/NowsMC/Tube/commit/3b13912d2549fc0a8b4d35aa131efeaacfab9463))
+- `PlayerSneakEvent`, `PlayerSprintEvent` and `EntityGlideEvent` tell plugins when the state of a player or entity changes, and `Server.protocolVersion()` gives the protocol version the server speaks. ([`4f39589`](https://github.com/NowsMC/Tube/commit/4f39589bbd2ae816b00d6d71d6845096ec728bba))
+- `Scheduler.region()` and `Scheduler.entity(entity)` run tasks at a place or for an entity. An entity task stops and calls its retired callback when the entity is gone. Tube runs them on its one scheduler, so they are the shape a Folia port needs without the threads. ([`8ec4b4b`](https://github.com/NowsMC/Tube/commit/8ec4b4be15d7193d2c69366913b9767118a68a77))
+
+### Bukkit layer
+
+- Bukkit plugins can use `Player.isSneaking`, `isSprinting`, `getEyeLocation`, `getOpenInventory`, `isGlowing`, `getFireTicks`, `World.getNearbyEntities`, `getGameRuleValue`, `Bukkit.getItemFactory`, `Location.subtract(Location)`, `Block.getFace`, `Material.getEquipmentSlot`, `PlayerToggleSneakEvent`, `PlayerToggleSprintEvent`, `EntityToggleGlideEvent` and `UnsafeValues.getProtocolVersion`. Legacy numeric block and item ids are still not available. ([`5c3977e`](https://github.com/NowsMC/Tube/commit/5c3977e9802383c60ffe7b8e1789fefb28647665), [`a8743d0`](https://github.com/NowsMC/Tube/commit/a8743d01c5daadfdaa6bf01344f9774107acfd62), [`e41b1f3`](https://github.com/NowsMC/Tube/commit/e41b1f3df328c0dad6221ea886d4cd4b38358033), [`cc64151`](https://github.com/NowsMC/Tube/commit/cc6415142c7d4cd8c60c8e1ef35f1d22995ba010), [`7a36169`](https://github.com/NowsMC/Tube/commit/7a3616919037db4328f4f0b87505acf8bc80aba9))
+
 ### Chat
 
 - Plugins can build chat text with colours, hover text and click actions through `Chat` and `ChatText` in the API: copy to the clipboard, open a web link (http and https only), run or suggest a command, and insert text on shift click. `Chat.linkify` turns the links inside a text into clickable ones. ([`4bec423`](https://github.com/NowsMC/Tube/commit/4bec42392d5446662f4f6310b876771e835f0854))
