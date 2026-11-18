@@ -19,6 +19,7 @@ import space.nows.tube.server.mob.sense.Harm;
 import space.nows.tube.server.mob.sense.Sight;
 import space.nows.tube.server.mob.sound.AmbientSound;
 import space.nows.tube.server.mob.sound.DeathEffect;
+import space.nows.tube.server.mob.trait.Crowding;
 import space.nows.tube.server.mob.trait.Trait;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public final class Creature extends EntityCreature {
         this.gaze = new Gaze(this, kind.headTurnSpeed(), kind.maxHeadPitch(), kind.maxHeadTurn());
         this.sight = new Sight(this);
         kind.configure(this, goals, targets);
+        traits.add(new Crowding(this));
         if (kind.ambientSounds()) {
             traits.add(new AmbientSound(this));
         }
