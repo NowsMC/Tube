@@ -13,12 +13,15 @@ import space.nows.tube.api.Server;
 import space.nows.tube.api.ServerExtension;
 import space.nows.tube.api.TickReport;
 import space.nows.tube.api.command.CommandRegistry;
+import space.nows.tube.api.command.CommandSender;
+import space.nows.tube.api.command.TargetResolver;
 import space.nows.tube.api.entity.GameMode;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.api.network.Network;
 import space.nows.tube.api.plugin.PluginDescriptor;
+import space.nows.tube.api.registry.Registries;
 import space.nows.tube.api.scheduler.Scheduler;
 import space.nows.tube.api.world.WorldManager;
 import space.nows.tube.api.world.WorldOptions;
@@ -30,19 +33,21 @@ import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.access.Profiles;
 import space.nows.tube.server.access.UserCache;
 import space.nows.tube.server.access.Whitelist;
+import space.nows.tube.server.command.CommandService;
 import space.nows.tube.server.command.builtin.BuiltinCommands;
 import space.nows.tube.server.command.builtin.server.ServerControls;
-import space.nows.tube.server.command.CommandService;
+import space.nows.tube.server.command.support.EngineRegistries;
+import space.nows.tube.server.command.support.Targets;
 import space.nows.tube.server.config.ServerProperties;
 import space.nows.tube.server.config.ServerSettings;
 import space.nows.tube.server.connection.ConnectionLog;
-import space.nows.tube.server.console.TubeConsole;
 import space.nows.tube.server.connection.LoginGate;
 import space.nows.tube.server.connection.LoginHandler;
 import space.nows.tube.server.connection.PacketRateLimiter;
 import space.nows.tube.server.connection.PluginChannelService;
 import space.nows.tube.server.connection.ResourcePackHandler;
 import space.nows.tube.server.connection.StatusResponder;
+import space.nows.tube.server.console.TubeConsole;
 import space.nows.tube.server.entity.ItemDrops;
 import space.nows.tube.server.event.DefaultEventBus;
 import space.nows.tube.server.event.EventBridge;
@@ -95,6 +100,8 @@ public final class DedicatedServer implements Server {
     private PluginManager plugins;
     private NettyNetwork network;
     private RemoteAccess remoteAccess;
+    private final Targets targets = new Targets(this);
+    private final Registries registries = new EngineRegistries();
     private Autosave autosave;
     private final AutosaveGate autosaveGate = new AutosaveGate();
     private TickWatchdog watchdog;
@@ -190,6 +197,21 @@ public final class DedicatedServer implements Server {
     @Override
     public Collection<Player> players() {
         return players.online();
+    }
+
+    @Override
+    public CommandSender console() {
+        return commands.console();
+    }
+
+    @Override
+    public TargetResolver targets() {
+        return targets;
+    }
+
+    @Override
+    public Registries registries() {
+        return registries;
     }
 
     @Override

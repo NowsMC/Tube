@@ -4,6 +4,7 @@ import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.command.Suggestions;
+import space.nows.tube.api.command.TargetResolver;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.entity.Player;
 import space.nows.tube.api.world.Location;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public final class Targets {
+public final class Targets implements TargetResolver {
 
     public static final List<String> PLAYER_SELECTORS = List.of("@a", "@p", "@r", "@s");
     public static final List<String> ENTITY_SELECTORS = List.of("@a", "@e", "@p", "@r", "@s");
@@ -23,10 +24,12 @@ public final class Targets {
         this.server = server;
     }
 
+    @Override
     public Optional<Player> online(String name) {
         return server.players().stream().filter(player -> player.name().equalsIgnoreCase(name)).findFirst();
     }
 
+    @Override
     public Player player(CommandSender sender, String text) {
         List<Player> found = players(sender, text);
         if (found.size() != 1) {
@@ -35,6 +38,7 @@ public final class Targets {
         return found.getFirst();
     }
 
+    @Override
     public List<Player> players(CommandSender sender, String text) {
         List<Player> found;
         if (!Selector.is(text)) {
@@ -57,6 +61,7 @@ public final class Targets {
         return found;
     }
 
+    @Override
     public List<Entity> entities(CommandSender sender, String text) {
         if (!text.startsWith("@e")) {
             return List.copyOf(players(sender, text));
@@ -90,10 +95,12 @@ public final class Targets {
         return options;
     }
 
+    @Override
     public List<String> suggestPlayers(String typed) {
         return suggest(typed, PLAYER_SELECTORS, playerOptions());
     }
 
+    @Override
     public List<String> suggestEntities(String typed) {
         return suggest(typed, ENTITY_SELECTORS, entityOptions());
     }
@@ -112,6 +119,7 @@ public final class Targets {
         throw new CommandFailure("This command needs a player target when run from the console");
     }
 
+    @Override
     public Location origin(CommandSender sender) {
         if (sender instanceof Player player) {
             return player.location();
