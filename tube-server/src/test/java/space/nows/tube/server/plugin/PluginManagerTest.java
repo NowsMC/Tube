@@ -12,6 +12,7 @@ import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.plugin.PluginDescriptor;
 import space.nows.tube.api.scheduler.ScheduledTask;
 import space.nows.tube.api.scheduler.Scheduler;
+import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.event.DefaultEventBus;
 
 import java.io.IOException;
@@ -141,6 +142,24 @@ class PluginManagerTest {
         writeRaw("c.jar", "name: c\nversion: 1\nmain: " + RecordingPlugin.class.getName() + "\nload-before: [b]\n");
         new PluginManager(server, registry, scheduler, new DefaultEventBus(), directory).loadAll();
         assertEquals(List.of("enable:c:none", "enable:b:none", "enable:a:none"), RecordingPlugin.EVENTS);
+    }
+
+    @Test
+    void refusesPluginsForANewerTube() throws IOException {
+        writeRaw("new.jar", "name: fresh\nversion: 1\nmain: " + RecordingPlugin.class.getName() + "\ntube: '0.2701'\n");
+        writeRaw("old.jar", "name: settled\nversion: 1\nmain: " + RecordingPlugin.class.getName() + "\ntube: '0.2611'\nminecraft: ['1.21']\n");
+        PluginManager manager = new PluginManager(serverWith(new PermissionService(directory)), registry, scheduler, new DefaultEventBus(), directory);
+        manager.loadAll();
+        assertEquals(List.of("settled"), manager.descriptors().stream().map(PluginDescriptor::name).toList());
+    }
+
+    private Server serverWith(PermissionService permissions) {
+        return (Server) Proxy.newProxyInstance(Server.class.getClassLoader(), new Class<?>[] {Server.class}, (proxy, method, args) -> switch (method.getName()) {
+            case "version" -> "0.2611.2-SNAPSHOT";
+            case "minecraftVersion" -> "26.2";
+            case "permissions" -> permissions;
+            default -> null;
+        });
     }
 
     private void writeRaw(String fileName, String descriptor) throws IOException {

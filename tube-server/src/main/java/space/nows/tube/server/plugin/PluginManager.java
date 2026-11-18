@@ -192,6 +192,20 @@ public final class PluginManager {
         return names;
     }
 
+    private boolean compatible(PluginDescriptor descriptor) {
+        String required = descriptor.tube();
+        String version = server.version();
+        if (required != null && version != null && !ReleaseNumber.atLeast(version, required)) {
+            LOGGER.error("Plugin {} needs Tube {} or newer, this server runs {}", descriptor.name(), required, version);
+            return false;
+        }
+        String minecraft = server.minecraftVersion();
+        if (!descriptor.minecraft().isEmpty() && minecraft != null && !descriptor.minecraft().contains(minecraft)) {
+            LOGGER.warn("Plugin {} lists Minecraft {}, this server runs {}", descriptor.name(), String.join(", ", descriptor.minecraft()), minecraft);
+        }
+        return true;
+    }
+
     private static boolean isOrdered(String name, List<Candidate> ordered) {
         return ordered.stream().anyMatch(candidate -> candidate.descriptor().name().equals(name));
     }
@@ -203,6 +217,9 @@ public final class PluginManager {
                 LOGGER.error("Plugin {} not enabled: dependency {} failed to enable", descriptor.name(), dependency);
                 return;
             }
+        }
+        if (!compatible(descriptor)) {
+            return;
         }
 
         ScopedCommands scoped = new ScopedCommands(commands);
