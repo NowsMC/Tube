@@ -11,9 +11,14 @@ import net.minestom.server.event.player.PlayerChatEvent;
 import net.minestom.server.event.player.PlayerCommandEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerHandAnimationEvent;
+import net.minestom.server.event.player.PlayerInputEvent;
 import net.minestom.server.event.player.PlayerRespawnEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.event.player.PlayerStartDiggingEvent;
+import net.minestom.server.event.player.PlayerStartFlyingWithElytraEvent;
+import net.minestom.server.event.player.PlayerStartSprintingEvent;
+import net.minestom.server.event.player.PlayerStopFlyingWithElytraEvent;
+import net.minestom.server.event.player.PlayerStopSprintingEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.inventory.click.Click;
 import space.nows.tube.api.entity.GameMode;
@@ -24,6 +29,7 @@ import space.nows.tube.api.event.Cancellable;
 import space.nows.tube.api.event.CommandDispatchEvent;
 import space.nows.tube.api.event.EntityDamageEvent;
 import space.nows.tube.api.event.EntityDeathEvent;
+import space.nows.tube.api.event.EntityGlideEvent;
 import space.nows.tube.api.event.EntitySpawnEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.InventoryClickEvent;
@@ -35,6 +41,8 @@ import space.nows.tube.api.event.PlayerInteractEvent;
 import space.nows.tube.api.event.PlayerJoinEvent;
 import space.nows.tube.api.event.PlayerMoveEvent;
 import space.nows.tube.api.event.PlayerQuitEvent;
+import space.nows.tube.api.event.PlayerSneakEvent;
+import space.nows.tube.api.event.PlayerSprintEvent;
 import space.nows.tube.api.inventory.ClickType;
 import space.nows.tube.server.inventory.ItemMapper;
 import space.nows.tube.server.inventory.MinestomInventory;
@@ -91,6 +99,16 @@ public final class EventBridge {
             players.remove(event.getPlayer());
             announce(left.quitMessage());
         });
+
+        node.addListener(PlayerInputEvent.class, event -> {
+            if (event.hasPressedShiftKey() || event.hasReleasedShiftKey()) {
+                bus.post(new PlayerSneakEvent(players.wrap(event.getPlayer()), event.isHoldingShiftKey()));
+            }
+        });
+        node.addListener(PlayerStartSprintingEvent.class, event -> bus.post(new PlayerSprintEvent(players.wrap(event.getPlayer()), true)));
+        node.addListener(PlayerStopSprintingEvent.class, event -> bus.post(new PlayerSprintEvent(players.wrap(event.getPlayer()), false)));
+        node.addListener(PlayerStartFlyingWithElytraEvent.class, event -> bus.post(new EntityGlideEvent(players.wrap(event.getPlayer()), true)));
+        node.addListener(PlayerStopFlyingWithElytraEvent.class, event -> bus.post(new EntityGlideEvent(players.wrap(event.getPlayer()), false)));
 
         node.addListener(PlayerChatEvent.class, event -> {
             var player = players.wrap(event.getPlayer());

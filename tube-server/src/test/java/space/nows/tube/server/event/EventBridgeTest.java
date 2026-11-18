@@ -69,6 +69,21 @@ class EventBridgeTest {
     }
 
     @Test
+    void postsSprintAndGlideChanges(Env env) {
+        install();
+        bus.subscribe(space.nows.tube.api.event.PlayerSprintEvent.class, event -> log.add("sprint:" + event.sprinting()));
+        bus.subscribe(space.nows.tube.api.event.EntityGlideEvent.class, event -> log.add("glide:" + event.gliding() + ":" + event.entity().type()));
+        var player = env.createPlayer(instance(), new Pos(0, 42, 0));
+
+        EventDispatcher.call(new net.minestom.server.event.player.PlayerStartSprintingEvent(player));
+        EventDispatcher.call(new net.minestom.server.event.player.PlayerStopSprintingEvent(player));
+        EventDispatcher.call(new net.minestom.server.event.player.PlayerStartFlyingWithElytraEvent(player));
+        EventDispatcher.call(new net.minestom.server.event.player.PlayerStopFlyingWithElytraEvent(player));
+
+        assertEquals(List.of("sprint:true", "sprint:false", "glide:true:minecraft:player", "glide:false:minecraft:player"), log);
+    }
+
+    @Test
     void chatCanBeRewrittenOrCancelled(Env env) {
         install();
         var player = env.createPlayer(instance(), new Pos(0, 42, 0));
