@@ -12,6 +12,9 @@ import space.nows.tube.server.mob.ai.idle.StayAfloat;
 import space.nows.tube.server.mob.ai.idle.Tempted;
 import space.nows.tube.server.mob.ai.idle.Wander;
 import space.nows.tube.server.mob.ai.idle.WatchNearby;
+import space.nows.tube.server.mob.ai.social.Breed;
+import space.nows.tube.server.mob.ai.social.FollowParent;
+import space.nows.tube.server.mob.life.Lifecycle;
 
 import java.util.Set;
 import java.util.random.RandomGenerator;
@@ -34,9 +37,12 @@ public final class Chicken extends Animal {
 
     @Override
     public void configure(Creature creature, GoalSelector goals, GoalSelector targets) {
+        Lifecycle life = lifecycle(creature);
         goals.add(0, new StayAfloat(creature));
         goals.add(1, new Panic(creature, 1.4));
+        goals.add(2, new Breed(creature, life, 1.0));
         goals.add(3, new Tempted(creature, 1.0, FOOD));
+        goals.add(4, new FollowParent(creature, life, 1.1));
         goals.add(5, Wander.onLand(creature, 1.0));
         goals.add(6, WatchNearby.players(creature, 6f));
         goals.add(7, new LookAround(creature));
@@ -47,5 +53,15 @@ public final class Chicken extends Animal {
     @Override
     public void prepare(Creature creature, RandomGenerator random) {
         creature.set(DataComponents.CHICKEN_VARIANT, FarmClimate.at(creature.getInstance(), creature.getPosition()).variant());
+    }
+
+    @Override
+    public Set<Material> breedingFood() {
+        return FOOD;
+    }
+
+    @Override
+    public void inherit(Creature child, Creature mother, Creature father, RandomGenerator random) {
+        inheritComponent(child, mother, father, DataComponents.CHICKEN_VARIANT, random);
     }
 }

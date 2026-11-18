@@ -1,16 +1,34 @@
 package space.nows.tube.server.mob.kind.animal;
 
+import net.minestom.server.component.DataComponent;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureKind;
 import space.nows.tube.server.mob.Disposition;
+import space.nows.tube.server.mob.life.Breedable;
+import space.nows.tube.server.mob.life.Lifecycle;
 import space.nows.tube.server.mob.sense.Daylight;
 
-abstract class Animal implements CreatureKind {
+import java.util.random.RandomGenerator;
+
+abstract class Animal implements CreatureKind, Breedable {
 
     private static final float GRASS_PREFERENCE = 10f;
+
+    static Lifecycle lifecycle(Creature creature) {
+        Lifecycle life = new Lifecycle(creature);
+        creature.addTrait(life);
+        return life;
+    }
+
+    static <T> void inheritComponent(Creature child, Creature mother, Creature father, DataComponent<T> component, RandomGenerator random) {
+        T value = (random.nextBoolean() ? mother : father).get(component);
+        if (value != null) {
+            child.set(component, value);
+        }
+    }
 
     @Override
     public int ambientInterval() {

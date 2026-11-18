@@ -17,6 +17,7 @@ import net.minestom.testing.EnvTest;
 import org.junit.jupiter.api.Test;
 import space.nows.tube.server.gameplay.Archery;
 import space.nows.tube.server.gameplay.TestHooks;
+import space.nows.tube.server.mob.life.Lifecycle;
 import space.nows.tube.server.mob.loot.MobLoot;
 
 @EnvTest
@@ -104,5 +105,26 @@ class MobsTest {
         Creature cow = spawn(EntityType.COW, new Pos(10, 40, 10));
         boolean beef = MobLoot.of(cow).items().stream().anyMatch(item -> item.material() == Material.BEEF);
         assertTrue(beef);
+    }
+
+    @Test
+    void cowsInLoveHaveACalfThatGrowsUp(Env env) {
+        setup(env);
+        Creature mother = spawn(EntityType.COW, new Pos(10, 40, 10));
+        Creature father = spawn(EntityType.COW, new Pos(12, 40, 10));
+        Lifecycle motherLife = mother.trait(Lifecycle.class).orElseThrow();
+        Lifecycle fatherLife = father.trait(Lifecycle.class).orElseThrow();
+        motherLife.fallInLove(player);
+        fatherLife.fallInLove(player);
+        ticks(env, 300);
+        Creature calf = instance.getEntities().stream()
+                .filter(entity -> entity instanceof Creature creature && creature.getEntityType() == EntityType.COW && creature.isBaby())
+                .map(Creature.class::cast).findFirst().orElse(null);
+        assertTrue(calf != null, "no calf");
+        assertTrue(motherLife.age() > 0 && fatherLife.age() > 0, "parents not on cooldown");
+        Lifecycle calfLife = calf.trait(Lifecycle.class).orElseThrow();
+        calfLife.setAge(-1);
+        ticks(env, 2);
+        assertTrue(!calf.isBaby(), "calf did not grow up");
     }
 }
