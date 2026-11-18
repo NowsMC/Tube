@@ -16,6 +16,13 @@
 - The start shows the Java version and system, the default game mode and difficulty, how long the world took, the address, and `Done (…s)! For help, type "help"`. ([`20b4c54`](https://github.com/NowsMC/Tube/commit/20b4c545a76103615ef1aaf418fdb32bc26bf585))
 - Logins show the address with port and the position, commands players run are logged, and an unknown command points to `help`. ([`2144557`](https://github.com/NowsMC/Tube/commit/21445571e25b99acb4d5bcf587837f392a6b4c0d), [`663853e`](https://github.com/NowsMC/Tube/commit/663853edde78520ec52958c118b8302d09d30669))
 
+### Plugins
+
+- `tube-plugin.yml` gains `description`, `authors`, `website`, `prefix`, `soft-depends`, `load-before`, `tube` (lowest Tube version), `minecraft`, `libraries`, `commands` and `permissions`. Bukkit's names (`author`, `depend`, `softdepend`, `loadbefore`) work too. ([`8f7ce65`](https://github.com/NowsMC/Tube/commit/8f7ce65), [`bdd5c7f`](https://github.com/NowsMC/Tube/commit/bdd5c7f), [`81d82ac`](https://github.com/NowsMC/Tube/commit/81d82ac))
+- Libraries listed by a plugin are downloaded from Maven Central and checked before the plugin starts. ([`eb90afe`](https://github.com/NowsMC/Tube/commit/eb90afe))
+- Declared commands get their description, usage, aliases, permission and permission message; declared permissions get a default (`true`, `false`, `op`, `not-op`) and children. ([`9946081`](https://github.com/NowsMC/Tube/commit/9946081), [`9c371d7`](https://github.com/NowsMC/Tube/commit/9c371d7))
+- `help` lists command descriptions, `help <command>` shows usage and aliases, and `version <plugin>` shows a plugin's details. ([`a3b5233`](https://github.com/NowsMC/Tube/commit/a3b5233), [`8f7ce65`](https://github.com/NowsMC/Tube/commit/8f7ce65))
+
 ### Commands
 
 - Auto-fill offers every option as soon as a space is typed, for example `/gamemode `, instead of showing `[<args>]`. ([`c2ae326`](https://github.com/NowsMC/Tube/commit/c2ae3264a201434265c6618cd4a8b9d587a73f49))
