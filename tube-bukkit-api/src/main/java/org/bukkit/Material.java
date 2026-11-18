@@ -1720,6 +1720,26 @@ public enum Material implements Keyed {
         return NamespacedKey.minecraft(key);
     }
 
+    public int getId() {
+        throw new IllegalArgumentException("Cannot get ID of Modern Material");
+    }
+
+    public org.bukkit.inventory.EquipmentSlot getEquipmentSlot() {
+        if (key.endsWith("_helmet") || this == CARVED_PUMPKIN || key.endsWith("_head") || key.endsWith("_skull")) {
+            return org.bukkit.inventory.EquipmentSlot.HEAD;
+        }
+        if (key.endsWith("_chestplate") || this == ELYTRA) {
+            return org.bukkit.inventory.EquipmentSlot.CHEST;
+        }
+        if (key.endsWith("_leggings")) {
+            return org.bukkit.inventory.EquipmentSlot.LEGS;
+        }
+        if (key.endsWith("_boots")) {
+            return org.bukkit.inventory.EquipmentSlot.FEET;
+        }
+        return this == SHIELD ? org.bukkit.inventory.EquipmentSlot.OFF_HAND : org.bukkit.inventory.EquipmentSlot.HAND;
+    }
+
     public boolean isBlock() {
         return block;
     }

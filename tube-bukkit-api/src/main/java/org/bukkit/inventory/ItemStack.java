@@ -28,6 +28,14 @@ public class ItemStack implements Cloneable {
         this.durability = damage;
     }
 
+    public ItemStack(Material type, int amount, short damage, Byte data) {
+        this(type, amount, damage);
+    }
+
+    public int getTypeId() {
+        throw new UnsupportedOperationException("ItemStack#getTypeId uses legacy ids, which Tube does not have");
+    }
+
     public Material getType() {
         return type;
     }

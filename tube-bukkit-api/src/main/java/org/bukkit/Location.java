@@ -117,6 +117,10 @@ public class Location implements Cloneable {
         return add(-dx, -dy, -dz);
     }
 
+    public Location subtract(Location other) {
+        return subtract(other.x, other.y, other.z);
+    }
+
     public double distanceSquared(Location other) {
         double dx = x - other.x;
         double dy = y - other.y;
