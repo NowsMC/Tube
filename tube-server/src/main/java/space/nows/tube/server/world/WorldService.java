@@ -17,6 +17,7 @@ import space.nows.tube.api.world.WorldManager;
 import space.nows.tube.api.world.WorldOptions;
 import space.nows.tube.server.config.FileConfig;
 import space.nows.tube.server.entity.MinestomEntity;
+import space.nows.tube.server.world.rule.RuleBook;
 import space.nows.tube.server.entity.MinestomItemEntity;
 import space.nows.tube.server.entity.MinestomLivingEntity;
 import space.nows.tube.server.player.PlayerService;
@@ -217,6 +218,7 @@ public final class WorldService implements WorldManager {
         instance.setGenerator(unit -> generator.generate(new MinestomChunkBuilder(unit)));
         instance.setWorldAge((long) settings.getDouble("age", 0));
         instance.setTime((long) settings.getDouble("time", 1000));
+        RuleBook.load(instance, settings);
 
         MinestomWorld world = new MinestomWorld(name, instance, spawn, options, this);
         byInstance.put(instance, world);
@@ -227,6 +229,7 @@ public final class WorldService implements WorldManager {
         FileConfig settings = FileConfig.load(root.resolve(world.name()).resolve("tube-world.yml"));
         settings.set("time", world.instance().getTime());
         settings.set("age", world.instance().getWorldAge());
+        RuleBook.store(world.instance(), settings);
         settings.save();
     }
 

@@ -8,7 +8,9 @@ import net.minestom.server.instance.InstanceContainer;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.inventory.ItemStack;
 import space.nows.tube.api.world.Block;
+import space.nows.tube.api.world.GameRule;
 import space.nows.tube.api.world.Location;
+import space.nows.tube.api.world.Weather;
 import space.nows.tube.api.world.World;
 import space.nows.tube.api.world.WorldBorder;
 import space.nows.tube.api.world.WorldOptions;
@@ -18,6 +20,8 @@ import space.nows.tube.server.mob.CreatureKind;
 import space.nows.tube.server.mob.CreatureKinds;
 import space.nows.tube.server.world.effect.ParticleSpawner;
 import space.nows.tube.server.world.effect.SoundPlayer;
+import space.nows.tube.server.world.rule.RuleBook;
+import space.nows.tube.server.world.weather.WeatherControl;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -87,6 +91,27 @@ public final class MinestomWorld implements World {
         spawn[1] = location.y();
         spawn[2] = location.z();
         owner.saveSpawn(this, spawn);
+    }
+
+    @Override
+    public Weather weather() {
+        return WeatherControl.current(instance);
+    }
+
+    @Override
+    public void setWeather(Weather weather, int durationTicks) {
+        WeatherControl.apply(instance, weather, durationTicks);
+    }
+
+    @Override
+    public boolean gameRule(GameRule rule) {
+        return RuleBook.enabled(instance, rule);
+    }
+
+    @Override
+    public void setGameRule(GameRule rule, boolean value) {
+        RuleBook.set(instance, rule, value);
+        owner.saveState(this);
     }
 
     @Override

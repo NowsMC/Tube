@@ -31,6 +31,14 @@ public interface World {
 
     void setTime(long time);
 
+    Weather weather();
+
+    void setWeather(Weather weather, int durationTicks);
+
+    boolean gameRule(GameRule rule);
+
+    void setGameRule(GameRule rule, boolean value);
+
     Block block(int x, int y, int z);
 
     void setBlock(int x, int y, int z, Block block);
