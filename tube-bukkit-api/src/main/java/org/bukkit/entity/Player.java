@@ -10,6 +10,16 @@ public interface Player extends HumanEntity, OfflinePlayer {
 
     boolean isSprinting();
 
+    void hidePlayer(Player other);
+
+    void hidePlayer(org.bukkit.plugin.Plugin plugin, Player other);
+
+    void showPlayer(Player other);
+
+    void showPlayer(org.bukkit.plugin.Plugin plugin, Player other);
+
+    boolean canSee(Player other);
+
 
     String getDisplayName();
 

@@ -70,6 +70,31 @@ public final class BukkitPlayer extends BukkitLivingEntity implements Player {
     }
 
     @Override
+    public void hidePlayer(Player other) {
+        tube.hidePlayer(((BukkitPlayer) other).tube);
+    }
+
+    @Override
+    public void hidePlayer(Plugin plugin, Player other) {
+        hidePlayer(other);
+    }
+
+    @Override
+    public void showPlayer(Player other) {
+        tube.showPlayer(((BukkitPlayer) other).tube);
+    }
+
+    @Override
+    public void showPlayer(Plugin plugin, Player other) {
+        showPlayer(other);
+    }
+
+    @Override
+    public boolean canSee(Player other) {
+        return tube.canSee(((BukkitPlayer) other).tube);
+    }
+
+    @Override
     public boolean isSprinting() {
         return tube.isSprinting();
     }
