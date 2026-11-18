@@ -244,7 +244,7 @@ public final class PluginManager {
             return;
         }
 
-        ScopedCommands scoped = new ScopedCommands(commands, descriptor.commands());
+        ScopedCommands scoped = new ScopedCommands(commands, descriptor.name(), descriptor.commands());
         ScopedScheduler scopedScheduler = new ScopedScheduler(scheduler);
         ScopedEvents scopedEvents = new ScopedEvents(events);
         space.nows.tube.network.ScopedNetwork scopedNetwork = new space.nows.tube.network.ScopedNetwork(server.network());

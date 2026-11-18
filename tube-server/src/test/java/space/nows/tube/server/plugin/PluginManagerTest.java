@@ -203,7 +203,7 @@ class PluginManagerTest {
         assertEquals("a.use", command.permission());
         assertEquals("Does a", command.description());
         assertEquals("/<command> <thing>", command.usage());
-        assertEquals(List.of("ca"), registry.aliases.get("cmd-a"));
+        assertEquals(List.of("ca", "a:cmd-a"), registry.aliases.get("cmd-a"));
         assertTrue(permissions.has(UUID.randomUUID(), "a.use"));
 
         manager.disableAll();
