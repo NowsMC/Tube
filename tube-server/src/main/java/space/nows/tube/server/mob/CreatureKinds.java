@@ -5,6 +5,10 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.instance.Instance;
 import space.nows.tube.server.mob.kind.animal.Chicken;
 import space.nows.tube.server.mob.kind.animal.Cow;
+import space.nows.tube.server.mob.kind.animal.Mooshroom;
+import space.nows.tube.server.mob.kind.animal.Ocelot;
+import space.nows.tube.server.mob.kind.animal.PolarBear;
+import space.nows.tube.server.mob.kind.animal.Rabbit;
 import space.nows.tube.server.mob.kind.animal.Pig;
 import space.nows.tube.server.mob.kind.animal.Sheep;
 import space.nows.tube.server.mob.kind.fish.Cod;
@@ -39,7 +43,7 @@ public final class CreatureKinds {
     private static final Map<EntityType, CreatureKind> KINDS = new HashMap<>();
 
     static {
-        for (CreatureKind kind : List.of(new Cow(), new Pig(), new Sheep(), new Chicken(),
+        for (CreatureKind kind : List.of(new Cow(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(),
                 new Zombie(), new Husk(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Enderman(), new Cod(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }

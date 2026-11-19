@@ -19,7 +19,7 @@ import space.nows.tube.server.mob.life.Lifecycle;
 import java.util.Set;
 import java.util.random.RandomGenerator;
 
-public final class Cow extends Animal {
+public class Cow extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(10, 0.2);
     private static final Set<Material> FOOD = Set.of(Material.WHEAT);
