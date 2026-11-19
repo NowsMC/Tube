@@ -16,8 +16,9 @@
 
 ### Network
 
-- RCON closes a client that does not log in within 30 seconds and refuses an address for a minute after three wrong passwords. ([`cd45364`](https://github.com/NowsMC/Tube/commit/cd453641dd2e1eed094116d6faa27ef5d4c136f4))
+- RCON closes a client that does not log in within 30 seconds and refuses an address for a minute after three wrong passwords, including on connections it had already opened. ([`cd45364`](https://github.com/NowsMC/Tube/commit/cd453641dd2e1eed094116d6faa27ef5d4c136f4), [`04e3859`](https://github.com/NowsMC/Tube/commit/04e38599e2ccd08563ea39a3baccf694e1c58821))
 - If the RCON or Query port, or a port a plugin listens on, is already in use, Tube reports which address could not be bound instead of failing to start. ([`cd45364`](https://github.com/NowsMC/Tube/commit/cd453641dd2e1eed094116d6faa27ef5d4c136f4))
+- When a plugin closes a TCP server, or is disabled, the connections that server accepted are closed too, so handlers of an unloaded plugin stop receiving data. A plugin channel handler registered while another one unsubscribes is no longer lost. ([`04e3859`](https://github.com/NowsMC/Tube/commit/04e38599e2ccd08563ea39a3baccf694e1c58821))
 - Query keeps its handshake tokens in check under a flood of requests and no longer accepts expired ones. ([`cd45364`](https://github.com/NowsMC/Tube/commit/cd453641dd2e1eed094116d6faa27ef5d4c136f4))
 
 ### Mobs
