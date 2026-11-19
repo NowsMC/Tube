@@ -148,4 +148,29 @@ class MonsterVariantsTest {
                 .filter(entity -> entity.getEntityType() == EntityType.SLIME && !((Creature) entity).isDead()).count();
         assertTrue(alive >= 2, () -> "split into " + alive);
     }
+
+    @Test
+    void blazesAndGhastsShootFire(Env env) {
+        setup(env);
+        spawn(EntityType.BLAZE, new Pos(10, 40, 0));
+        boolean[] seen = new boolean[2];
+        for (int i = 0; i < 300 && !(seen[0] && seen[1]); i++) {
+            env.tick();
+            for (var entity : instance.getEntities()) {
+                if (entity.getEntityType() == EntityType.SMALL_FIREBALL) {
+                    seen[0] = true;
+                }
+            }
+            if (i == 0) {
+                spawn(EntityType.GHAST, new Pos(-12, 42, 0));
+            }
+            for (var entity : instance.getEntities()) {
+                if (entity.getEntityType() == EntityType.FIREBALL) {
+                    seen[1] = true;
+                }
+            }
+        }
+        assertTrue(seen[0], "blaze never shot");
+        assertTrue(seen[1], "ghast never shot");
+    }
 }
