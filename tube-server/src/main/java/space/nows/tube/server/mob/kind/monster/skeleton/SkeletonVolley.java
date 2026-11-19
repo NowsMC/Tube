@@ -5,6 +5,7 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.potion.Potion;
 import space.nows.tube.server.gameplay.Archery;
 import space.nows.tube.server.gameplay.SweptArrow;
 import space.nows.tube.server.mob.Creature;
@@ -21,6 +22,12 @@ final class SkeletonVolley implements Volley {
     private static final int BASE_INACCURACY = 14;
     private static final int INACCURACY_PER_DIFFICULTY = 4;
 
+    private final Potion effect;
+
+    SkeletonVolley(Potion effect) {
+        this.effect = effect;
+    }
+
     @Override
     public void fire(Creature shooter, LivingEntity target, float power) {
         int difficulty = MinecraftServer.getDifficulty().ordinal();
@@ -29,6 +36,9 @@ final class SkeletonVolley implements Volley {
         double base = power * BASE_DAMAGE + triangle(shooter, DIFFICULTY_DAMAGE * difficulty, DAMAGE_SPREAD);
         SweptArrow arrow = new SweptArrow(shooter);
         arrow.setTag(Archery.ARROW_DAMAGE, Math.ceil(ARROW_SPEED * base));
+        if (effect != null) {
+            arrow.setTag(Archery.ARROW_EFFECT, effect);
+        }
         double inaccuracy = BASE_INACCURACY - difficulty * INACCURACY_PER_DIFFICULTY;
         double reach = Math.hypot(aim.x() - from.x(), aim.z() - from.z());
         arrow.launch(shooter.getInstance(), from, new Vec(aim.x() - from.x(), aim.y() - from.y() + reach * LIFT_PER_REACH, aim.z() - from.z()), ARROW_SPEED, inaccuracy);

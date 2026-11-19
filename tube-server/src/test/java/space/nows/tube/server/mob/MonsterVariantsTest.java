@@ -1,0 +1,64 @@
+package space.nows.tube.server.mob;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.coordinate.Pos;
+import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.GameMode;
+import net.minestom.server.entity.Player;
+import net.minestom.server.instance.Instance;
+import net.minestom.server.potion.PotionEffect;
+import net.minestom.testing.Env;
+import net.minestom.testing.EnvTest;
+import org.junit.jupiter.api.Test;
+import space.nows.tube.server.gameplay.Archery;
+import space.nows.tube.server.gameplay.TestHooks;
+
+@EnvTest
+class MonsterVariantsTest {
+
+    private Instance instance;
+    private Player player;
+
+    private void setup(Env env) {
+        Mobs.install(MinecraftServer.getGlobalEventHandler());
+        TestHooks.installCombat(MinecraftServer.getGlobalEventHandler());
+        Archery.install(MinecraftServer.getGlobalEventHandler());
+        instance = env.createFlatInstance();
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                instance.loadChunk(x, z).join();
+            }
+        }
+        instance.setTime(18000);
+        player = env.createPlayer(instance, new Pos(0, 40, 0));
+        player.setGameMode(GameMode.SURVIVAL);
+    }
+
+    private Creature spawn(EntityType type, Pos at) {
+        Creature creature = new Creature(CreatureKinds.of(type).orElseThrow());
+        CreatureKinds.spawn(creature, instance, at).join();
+        return creature;
+    }
+
+    private static void ticks(Env env, int count) {
+        for (int i = 0; i < count; i++) {
+            env.tick();
+        }
+    }
+
+    private boolean affected(PotionEffect effect) {
+        return player.getActiveEffects().stream().anyMatch(active -> active.potion().effect() == effect);
+    }
+
+    @Test
+    void strayArrowsSlow(Env env) {
+        setup(env);
+        Creature stray = spawn(EntityType.STRAY, new Pos(8, 40, 0));
+        for (int i = 0; i < 400 && !affected(PotionEffect.SLOWNESS); i++) {
+            env.tick();
+        }
+        assertTrue(affected(PotionEffect.SLOWNESS), () -> "health " + player.getHealth() + " stray at " + stray.getPosition());
+    }
+}
