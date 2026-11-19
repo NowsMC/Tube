@@ -175,6 +175,7 @@ public final class Creature extends EntityCreature {
         if (kind.fireproof() && FireDamage.is(damage) || !kind.acceptsDamage(this, damage)) {
             return false;
         }
+        kind.absorb(this, damage);
         boolean hurt = super.damage(damage);
         if (hurt) {
             harm.record(damage, getAliveTicks());

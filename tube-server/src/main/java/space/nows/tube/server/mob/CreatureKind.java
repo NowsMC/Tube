@@ -30,6 +30,9 @@ public interface CreatureKind {
         return true;
     }
 
+    default void absorb(Creature creature, Damage damage) {
+    }
+
     default void damaged(Creature creature, Damage damage) {
     }
 
