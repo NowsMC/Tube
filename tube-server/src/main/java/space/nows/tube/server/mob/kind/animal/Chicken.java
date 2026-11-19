@@ -52,7 +52,7 @@ public final class Chicken extends Animal {
 
     @Override
     public void prepare(Creature creature, RandomGenerator random) {
-        creature.set(DataComponents.CHICKEN_VARIANT, FarmClimate.at(creature.getInstance(), creature.getPosition()).variant());
+        pickVariant(creature, DataComponents.CHICKEN_VARIANT, "chicken_variant", random);
     }
 
     @Override

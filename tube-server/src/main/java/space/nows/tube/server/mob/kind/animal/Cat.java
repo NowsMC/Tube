@@ -1,5 +1,6 @@
 package space.nows.tube.server.mob.kind.animal;
 
+import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.item.Material;
 import space.nows.tube.api.entity.brain.Brain;
@@ -23,6 +24,7 @@ import space.nows.tube.server.mob.life.Tamable;
 import space.nows.tube.server.mob.life.Tameness;
 
 import java.util.Set;
+import java.util.random.RandomGenerator;
 
 public final class Cat extends Animal implements Tamable {
 
@@ -56,6 +58,16 @@ public final class Cat extends Animal implements Tamable {
         brain.add(12, WatchNearby.players(creature, 10f));
         brain.add(1, HuntNearest.of(creature, EntityType.RABBIT, false).when(cat -> !tameness.tamed()));
         brain.add(1, Turtles.hatchlingHunt(creature).when(cat -> !tameness.tamed()));
+    }
+
+    @Override
+    public void prepare(Creature creature, RandomGenerator random) {
+        pickVariant(creature, DataComponents.CAT_VARIANT, "cat_variant", random);
+    }
+
+    @Override
+    public void inherit(Creature child, Creature mother, Creature father, RandomGenerator random) {
+        inheritComponent(child, mother, father, DataComponents.CAT_VARIANT, random);
     }
 
     @Override

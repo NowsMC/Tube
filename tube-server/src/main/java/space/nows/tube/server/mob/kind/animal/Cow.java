@@ -49,7 +49,7 @@ public class Cow extends Animal {
 
     @Override
     public void prepare(Creature creature, RandomGenerator random) {
-        creature.set(DataComponents.COW_VARIANT, FarmClimate.at(creature.getInstance(), creature.getPosition()).variant());
+        pickVariant(creature, DataComponents.COW_VARIANT, "cow_variant", random);
     }
 
     @Override

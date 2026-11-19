@@ -4,12 +4,14 @@ import net.minestom.server.component.DataComponent;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.registry.RegistryKey;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureKind;
 import space.nows.tube.server.mob.Disposition;
 import space.nows.tube.server.mob.life.Breedable;
 import space.nows.tube.server.mob.life.Lifecycle;
 import space.nows.tube.server.mob.sense.Daylight;
+import space.nows.tube.server.mob.spawn.VariantTable;
 
 import java.util.random.RandomGenerator;
 
@@ -21,6 +23,11 @@ public abstract class Animal implements CreatureKind, Breedable {
         Lifecycle life = new Lifecycle(creature);
         creature.addTrait(life);
         return life;
+    }
+
+    protected static <T> void pickVariant(Creature creature, DataComponent<RegistryKey<T>> component, String registry, RandomGenerator random) {
+        String biome = creature.getInstance().getBiome(creature.getPosition()).key().asString();
+        VariantTable.pick(registry, biome, random).ifPresent(variant -> creature.set(component, RegistryKey.of(variant)));
     }
 
     protected static <T> void inheritComponent(Creature child, Creature mother, Creature father, DataComponent<T> component, RandomGenerator random) {

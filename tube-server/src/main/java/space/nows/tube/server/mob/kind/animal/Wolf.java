@@ -1,5 +1,6 @@
 package space.nows.tube.server.mob.kind.animal;
 
+import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.attribute.Attribute;
@@ -31,6 +32,7 @@ import space.nows.tube.server.mob.life.Tameness;
 import space.nows.tube.server.mob.sense.Grudge;
 
 import java.util.Set;
+import java.util.random.RandomGenerator;
 
 public final class Wolf extends Animal implements Tamable {
 
@@ -93,6 +95,16 @@ public final class Wolf extends Animal implements Tamable {
             creature.trait(Grudge.class).ifPresent(grudge -> grudge.provoke(attacker));
             creature.trait(Tameness.class).ifPresent(tameness -> tameness.sit(false));
         }
+    }
+
+    @Override
+    public void prepare(Creature creature, RandomGenerator random) {
+        pickVariant(creature, DataComponents.WOLF_VARIANT, "wolf_variant", random);
+    }
+
+    @Override
+    public void inherit(Creature child, Creature mother, Creature father, RandomGenerator random) {
+        inheritComponent(child, mother, father, DataComponents.WOLF_VARIANT, random);
     }
 
     @Override

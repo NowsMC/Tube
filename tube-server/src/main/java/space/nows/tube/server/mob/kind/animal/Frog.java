@@ -1,5 +1,6 @@
 package space.nows.tube.server.mob.kind.animal;
 
+import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.metadata.cube.AbstractCubeMeta;
 import net.minestom.server.item.Material;
@@ -17,6 +18,7 @@ import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.life.Lifecycle;
 
 import java.util.Set;
+import java.util.random.RandomGenerator;
 
 public final class Frog extends Animal {
 
@@ -46,6 +48,16 @@ public final class Frog extends Animal {
         brain.add(1, HuntNearest.of(creature, entity -> (entity.getEntityType() == EntityType.SLIME
                 || entity.getEntityType() == EntityType.MAGMA_CUBE)
                 && entity.getEntityMeta() instanceof AbstractCubeMeta cube && cube.getSize() == 1, 10, true, target -> true));
+    }
+
+    @Override
+    public void prepare(Creature creature, RandomGenerator random) {
+        pickVariant(creature, DataComponents.FROG_VARIANT, "frog_variant", random);
+    }
+
+    @Override
+    public void inherit(Creature child, Creature mother, Creature father, RandomGenerator random) {
+        inheritComponent(child, mother, father, DataComponents.FROG_VARIANT, random);
     }
 
     @Override

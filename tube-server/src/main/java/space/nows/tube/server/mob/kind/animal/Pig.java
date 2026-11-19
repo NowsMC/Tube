@@ -51,7 +51,7 @@ public final class Pig extends Animal {
 
     @Override
     public void prepare(Creature creature, RandomGenerator random) {
-        creature.set(DataComponents.PIG_VARIANT, FarmClimate.at(creature.getInstance(), creature.getPosition()).variant());
+        pickVariant(creature, DataComponents.PIG_VARIANT, "pig_variant", random);
     }
 
     @Override

@@ -2,9 +2,7 @@ package space.nows.tube.server.mob.kind.animal;
 
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.Instance;
-import net.minestom.server.registry.RegistryKey;
 
-import java.util.Locale;
 import java.util.Set;
 
 enum FarmClimate {
@@ -26,10 +24,6 @@ enum FarmClimate {
             "minecraft:cold_ocean", "minecraft:deep_cold_ocean", "minecraft:old_growth_pine_taiga",
             "minecraft:old_growth_spruce_taiga", "minecraft:taiga", "minecraft:windswept_forest",
             "minecraft:windswept_gravelly_hills", "minecraft:windswept_hills", "minecraft:stony_peaks");
-
-    <T> RegistryKey<T> variant() {
-        return RegistryKey.of("minecraft:" + name().toLowerCase(Locale.ROOT));
-    }
 
     static FarmClimate at(Instance instance, Point position) {
         String biome = instance.getBiome(position).key().asString();
