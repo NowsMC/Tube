@@ -39,6 +39,7 @@ import space.nows.tube.server.mob.kind.monster.cube.MagmaCube;
 import space.nows.tube.server.mob.kind.monster.cube.Slime;
 import space.nows.tube.server.mob.kind.monster.enderman.Enderman;
 import space.nows.tube.server.mob.kind.monster.ghast.Ghast;
+import space.nows.tube.server.mob.kind.monster.illager.Evoker;
 import space.nows.tube.server.mob.kind.monster.illager.Pillager;
 import space.nows.tube.server.mob.kind.monster.illager.Ravager;
 import space.nows.tube.server.mob.kind.monster.illager.Vindicator;
@@ -66,7 +67,7 @@ public final class CreatureKinds {
 
     static {
         for (CreatureKind kind : List.of(new Cow(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
-                new Zombie(), new Husk(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Slime(), new MagmaCube(), new Blaze(), new Ghast(), new Vex(), new Bat(), new Pillager(), new Vindicator(), new Ravager(), new Enderman(), new IronGolem(), new SnowGolem(), new Squid(), new GlowSquid(), new Cod(), new Pufferfish(), new TropicalFish(), new Salmon())) {
+                new Zombie(), new Husk(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Slime(), new MagmaCube(), new Blaze(), new Ghast(), new Vex(), new Bat(), new Pillager(), new Vindicator(), new Evoker(), new Ravager(), new Enderman(), new IronGolem(), new SnowGolem(), new Squid(), new GlowSquid(), new Cod(), new Pufferfish(), new TropicalFish(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }
     }

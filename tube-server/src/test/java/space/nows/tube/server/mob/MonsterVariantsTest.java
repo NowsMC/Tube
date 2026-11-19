@@ -124,10 +124,12 @@ class MonsterVariantsTest {
         setup(env);
         Creature llama = spawn(EntityType.LLAMA, new Pos(6, 40, 0));
         llama.damage(net.minestom.server.entity.damage.Damage.fromPlayer(player, 1));
-        for (int i = 0; i < 200 && player.getHealth() >= 20; i++) {
+        boolean spat = false;
+        for (int i = 0; i < 200 && !spat; i++) {
             env.tick();
+            spat = instance.getEntities().stream().anyMatch(entity -> entity.getEntityType() == EntityType.LLAMA_SPIT);
         }
-        assertTrue(player.getHealth() < 20, "llama did not spit");
+        assertTrue(spat, "llama did not spit");
         ticks(env, 10);
         assertTrue(llama.target() == null, "llama kept its target after spitting");
     }
@@ -182,5 +184,18 @@ class MonsterVariantsTest {
             env.tick();
         }
         assertTrue(player.getHealth() < 20, () -> "pillager at " + pillager.getPosition() + " never hit");
+    }
+
+    @Test
+    void evokersCastSpells(Env env) {
+        setup(env);
+        spawn(EntityType.EVOKER, new Pos(6, 40, 0));
+        boolean cast = false;
+        for (int i = 0; i < 400 && !cast; i++) {
+            env.tick();
+            cast = instance.getEntities().stream().anyMatch(entity -> entity.getEntityType() == EntityType.EVOKER_FANGS
+                    || entity.getEntityType() == EntityType.VEX);
+        }
+        assertTrue(cast, "evoker never cast");
     }
 }
