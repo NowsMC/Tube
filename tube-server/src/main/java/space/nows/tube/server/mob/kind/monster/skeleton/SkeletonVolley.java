@@ -12,7 +12,7 @@ import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.brain.combat.Volley;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
-final class SkeletonVolley implements Volley {
+public final class SkeletonVolley implements Volley {
 
     private static final double ARROW_SPEED = 1.6;
     private static final double LIFT_PER_REACH = 0.2;
@@ -24,7 +24,7 @@ final class SkeletonVolley implements Volley {
 
     private final Potion effect;
 
-    SkeletonVolley(Potion effect) {
+    public SkeletonVolley(Potion effect) {
         this.effect = effect;
     }
 
