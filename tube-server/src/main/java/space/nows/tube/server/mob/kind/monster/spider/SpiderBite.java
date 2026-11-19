@@ -1,7 +1,7 @@
 package space.nows.tube.server.mob.kind.monster.spider;
 
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.ai.combat.MeleeAttack;
+import space.nows.tube.server.mob.brain.combat.MeleeAttack;
 
 final class SpiderBite extends MeleeAttack {
 

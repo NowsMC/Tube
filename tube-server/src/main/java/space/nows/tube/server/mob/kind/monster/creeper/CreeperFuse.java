@@ -5,7 +5,7 @@ import net.minestom.server.entity.metadata.monster.CreeperMeta;
 import net.minestom.server.instance.Instance;
 import space.nows.tube.server.gameplay.Explosions;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.ai.combat.Swelling;
+import space.nows.tube.server.mob.brain.combat.Swelling;
 import space.nows.tube.server.mob.trait.Trait;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
