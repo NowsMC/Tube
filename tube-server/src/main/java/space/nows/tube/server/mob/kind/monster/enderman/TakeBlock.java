@@ -4,14 +4,14 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.metadata.monster.EndermanMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
+import space.nows.tube.api.entity.brain.Behavior;
 import space.nows.tube.api.world.GameRule;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.ai.Goal;
 import space.nows.tube.server.world.rule.RuleBook;
 
 import java.util.Set;
 
-final class TakeBlock extends Goal {
+final class TakeBlock extends Behavior {
 
     private static final int CHANCE = 20;
     private static final Set<String> HOLDABLE = Set.of(

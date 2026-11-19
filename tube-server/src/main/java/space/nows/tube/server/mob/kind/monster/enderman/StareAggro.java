@@ -3,12 +3,12 @@ package space.nows.tube.server.mob.kind.monster.enderman;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.attribute.Attribute;
+import space.nows.tube.api.entity.brain.Behavior;
+import space.nows.tube.api.entity.brain.Control;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.ai.Control;
-import space.nows.tube.server.mob.ai.Goal;
-import space.nows.tube.server.mob.ai.target.Targeting;
+import space.nows.tube.server.mob.brain.target.Targeting;
 
-final class StareAggro extends Goal {
+final class StareAggro extends Behavior {
 
     private static final int AGGRO_DELAY = 5;
     private static final int CHASE_TELEPORT_DELAY = 30;

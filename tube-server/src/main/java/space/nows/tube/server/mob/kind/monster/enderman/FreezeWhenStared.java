@@ -2,11 +2,11 @@ package space.nows.tube.server.mob.kind.monster.enderman;
 
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
+import space.nows.tube.api.entity.brain.Behavior;
+import space.nows.tube.api.entity.brain.Control;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.ai.Control;
-import space.nows.tube.server.mob.ai.Goal;
 
-final class FreezeWhenStared extends Goal {
+final class FreezeWhenStared extends Behavior {
 
     private static final double STARE_RANGE_SQUARED = 256.0;
 
