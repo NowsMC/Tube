@@ -3,6 +3,7 @@ package space.nows.tube.server.mob;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
+import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.damage.Damage;
 import space.nows.tube.api.entity.brain.Brain;
 
@@ -30,6 +31,10 @@ public interface CreatureKind {
     }
 
     default void damaged(Creature creature, Damage damage) {
+    }
+
+    default float attackDamage(Creature creature) {
+        return (float) creature.getAttributeValue(Attribute.ATTACK_DAMAGE);
     }
 
     default void landedHit(Creature creature, LivingEntity target) {

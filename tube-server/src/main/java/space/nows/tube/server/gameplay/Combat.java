@@ -116,7 +116,7 @@ final class Combat {
             source = Damage.fromPlayer(player, damage);
             KillCredit.hitBy(target, player);
         } else {
-            damage = (float) attacker.getAttributeValue(Attribute.ATTACK_DAMAGE);
+            damage = attacker instanceof Creature creature ? creature.kind().attackDamage(creature) : (float) attacker.getAttributeValue(Attribute.ATTACK_DAMAGE);
             source = Damage.fromEntity(attacker, damage);
         }
         if (target.damage(source)) {
