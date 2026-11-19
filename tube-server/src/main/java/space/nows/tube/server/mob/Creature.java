@@ -171,7 +171,7 @@ public final class Creature extends EntityCreature {
 
     @Override
     public boolean damage(Damage damage) {
-        if (!kind.acceptsDamage(this, damage)) {
+        if (kind.fireproof() && FireDamage.is(damage) || !kind.acceptsDamage(this, damage)) {
             return false;
         }
         boolean hurt = super.damage(damage);

@@ -39,6 +39,10 @@ public interface CreatureKind {
         return type().key().value();
     }
 
+    default boolean fireproof() {
+        return false;
+    }
+
     default boolean leavesWhenFar(Creature creature) {
         return true;
     }
