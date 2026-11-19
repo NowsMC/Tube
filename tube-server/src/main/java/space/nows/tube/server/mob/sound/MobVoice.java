@@ -13,7 +13,7 @@ public final class MobVoice {
     }
 
     public static String key(Creature creature, String event) {
-        return "minecraft:entity." + creature.kind().type().key().value() + "." + event;
+        return "minecraft:entity." + creature.kind().voice() + "." + event;
     }
 
     public static void play(Creature creature, String event) {

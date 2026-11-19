@@ -19,6 +19,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.world.Difficulty;
 import space.nows.tube.server.item.Enchantments;
+import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.KillCredit;
 
 import java.util.Set;
@@ -128,6 +129,9 @@ final class Combat {
                 if (weapon.has(DataComponents.MAX_DAMAGE)) {
                     Durability.damage(player, EquipmentSlot.MAIN_HAND, weapon.has(DataComponents.WEAPON) ? 1 : 2);
                 }
+            }
+            if (attacker instanceof Creature creature) {
+                creature.kind().landedHit(creature, target);
             }
         }
     }
