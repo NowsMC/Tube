@@ -4,17 +4,25 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.instance.Instance;
 import space.nows.tube.server.mob.kind.ambient.Bat;
+import space.nows.tube.server.mob.kind.animal.Armadillo;
 import space.nows.tube.server.mob.kind.animal.Axolotl;
+import space.nows.tube.server.mob.kind.animal.Camel;
+import space.nows.tube.server.mob.kind.animal.CamelHusk;
 import space.nows.tube.server.mob.kind.animal.Cat;
 import space.nows.tube.server.mob.kind.animal.Chicken;
 import space.nows.tube.server.mob.kind.animal.Cow;
+import space.nows.tube.server.mob.kind.animal.Fox;
 import space.nows.tube.server.mob.kind.animal.Frog;
+import space.nows.tube.server.mob.kind.animal.Goat;
 import space.nows.tube.server.mob.kind.animal.Mooshroom;
 import space.nows.tube.server.mob.kind.animal.Ocelot;
+import space.nows.tube.server.mob.kind.animal.Panda;
 import space.nows.tube.server.mob.kind.animal.Pig;
 import space.nows.tube.server.mob.kind.animal.PolarBear;
 import space.nows.tube.server.mob.kind.animal.Rabbit;
 import space.nows.tube.server.mob.kind.animal.Sheep;
+import space.nows.tube.server.mob.kind.animal.Sniffer;
+import space.nows.tube.server.mob.kind.animal.Strider;
 import space.nows.tube.server.mob.kind.animal.Turtle;
 import space.nows.tube.server.mob.kind.animal.Wolf;
 import space.nows.tube.server.mob.kind.animal.horse.Donkey;
@@ -81,7 +89,7 @@ public final class CreatureKinds {
     private static final Map<EntityType, CreatureKind> KINDS = new HashMap<>();
 
     static {
-        for (CreatureKind kind : List.of(new Cow(), new Frog(), new Axolotl(), new Turtle(), new Tadpole(), new ZombieNautilus(), new Nautilus(), new Dolphin(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Wolf(), new Cat(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
+        for (CreatureKind kind : List.of(new Cow(), new Fox(), new Panda(), new Strider(), new Sniffer(), new CamelHusk(), new Camel(), new Armadillo(), new Goat(), new Frog(), new Axolotl(), new Turtle(), new Tadpole(), new ZombieNautilus(), new Nautilus(), new Dolphin(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Wolf(), new Cat(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
                 new Zombie(), new Husk(), new Drowned(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Slime(), new MagmaCube(), new Blaze(), new Ghast(), new Vex(), new Bat(), new Pillager(), new Vindicator(), new Evoker(), new Witch(), new Guardian(), new ElderGuardian(), new Hoglin(), new Zoglin(), new Ravager(), new Enderman(), new IronGolem(), new SnowGolem(), new Squid(), new GlowSquid(), new Cod(), new Pufferfish(), new TropicalFish(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }
