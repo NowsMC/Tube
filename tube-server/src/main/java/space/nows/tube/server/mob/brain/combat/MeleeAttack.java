@@ -11,21 +11,27 @@ import space.nows.tube.server.mob.Creature;
 public class MeleeAttack extends Behavior {
 
     private static final long START_CHECK_COOLDOWN = 20;
-    private static final int ATTACK_INTERVAL = 20;
+    private static final int DEFAULT_INTERVAL = 20;
 
     protected final Creature creature;
     private final double speed;
     private final boolean persistent;
+    private final int interval;
     private Point pathedTo;
     private int repathIn;
     private int attackIn;
     private long lastStartCheck = -START_CHECK_COOLDOWN;
 
     public MeleeAttack(Creature creature, double speed, boolean persistent) {
+        this(creature, speed, persistent, DEFAULT_INTERVAL);
+    }
+
+    public MeleeAttack(Creature creature, double speed, boolean persistent, int interval) {
         super(Control.MOVE, Control.LOOK);
         this.creature = creature;
         this.speed = speed;
         this.persistent = persistent;
+        this.interval = interval;
     }
 
     @Override
@@ -101,7 +107,7 @@ public class MeleeAttack extends Behavior {
         }
         attackIn = Math.max(attackIn - 1, 0);
         if (attackIn <= 0 && Reach.melee(creature, target) && creature.sight().canSee(target)) {
-            attackIn = ticks(ATTACK_INTERVAL);
+            attackIn = ticks(interval);
             creature.strike(target);
         }
     }
@@ -111,7 +117,7 @@ public class MeleeAttack extends Behavior {
     }
 
     protected final int attackInterval() {
-        return ticks(ATTACK_INTERVAL);
+        return ticks(interval);
     }
 
     private boolean targetMoved(LivingEntity target) {
