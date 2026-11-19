@@ -117,5 +117,6 @@ class ScoreboardTest {
         removals.assertSingle();
         assertTrue(viewer.tabList().entries().isEmpty());
         assertThrows(IllegalArgumentException.class, () -> viewer.tabList().update(TabEntry.of(fake, "Spacer")));
+        assertThrows(IllegalArgumentException.class, () -> TabEntry.of(fake, "SeventeenLetters!"));
     }
 }

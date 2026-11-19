@@ -9,6 +9,7 @@ import space.nows.tube.api.scoreboard.team.NameTagVisibility;
 import space.nows.tube.api.scoreboard.team.Team;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 final class MinestomTeam implements Team {
@@ -36,7 +37,7 @@ final class MinestomTeam implements Team {
 
     @Override
     public void setDisplayName(Component displayName) {
-        team.updateTeamDisplayName(displayName == null ? Component.empty() : displayName);
+        team.updateTeamDisplayName(Objects.requireNonNullElse(displayName, Component.empty()));
     }
 
     @Override
@@ -46,7 +47,7 @@ final class MinestomTeam implements Team {
 
     @Override
     public void setPrefix(Component prefix) {
-        team.updatePrefix(prefix == null ? Component.empty() : prefix);
+        team.updatePrefix(Objects.requireNonNullElse(prefix, Component.empty()));
     }
 
     @Override
@@ -56,7 +57,7 @@ final class MinestomTeam implements Team {
 
     @Override
     public void setSuffix(Component suffix) {
-        team.updateSuffix(suffix == null ? Component.empty() : suffix);
+        team.updateSuffix(Objects.requireNonNullElse(suffix, Component.empty()));
     }
 
     @Override

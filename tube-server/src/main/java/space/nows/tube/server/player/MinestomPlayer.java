@@ -14,6 +14,7 @@ import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.entity.MinestomLivingEntity;
 import space.nows.tube.server.inventory.MinestomInventory;
+import space.nows.tube.server.scoreboard.MinestomTabList;
 import space.nows.tube.server.world.WorldService;
 
 import java.net.InetSocketAddress;

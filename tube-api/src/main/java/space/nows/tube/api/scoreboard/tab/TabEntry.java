@@ -9,10 +9,15 @@ import java.util.UUID;
 
 public record TabEntry(UUID id, String name, Component displayName, Skin skin, int latency, GameMode gameMode, int order) {
 
+    public static final int MAX_NAME = 16;
+
     public TabEntry {
         Objects.requireNonNull(id, "id");
         Objects.requireNonNull(name, "name");
         Objects.requireNonNull(gameMode, "gameMode");
+        if (name.length() > MAX_NAME) {
+            throw new IllegalArgumentException("Tab entry names hold at most " + MAX_NAME + " characters: " + name);
+        }
     }
 
     public static TabEntry of(UUID id, String name) {

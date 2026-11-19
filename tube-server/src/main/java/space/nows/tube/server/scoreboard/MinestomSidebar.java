@@ -12,6 +12,7 @@ import space.nows.tube.server.player.PlayerService;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 final class MinestomSidebar implements Sidebar {
@@ -21,7 +22,7 @@ final class MinestomSidebar implements Sidebar {
     private boolean numbersHidden;
 
     MinestomSidebar(Component title, PlayerService players) {
-        this.sidebar = new net.minestom.server.scoreboard.Sidebar(title == null ? Component.empty() : title);
+        this.sidebar = new net.minestom.server.scoreboard.Sidebar(Objects.requireNonNullElse(title, Component.empty()));
         this.players = players;
     }
 
@@ -32,14 +33,14 @@ final class MinestomSidebar implements Sidebar {
 
     @Override
     public void setTitle(Component title) {
-        sidebar.setTitle(title == null ? Component.empty() : title);
+        sidebar.setTitle(Objects.requireNonNullElse(title, Component.empty()));
     }
 
     @Override
     public void setLine(String id, Component text, int score) {
-        Component content = text == null ? Component.empty() : text;
+        Component content = Objects.requireNonNullElse(text, Component.empty());
         if (sidebar.getLine(id) == null) {
-            sidebar.createLine(new ScoreboardLine(id, content, score, numbersHidden ? NumberFormat.blank() : null));
+            sidebar.createLine(new ScoreboardLine(id, content, score, format()));
             return;
         }
         sidebar.updateLineContent(id, content);
@@ -76,10 +77,13 @@ final class MinestomSidebar implements Sidebar {
     @Override
     public void setNumbersHidden(boolean hidden) {
         this.numbersHidden = hidden;
-        NumberFormat format = hidden ? NumberFormat.blank() : null;
         for (ScoreboardLine line : sidebar.getLines()) {
-            sidebar.updateLineNumberFormat(line.getId(), format);
+            sidebar.updateLineNumberFormat(line.getId(), format());
         }
+    }
+
+    private NumberFormat format() {
+        return numbersHidden ? NumberFormat.blank() : null;
     }
 
     @Override
