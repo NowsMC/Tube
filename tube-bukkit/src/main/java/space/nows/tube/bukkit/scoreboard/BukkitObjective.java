@@ -57,8 +57,8 @@ final class BukkitObjective implements Objective {
     }
 
     void changed() {
-        if (slot == DisplaySlot.SIDEBAR) {
-            scoreboard.refreshSidebar();
+        if (slot != null) {
+            scoreboard.refresh();
         }
     }
 

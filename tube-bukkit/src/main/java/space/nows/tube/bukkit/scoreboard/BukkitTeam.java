@@ -23,7 +23,7 @@ final class BukkitTeam implements Team {
     private String prefix = "";
     private String suffix = "";
     private ChatColor color = ChatColor.RESET;
-    private boolean friendlyFire;
+    private boolean friendlyFire = true;
     private boolean seeInvisible = true;
 
     BukkitTeam(BukkitScoreboard scoreboard, String name) {
@@ -33,12 +33,11 @@ final class BukkitTeam implements Team {
         for (Option option : Option.values()) {
             options.put(option, OptionStatus.ALWAYS);
         }
-        this.tube = scoreboard.isMain() ? backing(scoreboard, name) : null;
+        this.tube = scoreboard.tubeTeam(name);
     }
 
-    private static space.nows.tube.api.scoreboard.team.Team backing(BukkitScoreboard scoreboard, String name) {
-        var scoreboards = scoreboard.runtime().tube().scoreboards();
-        return scoreboards.team(name).orElseGet(() -> scoreboards.createTeam(name));
+    space.nows.tube.api.scoreboard.team.Team tube() {
+        return tube;
     }
 
     @Override
@@ -54,9 +53,7 @@ final class BukkitTeam implements Team {
     @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-        if (tube != null) {
-            tube.setDisplayName(BukkitText.component(displayName));
-        }
+        tube.setDisplayName(BukkitText.component(displayName));
     }
 
     @Override
@@ -67,9 +64,7 @@ final class BukkitTeam implements Team {
     @Override
     public void setPrefix(String prefix) {
         this.prefix = prefix == null ? "" : prefix;
-        if (tube != null) {
-            tube.setPrefix(BukkitText.component(this.prefix));
-        }
+        tube.setPrefix(BukkitText.component(this.prefix));
     }
 
     @Override
@@ -80,9 +75,7 @@ final class BukkitTeam implements Team {
     @Override
     public void setSuffix(String suffix) {
         this.suffix = suffix == null ? "" : suffix;
-        if (tube != null) {
-            tube.setSuffix(BukkitText.component(this.suffix));
-        }
+        tube.setSuffix(BukkitText.component(this.suffix));
     }
 
     @Override
@@ -96,9 +89,7 @@ final class BukkitTeam implements Team {
             throw new IllegalArgumentException("Only color or reset is allowed");
         }
         this.color = color;
-        if (tube != null) {
-            tube.setColor(color == ChatColor.RESET ? NamedTextColor.WHITE : NamedTextColor.NAMES.value(color.name().toLowerCase(java.util.Locale.ROOT)));
-        }
+        tube.setColor(color == ChatColor.RESET ? NamedTextColor.WHITE : NamedTextColor.NAMES.value(color.name().toLowerCase(java.util.Locale.ROOT)));
     }
 
     @Override
@@ -109,9 +100,7 @@ final class BukkitTeam implements Team {
     @Override
     public void setAllowFriendlyFire(boolean enabled) {
         this.friendlyFire = enabled;
-        if (tube != null) {
-            tube.setFriendlyFire(enabled);
-        }
+        tube.setFriendlyFire(enabled);
     }
 
     @Override
@@ -122,9 +111,7 @@ final class BukkitTeam implements Team {
     @Override
     public void setCanSeeFriendlyInvisibles(boolean enabled) {
         this.seeInvisible = enabled;
-        if (tube != null) {
-            tube.setSeeInvisibleMembers(enabled);
-        }
+        tube.setSeeInvisibleMembers(enabled);
     }
 
     @Override
@@ -135,9 +122,6 @@ final class BukkitTeam implements Team {
     @Override
     public void setOption(Option option, OptionStatus status) {
         options.put(option, status);
-        if (tube == null) {
-            return;
-        }
         if (option == Option.NAME_TAG_VISIBILITY) {
             tube.setNameTagVisibility(switch (status) {
                 case ALWAYS -> NameTagVisibility.ALWAYS;
@@ -168,15 +152,13 @@ final class BukkitTeam implements Team {
     @Override
     public synchronized void addEntry(String entry) {
         entries.add(entry);
-        if (tube != null) {
-            tube.addMember(entry);
-        }
+        tube.addMember(entry);
     }
 
     @Override
     public synchronized boolean removeEntry(String entry) {
         boolean removed = entries.remove(entry);
-        if (removed && tube != null) {
+        if (removed) {
             tube.removeMember(entry);
         }
         return removed;
@@ -195,8 +177,6 @@ final class BukkitTeam implements Team {
     @Override
     public void unregister() {
         scoreboard.forgetTeam(this);
-        if (tube != null) {
-            scoreboard.runtime().tube().scoreboards().removeTeam(tube);
-        }
+        scoreboard.runtime().tube().scoreboards().removeTeam(tube);
     }
 }

@@ -88,7 +88,26 @@ class ScoreboardLayerTest {
     }
 
     @Test
-    void mainTeamsReachTubeAndOtherScoreboardsOnlyKeepData() {
+    void belowNameAndTabListObjectivesReachTube() {
+        Scoreboard board = runtime.scoreboards().main();
+        Objective health = board.registerNewObjective("hp", "dummy", "HP");
+        health.getScore("Cy").setScore(20);
+        health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+        Objective kills = board.registerNewObjective("kills", "dummy");
+        kills.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+        kills.getScore("Dee").setScore(4);
+
+        assertTrue(stub.scoreboardLog.contains("objective.create:hp:BELOW_NAME"));
+        assertTrue(stub.scoreboardLog.contains("objective.score:Cy=20"));
+        assertTrue(stub.scoreboardLog.contains("objective.create:kills:TAB_LIST"));
+        assertTrue(stub.scoreboardLog.contains("objective.score:Dee=4"));
+
+        health.setDisplaySlot(null);
+        assertTrue(stub.scoreboardLog.contains("objective.remove"));
+    }
+
+    @Test
+    void teamsOfEveryScoreboardReachTheirOwnPlayers() {
         Scoreboard board = runtime.scoreboards().main();
         Team staff = board.registerNewTeam("staff");
 
@@ -104,12 +123,19 @@ class ScoreboardLayerTest {
         assertThrows(IllegalArgumentException.class, () -> staff.setColor(ChatColor.BOLD));
         assertThrows(IllegalArgumentException.class, () -> board.registerNewTeam("staff"));
 
-        int before = stub.scoreboardLog.size();
-        Team other = runtime.scoreboards().getNewScoreboard().registerNewTeam("staff");
+        assertTrue(stub.scoreboardLog.contains("team.create:staff"));
+
+        var cy = runtime.adapters().player(stub.player("Cy"));
+        Scoreboard own = runtime.scoreboards().getNewScoreboard();
+        Team other = own.registerNewTeam("staff");
         other.setPrefix("x");
         other.addEntry("Dee");
-        assertEquals(before, stub.scoreboardLog.size());
+        assertTrue(stub.scoreboardLog.stream().anyMatch(line -> line.startsWith("team.create:bukkit-") && line.endsWith("-staff")));
+        assertTrue(stub.scoreboardLog.contains("team.addMember:Dee"));
         assertEquals(Set.of("Dee"), other.getEntries());
+        cy.setScoreboard(own);
+        assertTrue(stub.scoreboardLog.contains("team.hide:staff:Cy"));
+        assertTrue(stub.scoreboardLog.stream().anyMatch(line -> line.startsWith("team.show:bukkit-") && line.endsWith("-staff:Cy")));
 
         staff.removeEntry("Cy");
         assertEquals(List.of(), List.copyOf(staff.getEntries()));

@@ -7,6 +7,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import space.nows.tube.api.scoreboard.Sidebar;
+import space.nows.tube.api.scoreboard.objective.ObjectiveSlot;
 import space.nows.tube.bukkit.BukkitRuntime;
 
 import java.util.HashSet;
@@ -15,8 +16,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class BukkitScoreboard implements Scoreboard {
+
+    private static final AtomicInteger SERIALS = new AtomicInteger();
 
     private final BukkitRuntime runtime;
     private final boolean main;
@@ -24,6 +28,8 @@ public final class BukkitScoreboard implements Scoreboard {
     private final Map<String, BukkitTeam> teams = new LinkedHashMap<>();
     private final Map<DisplaySlot, BukkitObjective> slots = new java.util.EnumMap<>(DisplaySlot.class);
     private final Set<UUID> viewers = new HashSet<>();
+    private final Map<DisplaySlot, Shown> displayed = new java.util.EnumMap<>(DisplaySlot.class);
+    private final String prefix = "bukkit-" + SERIALS.incrementAndGet() + "-";
     private Sidebar sidebar;
 
     BukkitScoreboard(BukkitRuntime runtime, boolean main) {
@@ -74,7 +80,7 @@ public final class BukkitScoreboard implements Scoreboard {
         BukkitObjective removed = slots.remove(slot);
         if (removed != null) {
             removed.slotCleared();
-            refreshSidebar();
+            refresh();
         }
     }
 
@@ -95,7 +101,7 @@ public final class BukkitScoreboard implements Scoreboard {
     @Override
     public synchronized void resetScores(String entry) {
         objectives.values().forEach(objective -> objective.reset(entry));
-        refreshSidebar();
+        refresh();
     }
 
     @Override
@@ -131,7 +137,7 @@ public final class BukkitScoreboard implements Scoreboard {
     synchronized void forgetObjective(BukkitObjective objective) {
         objectives.remove(objective.getName());
         if (slots.values().remove(objective)) {
-            refreshSidebar();
+            refresh();
         }
     }
 
@@ -139,15 +145,61 @@ public final class BukkitScoreboard implements Scoreboard {
         teams.remove(team.getName());
     }
 
+    space.nows.tube.api.scoreboard.team.Team tubeTeam(String name) {
+        var scoreboards = runtime.tube().scoreboards();
+        var team = scoreboards.createPrivateTeam(main && scoreboards.team(name).isEmpty() ? name : prefix + name);
+        online().forEach(team::show);
+        return team;
+    }
+
+    private java.util.List<space.nows.tube.api.entity.player.Player> online() {
+        return runtime.tube().players().stream().filter(player -> viewers.contains(player.uuid())).toList();
+    }
+
     synchronized void assignSlot(BukkitObjective objective, DisplaySlot slot) {
         BukkitObjective previous = slots.put(slot, objective);
         if (previous != null && previous != objective) {
             previous.slotCleared();
         }
+        refresh();
+    }
+
+    synchronized void refresh() {
+        refreshSlot(DisplaySlot.BELOW_NAME, ObjectiveSlot.BELOW_NAME);
+        refreshSlot(DisplaySlot.PLAYER_LIST, ObjectiveSlot.TAB_LIST);
         refreshSidebar();
     }
 
-    synchronized void refreshSidebar() {
+    private void refreshSlot(DisplaySlot slot, ObjectiveSlot tubeSlot) {
+        BukkitObjective assigned = slots.get(slot);
+        Shown current = displayed.get(slot);
+        var scoreboards = runtime.tube().scoreboards();
+        if (current != null && current.source() != assigned) {
+            scoreboards.removeObjective(current.objective());
+            displayed.remove(slot);
+            current = null;
+        }
+        if (assigned == null) {
+            return;
+        }
+        if (current == null) {
+            String name = main && scoreboards.objective(assigned.getName()).isEmpty() ? assigned.getName() : prefix + assigned.getName();
+            current = new Shown(assigned, scoreboards.createObjective(name, tubeSlot, assigned.title()));
+            displayed.put(slot, current);
+            online().forEach(current.objective()::show);
+        }
+        var tube = current.objective();
+        tube.setTitle(assigned.title());
+        Map<String, Integer> scores = assigned.scores();
+        for (String entry : tube.scores().keySet()) {
+            if (!scores.containsKey(entry)) {
+                tube.resetScore(entry);
+            }
+        }
+        scores.forEach(tube::setScore);
+    }
+
+    private void refreshSidebar() {
         BukkitObjective shown = slots.get(DisplaySlot.SIDEBAR);
         if (shown == null) {
             if (sidebar != null) {
@@ -179,6 +231,8 @@ public final class BukkitScoreboard implements Scoreboard {
         if (sidebar != null) {
             sidebar.show(player);
         }
+        teams.values().forEach(team -> team.tube().show(player));
+        displayed.values().forEach(entry -> entry.objective().show(player));
     }
 
     public synchronized void detach(space.nows.tube.api.entity.player.Player player) {
@@ -186,5 +240,7 @@ public final class BukkitScoreboard implements Scoreboard {
         if (sidebar != null) {
             sidebar.hide(player);
         }
+        teams.values().forEach(team -> team.tube().hide(player));
+        displayed.values().forEach(entry -> entry.objective().hide(player));
     }
 }

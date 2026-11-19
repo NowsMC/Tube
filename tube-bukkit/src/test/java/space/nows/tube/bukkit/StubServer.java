@@ -224,14 +224,32 @@ final class StubServer {
                 case "viewers" -> Set.of();
                 default -> null;
             });
-            case "createTeam" -> Proxy.newProxyInstance(loader, new Class<?>[] {space.nows.tube.api.scoreboard.team.Team.class}, (p, m, a) -> {
-                if (m.getName().startsWith("set") || m.getName().endsWith("Member")) {
-                    scoreboardLog.add("team." + m.getName() + ":" + a[0]);
-                }
-                return null;
-            });
-            case "team" -> Optional.empty();
-            case "teams" -> List.of();
+            case "createTeam", "createPrivateTeam" -> {
+                String team = (String) args[0];
+                scoreboardLog.add("team.create:" + team);
+                yield Proxy.newProxyInstance(loader, new Class<?>[] {space.nows.tube.api.scoreboard.team.Team.class}, (p, m, a) -> {
+                    if (m.getName().startsWith("set") || m.getName().endsWith("Member")) {
+                        scoreboardLog.add("team." + m.getName() + ":" + a[0]);
+                    } else if (m.getName().equals("show") || m.getName().equals("hide")) {
+                        scoreboardLog.add("team." + m.getName() + ":" + team + ":" + ((Player) a[0]).name());
+                    }
+                    return null;
+                });
+            }
+            case "createObjective" -> {
+                String objective = (String) args[0];
+                scoreboardLog.add("objective.create:" + objective + ":" + args[1]);
+                yield Proxy.newProxyInstance(loader, new Class<?>[] {space.nows.tube.api.scoreboard.objective.Objective.class}, (p, m, a) -> switch (m.getName()) {
+                    case "setScore" -> scoreboardLog.add("objective.score:" + a[0] + "=" + a[1]);
+                    case "show", "hide" -> scoreboardLog.add("objective." + m.getName() + ":" + ((Player) a[0]).name());
+                    case "scores" -> java.util.Map.of();
+                    case "viewers" -> Set.of();
+                    default -> null;
+                });
+            }
+            case "removeObjective" -> scoreboardLog.add("objective.remove");
+            case "team", "objective" -> Optional.empty();
+            case "teams", "objectives" -> List.of();
             default -> null;
         });
     }
