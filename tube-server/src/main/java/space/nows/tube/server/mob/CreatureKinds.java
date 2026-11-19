@@ -31,6 +31,7 @@ import space.nows.tube.server.mob.kind.golem.SnowGolem;
 import space.nows.tube.server.mob.kind.fish.Salmon;
 import space.nows.tube.server.mob.kind.monster.Endermite;
 import space.nows.tube.server.mob.kind.monster.Giant;
+import space.nows.tube.server.mob.kind.monster.zombie.Drowned;
 import space.nows.tube.server.mob.kind.monster.zombie.Husk;
 import space.nows.tube.server.mob.kind.monster.zombie.Zombie;
 import space.nows.tube.server.mob.kind.monster.zombie.ZombieVillager;
@@ -72,7 +73,7 @@ public final class CreatureKinds {
 
     static {
         for (CreatureKind kind : List.of(new Cow(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Wolf(), new Cat(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
-                new Zombie(), new Husk(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Slime(), new MagmaCube(), new Blaze(), new Ghast(), new Vex(), new Bat(), new Pillager(), new Vindicator(), new Evoker(), new Witch(), new Guardian(), new ElderGuardian(), new Ravager(), new Enderman(), new IronGolem(), new SnowGolem(), new Squid(), new GlowSquid(), new Cod(), new Pufferfish(), new TropicalFish(), new Salmon())) {
+                new Zombie(), new Husk(), new Drowned(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Slime(), new MagmaCube(), new Blaze(), new Ghast(), new Vex(), new Bat(), new Pillager(), new Vindicator(), new Evoker(), new Witch(), new Guardian(), new ElderGuardian(), new Ravager(), new Enderman(), new IronGolem(), new SnowGolem(), new Squid(), new GlowSquid(), new Cod(), new Pufferfish(), new TropicalFish(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }
     }
