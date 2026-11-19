@@ -96,7 +96,8 @@ public final class RandomSpot {
 
     private static Point accepted(Creature creature, Point at, boolean checkPenalty) {
         Instance instance = creature.getInstance();
-        if (instance == null || at.blockY() < instance.getCachedDimensionType().minY() || at.blockY() >= instance.getCachedDimensionType().maxY()) {
+        if (instance == null || at.blockY() < instance.getCachedDimensionType().minY() || at.blockY() >= instance.getCachedDimensionType().maxY()
+                || !instance.isChunkLoaded(at)) {
             return null;
         }
         if (!Footing.stable(instance, at) || checkPenalty && Footing.penalized(instance, at)) {
@@ -110,6 +111,9 @@ public final class RandomSpot {
             return null;
         }
         Instance instance = creature.getInstance();
+        if (!instance.isChunkLoaded(at)) {
+            return null;
+        }
         int maxY = instance.getCachedDimensionType().maxY();
         Point up = at;
         while (up.blockY() <= maxY && Footing.solid(instance, up)) {

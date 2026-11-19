@@ -160,7 +160,7 @@ public final class Creature extends EntityCreature {
 
     public Block blockAt(Point at) {
         Instance instance = getInstance();
-        return instance == null ? Block.AIR : instance.getBlock(at);
+        return instance == null || !instance.isChunkLoaded(at) ? Block.AIR : instance.getBlock(at);
     }
 
     @Override
