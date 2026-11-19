@@ -1,5 +1,7 @@
 package space.nows.tube.network;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.event.Subscription;
 import space.nows.tube.api.network.Network;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ScopedNetwork implements Network {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("tube-network");
 
     private final Network delegate;
     private final List<AutoCloseable> sockets = new ArrayList<>();
@@ -63,8 +67,8 @@ public final class ScopedNetwork implements Network {
         for (AutoCloseable socket : sockets) {
             try {
                 socket.close();
-            } catch (Exception ignored) {
-                // already closed or closing
+            } catch (Exception e) {
+                LOGGER.debug("A plugin socket failed to close", e);
             }
         }
         sockets.clear();

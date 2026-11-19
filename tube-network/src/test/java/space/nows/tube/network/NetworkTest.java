@@ -2,6 +2,7 @@ package space.nows.tube.network;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -116,6 +118,40 @@ class NetworkTest {
             Reply reply = read(socket.getInputStream());
             assertEquals(2, reply.id());
             assertEquals("ran list", reply.payload());
+        }
+    }
+
+    @Test
+    void bindingABusyPortFailsWithAnIoError() {
+        var first = network.listenTcp(new InetSocketAddress(LOCAL, 0), (connection, data) -> {
+        });
+        try {
+            assertThrows(UncheckedIOException.class, () -> network.listenTcp(first.address(), (connection, data) -> {
+            }));
+            assertThrows(UncheckedIOException.class, () -> new RconServer(network, first.address(), "secret",
+                    command -> CompletableFuture.completedFuture("")));
+        } finally {
+            first.close();
+        }
+    }
+
+    @Test
+    void rconLocksOutAnAddressAfterThreeFailedLogins() throws IOException {
+        try (RconServer server = new RconServer(network, new InetSocketAddress(LOCAL, 0), "secret", command -> CompletableFuture.completedFuture("ran"))) {
+            for (int attempt = 0; attempt < 3; attempt++) {
+                try (Socket socket = new Socket(LOCAL, server.address().getPort())) {
+                    socket.setSoTimeout(5000);
+                    rcon(socket.getOutputStream(), attempt, 3, "wrong");
+                    assertEquals(-1, read(socket.getInputStream()).id());
+                }
+            }
+            try (Socket socket = new Socket(LOCAL, server.address().getPort())) {
+                socket.setSoTimeout(5000);
+                assertThrows(IOException.class, () -> {
+                    rcon(socket.getOutputStream(), 9, 3, "secret");
+                    read(socket.getInputStream());
+                });
+            }
         }
     }
 

@@ -21,6 +21,8 @@ public final class QueryServer implements AutoCloseable {
     private static final int TYPE_STAT = 0;
     private static final int TYPE_HANDSHAKE = 9;
     private static final long TOKEN_LIFETIME_MILLIS = 30_000;
+    private static final long CLEANUP_MILLIS = 1_000;
+    private static final int MAX_CHALLENGES = 10_000;
     private static final byte[] FULL_PADDING = {0x73, 0x70, 0x6C, 0x69, 0x74, 0x6E, 0x75, 0x6D, 0x00, (byte) 0x80, 0x00};
     private static final byte[] PLAYER_PADDING = {0x01, 0x70, 0x6C, 0x61, 0x79, 0x65, 0x72, 0x5F, 0x00, 0x00};
 
@@ -31,6 +33,7 @@ public final class QueryServer implements AutoCloseable {
     private final Map<String, Challenge> challenges = new ConcurrentHashMap<>();
     private final Supplier<Info> info;
     private final UdpSocket socket;
+    private volatile long nextCleanup;
 
     public QueryServer(NettyNetwork network, InetSocketAddress address, Supplier<Info> info) {
         this.info = info;
@@ -54,10 +57,16 @@ public final class QueryServer implements AutoCloseable {
         int type = in.get() & 0xFF;
         int session = in.getInt() & 0x0F0F0F0F;
         long now = System.currentTimeMillis();
-        challenges.values().removeIf(challenge -> challenge.expires() < now);
+        if (now >= nextCleanup) {
+            nextCleanup = now + CLEANUP_MILLIS;
+            challenges.values().removeIf(challenge -> challenge.expires() < now);
+        }
         String key = sender.getAddress().getHostAddress();
 
         if (type == TYPE_HANDSHAKE) {
+            if (challenges.size() >= MAX_CHALLENGES && !challenges.containsKey(key)) {
+                return;
+            }
             int token = random.nextInt() & 0x7FFFFFFF;
             challenges.put(key, new Challenge(token, now + TOKEN_LIFETIME_MILLIS));
             ByteArrayOutputStream out = header(TYPE_HANDSHAKE, session);
@@ -69,7 +78,7 @@ public final class QueryServer implements AutoCloseable {
             return;
         }
         Challenge challenge = challenges.get(key);
-        if (challenge == null || challenge.token() != in.getInt()) {
+        if (challenge == null || challenge.expires() < now || challenge.token() != in.getInt()) {
             return;
         }
         boolean full = in.remaining() >= 4;

@@ -53,7 +53,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
 
     @Override
     public TcpServer listenTcp(InetSocketAddress address, TcpHandler handler) {
-        Channel channel = new ServerBootstrap()
+        Channel channel = Binding.await(new ServerBootstrap()
                 .group(group)
                 .channel(transport.serverChannel())
                 .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -62,16 +62,14 @@ public final class NettyNetwork implements Network, AutoCloseable {
                         child.pipeline().addLast(new TcpAdapter(handler, connectionIds.incrementAndGet()));
                     }
                 })
-                .bind(address)
-                .syncUninterruptibly()
-                .channel();
+                .bind(address), address);
         return new BoundTcp(channel);
     }
 
     @Override
     public UdpSocket bindUdp(InetSocketAddress address, UdpHandler handler) {
         BoundUdp[] holder = new BoundUdp[1];
-        Channel channel = new Bootstrap()
+        Channel channel = Binding.await(new Bootstrap()
                 .group(group)
                 .channel(transport.datagramChannel())
                 .handler(new SimpleChannelInboundHandler<DatagramPacket>() {
@@ -86,9 +84,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
                         }
                     }
                 })
-                .bind(address)
-                .syncUninterruptibly()
-                .channel();
+                .bind(address), address);
         holder[0] = new BoundUdp(channel);
         return holder[0];
     }
