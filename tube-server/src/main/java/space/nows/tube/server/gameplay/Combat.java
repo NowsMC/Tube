@@ -21,6 +21,7 @@ import net.minestom.server.world.Difficulty;
 import space.nows.tube.server.item.Enchantments;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.KillCredit;
+import space.nows.tube.server.mob.sense.Assault;
 
 import java.util.Set;
 
@@ -121,6 +122,7 @@ final class Combat {
         }
         if (target.damage(source)) {
             target.setTag(LAST_HURT, now);
+            Assault.record(attacker, target);
             double yaw = Math.toRadians(attacker.getPosition().yaw());
             target.takeKnockback((float) knockback, Math.sin(yaw), -Math.cos(yaw));
             if (attacker instanceof Player player) {
