@@ -20,6 +20,8 @@ import space.nows.tube.server.entity.MinestomEntity;
 import space.nows.tube.server.world.rule.RuleBook;
 import space.nows.tube.server.entity.MinestomItemEntity;
 import space.nows.tube.server.entity.MinestomLivingEntity;
+import space.nows.tube.server.entity.MinestomMob;
+import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.player.PlayerService;
 import space.nows.tube.server.world.generator.FlatGenerator;
 import space.nows.tube.server.world.generator.NetherGenerator;
@@ -155,6 +157,9 @@ public final class WorldService implements WorldManager {
     public space.nows.tube.api.entity.Entity wrap(net.minestom.server.entity.Entity entity) {
         if (entity instanceof net.minestom.server.entity.Player player) {
             return players.wrap(player);
+        }
+        if (entity instanceof Creature creature) {
+            return new MinestomMob(creature, this);
         }
         if (entity instanceof net.minestom.server.entity.LivingEntity living) {
             return new MinestomLivingEntity(living, this);
