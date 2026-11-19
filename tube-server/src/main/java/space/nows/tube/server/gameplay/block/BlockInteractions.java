@@ -13,6 +13,10 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockFace;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.TaskSchedule;
+import space.nows.tube.server.world.effect.Pitch;
+import space.nows.tube.server.world.effect.SoundPlayer;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class BlockInteractions {
 
@@ -155,12 +159,8 @@ public final class BlockInteractions {
     }
 
     static void sound(Instance instance, Player except, Point position, SoundEvent sound) {
-        Sound effect = Sound.sound(sound, Sound.Source.BLOCK, 1f, 0.9f + (float) Math.random() * 0.1f);
-        for (Player viewer : instance.getPlayers()) {
-            if (viewer != except) {
-                viewer.playSound(effect, position.x() + 0.5, position.y() + 0.5, position.z() + 0.5);
-            }
-        }
+        Sound effect = Sound.sound(sound, Sound.Source.BLOCK, 1f, Pitch.between(ThreadLocalRandom.current(), 0.9f, 1f));
+        SoundPlayer.playExcept(instance, except, effect, position.add(0.5, 0.5, 0.5));
     }
 
     static boolean isFace(BlockFace face) {

@@ -1,5 +1,6 @@
 package space.nows.tube.server.gameplay;
 
+import net.kyori.adventure.sound.Sound;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.entity.GameMode;
@@ -8,6 +9,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.sound.SoundEvent;
 import space.nows.tube.server.item.Enchantments;
+import space.nows.tube.server.world.effect.SoundPlayer;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -27,10 +29,7 @@ public final class Durability {
         }
         holder.setEquipment(slot, damaged);
         if (damaged.isAir() && holder.getInstance() != null) {
-            holder.getViewersAsAudience().playSound(net.kyori.adventure.sound.Sound.sound(SoundEvent.ENTITY_ITEM_BREAK, net.kyori.adventure.sound.Sound.Source.PLAYER, 0.8f, 1f), holder);
-            if (holder instanceof Player player) {
-                player.playSound(net.kyori.adventure.sound.Sound.sound(SoundEvent.ENTITY_ITEM_BREAK, net.kyori.adventure.sound.Sound.Source.PLAYER, 0.8f, 1f));
-            }
+            SoundPlayer.playAround(holder, Sound.sound(SoundEvent.ENTITY_ITEM_BREAK, Sound.Source.PLAYER, 0.8f, 1f));
         }
     }
 

@@ -109,7 +109,7 @@ final class Barrage extends Behavior {
         Vec direction = new Vec(triangle(dx, SPREAD * spread), dy, triangle(dz, SPREAD * spread));
         Pos from = blaze.getPosition().add(0, blaze.getBoundingBox().height() / 2 + 0.5, 0);
         new Fireball(EntityType.SMALL_FIREBALL, blaze, direction, new Scorch()).setInstance(blaze.getInstance(), from);
-        SoundPlayer.play(blaze.getInstance(), "minecraft:entity.blaze.shoot", Sound.Source.HOSTILE, blaze.getPosition(), 1f, 1f);
+        SoundPlayer.play(blaze, "minecraft:entity.blaze.shoot", Sound.Source.HOSTILE, 1f, 1f);
     }
 
     private double triangle(double mode, double deviation) {

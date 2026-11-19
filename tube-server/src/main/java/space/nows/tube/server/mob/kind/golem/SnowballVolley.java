@@ -8,6 +8,7 @@ import net.minestom.server.entity.LivingEntity;
 import space.nows.tube.server.gameplay.SweptProjectile;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.brain.combat.Volley;
+import space.nows.tube.server.world.effect.Pitch;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 final class SnowballVolley implements Volley {
@@ -25,7 +26,7 @@ final class SnowballVolley implements Volley {
         double dy = target.getPosition().y() + target.getEyeHeight() - AIM_DROP - from.y();
         new SweptProjectile(golem, EntityType.SNOWBALL)
                 .launch(golem.getInstance(), from, new Vec(dx, dy + Math.hypot(dx, dz) * LIFT_PER_REACH, dz), SPEED, SPREAD);
-        float pitch = 0.4f / (golem.random().nextFloat() * 0.4f + 0.8f);
-        SoundPlayer.play(golem.getInstance(), "minecraft:entity.snow_golem.shoot", Sound.Source.NEUTRAL, golem.getPosition(), 1f, pitch);
+        float pitch = Pitch.thrown(golem.random());
+        SoundPlayer.play(golem, "minecraft:entity.snow_golem.shoot", Sound.Source.NEUTRAL, 1f, pitch);
     }
 }

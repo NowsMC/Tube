@@ -43,7 +43,7 @@ public final class SkeletonVolley implements Volley {
         double reach = Math.hypot(aim.x() - from.x(), aim.z() - from.z());
         arrow.launch(shooter.getInstance(), from, new Vec(aim.x() - from.x(), aim.y() - from.y() + reach * LIFT_PER_REACH, aim.z() - from.z()), ARROW_SPEED, inaccuracy);
         float pitch = 1f / (shooter.random().nextFloat() * 0.4f + 0.8f);
-        SoundPlayer.play(shooter.getInstance(), "minecraft:entity.skeleton.shoot", Sound.Source.HOSTILE, shooter.getPosition(), 1f, pitch);
+        SoundPlayer.play(shooter, "minecraft:entity.skeleton.shoot", Sound.Source.HOSTILE, 1f, pitch);
     }
 
     private static double triangle(Creature shooter, double mode, double deviation) {

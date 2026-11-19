@@ -9,6 +9,7 @@ import space.nows.tube.server.mob.brain.combat.Volley;
 import space.nows.tube.server.mob.kind.monster.Raiders;
 import space.nows.tube.server.mob.projectile.Brew;
 import space.nows.tube.server.mob.projectile.SplashPotion;
+import space.nows.tube.server.world.effect.Pitch;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 final class PotionThrow implements Volley {
@@ -40,8 +41,8 @@ final class PotionThrow implements Volley {
                 heading.z() + witch.random().nextGaussian() * SPREAD).mul(speed);
         Pos from = witch.getPosition().add(0, witch.getEyeHeight() - 0.1, 0);
         new SplashPotion(witch, brew, scattered).setInstance(witch.getInstance(), from);
-        SoundPlayer.play(witch.getInstance(), "minecraft:entity.witch.throw", Sound.Source.HOSTILE, witch.getPosition(), 1f,
-                0.8f + witch.random().nextFloat() * 0.4f);
+        SoundPlayer.play(witch, "minecraft:entity.witch.throw", Sound.Source.HOSTILE, 1f,
+                Pitch.between(witch.random(), 0.8f, 1.2f));
     }
 
     private static Brew choose(Creature witch, LivingEntity target, double distance) {

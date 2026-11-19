@@ -19,6 +19,8 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.sound.SoundEvent;
 import space.nows.tube.server.gameplay.Durability;
+import space.nows.tube.server.world.effect.Pitch;
+import space.nows.tube.server.world.effect.SoundPlayer;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -201,7 +203,7 @@ public final class ItemUse {
     }
 
     static void sound(Instance instance, Point position, SoundEvent sound) {
-        instance.playSound(Sound.sound(sound, Sound.Source.BLOCK, 1f, 0.9f + ThreadLocalRandom.current().nextFloat() * 0.2f),
-                position.x() + 0.5, position.y() + 0.5, position.z() + 0.5);
+        SoundPlayer.play(instance, sound, Sound.Source.BLOCK, position.add(0.5, 0.5, 0.5), 1f,
+                Pitch.between(ThreadLocalRandom.current(), 0.9f, 1.1f));
     }
 }

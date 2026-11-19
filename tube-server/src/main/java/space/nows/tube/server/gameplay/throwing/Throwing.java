@@ -9,6 +9,7 @@ import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.network.packet.server.play.SetCooldownPacket;
 import net.minestom.server.tag.Tag;
 import space.nows.tube.server.gameplay.SweptProjectile;
+import space.nows.tube.server.world.effect.Pitch;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -54,7 +55,7 @@ public final class Throwing {
         Pos eye = player.getPosition().add(0, player.getEyeHeight(), 0);
         SweptProjectile projectile = new SweptProjectile(player, kind.entity());
         projectile.launch(player.getInstance(), eye, eye.direction(), SPEED, SPREAD);
-        float pitch = 0.4f / (ThreadLocalRandom.current().nextFloat() * 0.4f + 0.8f);
-        SoundPlayer.play(player.getInstance(), kind.sound(), Sound.Source.PLAYER, player.getPosition(), 0.5f, pitch);
+        float pitch = Pitch.thrown(ThreadLocalRandom.current());
+        SoundPlayer.play(player, kind.sound(), Sound.Source.PLAYER, 0.5f, pitch);
     }
 }

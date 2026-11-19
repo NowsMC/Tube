@@ -12,6 +12,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.tag.Tag;
 import space.nows.tube.server.gameplay.Durability;
 import space.nows.tube.server.item.Enchantments;
+import space.nows.tube.server.world.effect.Pitch;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,13 +39,13 @@ public final class Fishing {
             int damage = cast.reel();
             player.removeTag(BOBBER);
             Durability.damage(player, slot(hand), damage);
-            SoundPlayer.play(player.getInstance(), "minecraft:entity.fishing_bobber.retrieve", Sound.Source.NEUTRAL, player.getPosition(), 1f, 0.4f / (ThreadLocalRandom.current().nextFloat() * 0.4f + 0.8f));
+            SoundPlayer.play(player, "minecraft:entity.fishing_bobber.retrieve", Sound.Source.NEUTRAL, 1f, Pitch.thrown(ThreadLocalRandom.current()));
             return;
         }
         Bobber bobber = new Bobber(player, Enchantments.level(rod, "minecraft:lure"), Enchantments.level(rod, "minecraft:luck_of_the_sea"));
         bobber.cast(player.getPosition().direction());
         player.setTag(BOBBER, bobber);
-        SoundPlayer.play(player.getInstance(), "minecraft:entity.fishing_bobber.throw", Sound.Source.NEUTRAL, player.getPosition(), 0.5f, 0.4f / (ThreadLocalRandom.current().nextFloat() * 0.4f + 0.8f));
+        SoundPlayer.play(player, "minecraft:entity.fishing_bobber.throw", Sound.Source.NEUTRAL, 0.5f, Pitch.thrown(ThreadLocalRandom.current()));
     }
 
     private static void retract(Player player) {

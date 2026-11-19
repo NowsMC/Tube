@@ -29,6 +29,6 @@ public final class CrossbowShot implements Volley {
         arrow.launch(shooter.getInstance(), from, new Vec(aim.x() - from.x(), aim.y() - from.y() + reach * LIFT_PER_REACH, aim.z() - from.z()),
                 SPEED, BASE_INACCURACY - difficulty * INACCURACY_PER_DIFFICULTY);
         float pitch = 1f / (shooter.random().nextFloat() * 0.5f + 1.8f) + 0.53f;
-        SoundPlayer.play(shooter.getInstance(), "minecraft:item.crossbow.shoot", Sound.Source.HOSTILE, shooter.getPosition(), 1f, pitch);
+        SoundPlayer.play(shooter, "minecraft:item.crossbow.shoot", Sound.Source.HOSTILE, 1f, pitch);
     }
 }

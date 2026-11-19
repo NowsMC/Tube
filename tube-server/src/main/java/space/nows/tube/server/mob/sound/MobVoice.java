@@ -1,8 +1,8 @@
 package space.nows.tube.server.mob.sound;
 
 import net.kyori.adventure.sound.Sound;
-import net.minestom.server.instance.Instance;
 import space.nows.tube.server.mob.Creature;
+import space.nows.tube.server.world.effect.Pitch;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 public final class MobVoice {
@@ -17,10 +17,7 @@ public final class MobVoice {
     }
 
     public static void play(Creature creature, String event) {
-        Instance instance = creature.getInstance();
-        if (instance != null) {
-            SoundPlayer.play(instance, key(creature, event), source(creature), creature.getPosition(), 1f, pitch(creature));
-        }
+        SoundPlayer.play(creature, key(creature, event), source(creature), 1f, pitch(creature));
     }
 
     private static Sound.Source source(Creature creature) {
@@ -28,7 +25,7 @@ public final class MobVoice {
     }
 
     private static float pitch(Creature creature) {
-        float pitch = (creature.random().nextFloat() - creature.random().nextFloat()) * 0.2f + 1f;
+        float pitch = Pitch.wobble(creature.random());
         return creature.isBaby() ? pitch + BABY_PITCH_BONUS : pitch;
     }
 }

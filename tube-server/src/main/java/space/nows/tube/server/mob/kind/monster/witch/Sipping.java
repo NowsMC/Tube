@@ -11,6 +11,7 @@ import net.minestom.server.item.Material;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.projectile.Brew;
 import space.nows.tube.server.mob.trait.Trait;
+import space.nows.tube.server.world.effect.Pitch;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 final class Sipping implements Trait {
@@ -59,8 +60,8 @@ final class Sipping implements Trait {
         left = DRINK_TICKS;
         witch.setItemInMainHand(choice.item(Material.POTION));
         show(true);
-        SoundPlayer.play(witch.getInstance(), "minecraft:entity.witch.drink", Sound.Source.HOSTILE, witch.getPosition(), 1f,
-                0.8f + witch.random().nextFloat() * 0.4f);
+        SoundPlayer.play(witch, "minecraft:entity.witch.drink", Sound.Source.HOSTILE, 1f,
+                Pitch.between(witch.random(), 0.8f, 1.2f));
         witch.getAttribute(Attribute.MOVEMENT_SPEED).removeModifier(DRINKING);
         witch.getAttribute(Attribute.MOVEMENT_SPEED).addModifier(DRINKING);
     }

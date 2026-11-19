@@ -11,6 +11,7 @@ import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.projectile.Blast;
 import space.nows.tube.server.mob.projectile.Fireball;
+import space.nows.tube.server.world.effect.Pitch;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 final class Volley extends Behavior {
@@ -70,7 +71,7 @@ final class Volley extends Behavior {
         if (target.getPosition().distanceSquared(ghast.getPosition()) < MAX_RANGE && ghast.sight().canSee(target)) {
             charge++;
             if (charge == WARN_AT) {
-                SoundPlayer.play(ghast.getInstance(), "minecraft:entity.ghast.warn", Sound.Source.HOSTILE, ghast.getPosition(), 10f, pitch());
+                SoundPlayer.play(ghast, "minecraft:entity.ghast.warn", Sound.Source.HOSTILE, 10f, pitch());
             }
             if (charge == FIRE_AT) {
                 fire(target);
@@ -90,11 +91,11 @@ final class Volley extends Behavior {
                 target.getPosition().y() + target.getBoundingBox().height() / 2 - (0.5 + ghast.getPosition().y() + middle),
                 target.getPosition().z() - from.z());
         new Fireball(EntityType.FIREBALL, ghast, direction, new Blast(power)).setInstance(ghast.getInstance(), from);
-        SoundPlayer.play(ghast.getInstance(), "minecraft:entity.ghast.shoot", Sound.Source.HOSTILE, ghast.getPosition(), 10f, pitch());
+        SoundPlayer.play(ghast, "minecraft:entity.ghast.shoot", Sound.Source.HOSTILE, 10f, pitch());
     }
 
     private float pitch() {
-        return (ghast.random().nextFloat() - ghast.random().nextFloat()) * 0.2f + 1f;
+        return Pitch.wobble(ghast.random());
     }
 
     private void attacking(boolean attacking) {

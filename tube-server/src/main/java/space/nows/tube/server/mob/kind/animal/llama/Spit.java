@@ -9,6 +9,7 @@ import space.nows.tube.api.entity.mob.brain.MemoryKey;
 import space.nows.tube.server.gameplay.SweptProjectile;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.brain.combat.Volley;
+import space.nows.tube.server.world.effect.Pitch;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 final class Spit implements Volley {
@@ -29,8 +30,8 @@ final class Spit implements Volley {
         double dz = target.getPosition().z() - llama.getPosition().z();
         double dy = target.getPosition().y() + target.getBoundingBox().height() / 3.0 - from.y();
         spit.launch(llama.getInstance(), from, new Vec(dx, dy + Math.hypot(dx, dz) * LIFT_PER_REACH, dz), SPEED, SPREAD);
-        float pitch = 1f + (llama.random().nextFloat() - llama.random().nextFloat()) * 0.2f;
-        SoundPlayer.play(llama.getInstance(), "minecraft:entity.llama.spit", Sound.Source.NEUTRAL, llama.getPosition(), 1f, pitch);
+        float pitch = Pitch.wobble(llama.random());
+        SoundPlayer.play(llama, "minecraft:entity.llama.spit", Sound.Source.NEUTRAL, 1f, pitch);
         llama.brain().remember(SPAT, true);
     }
 }
