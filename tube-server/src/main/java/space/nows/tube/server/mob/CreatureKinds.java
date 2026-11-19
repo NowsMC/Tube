@@ -9,6 +9,7 @@ import space.nows.tube.server.mob.kind.animal.Pig;
 import space.nows.tube.server.mob.kind.animal.Sheep;
 import space.nows.tube.server.mob.kind.fish.Cod;
 import space.nows.tube.server.mob.kind.fish.Salmon;
+import space.nows.tube.server.mob.kind.monster.Husk;
 import space.nows.tube.server.mob.kind.monster.Zombie;
 import space.nows.tube.server.mob.kind.monster.creeper.Creeper;
 import space.nows.tube.server.mob.kind.monster.enderman.Enderman;
@@ -16,6 +17,7 @@ import space.nows.tube.server.mob.kind.monster.skeleton.Bogged;
 import space.nows.tube.server.mob.kind.monster.skeleton.Parched;
 import space.nows.tube.server.mob.kind.monster.skeleton.Skeleton;
 import space.nows.tube.server.mob.kind.monster.skeleton.Stray;
+import space.nows.tube.server.mob.kind.monster.spider.CaveSpider;
 import space.nows.tube.server.mob.kind.monster.spider.Spider;
 
 import java.util.Collection;
@@ -32,7 +34,7 @@ public final class CreatureKinds {
 
     static {
         for (CreatureKind kind : List.of(new Cow(), new Pig(), new Sheep(), new Chicken(),
-                new Zombie(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new Spider(), new Creeper(), new Enderman(), new Cod(), new Salmon())) {
+                new Zombie(), new Husk(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new Spider(), new CaveSpider(), new Creeper(), new Enderman(), new Cod(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }
     }

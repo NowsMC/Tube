@@ -14,7 +14,7 @@ import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Retaliate;
 import space.nows.tube.server.mob.kind.monster.Monster;
 
-public final class Spider extends Monster {
+public class Spider extends Monster {
 
     private static final CreatureStats STATS = CreatureStats.monster(16, 0.3);
 

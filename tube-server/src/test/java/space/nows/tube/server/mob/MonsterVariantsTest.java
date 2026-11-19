@@ -9,11 +9,13 @@ import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.potion.PotionEffect;
+import net.minestom.server.world.Difficulty;
 import net.minestom.testing.Env;
 import net.minestom.testing.EnvTest;
 import org.junit.jupiter.api.Test;
 import space.nows.tube.server.gameplay.Archery;
 import space.nows.tube.server.gameplay.TestHooks;
+import space.nows.tube.server.mob.trait.SunBurn;
 
 @EnvTest
 class MonsterVariantsTest {
@@ -60,5 +62,37 @@ class MonsterVariantsTest {
             env.tick();
         }
         assertTrue(affected(PotionEffect.SLOWNESS), () -> "health " + player.getHealth() + " stray at " + stray.getPosition());
+    }
+
+    @Test
+    void husksDoNotBurnInDaylight(Env env) {
+        setup(env);
+        Creature husk = spawn(EntityType.HUSK, new Pos(0, 40, 0));
+        Creature zombie = spawn(EntityType.ZOMBIE, new Pos(4, 40, 0));
+        assertTrue(husk.trait(SunBurn.class).isEmpty(), "husk burns");
+        assertTrue(zombie.trait(SunBurn.class).isPresent(), "zombie does not burn");
+    }
+
+    @Test
+    void huskHitsStarve(Env env) {
+        setup(env);
+        MinecraftServer.setDifficulty(Difficulty.HARD);
+        Creature husk = spawn(EntityType.HUSK, new Pos(2, 40, 0));
+        for (int i = 0; i < 300 && !affected(PotionEffect.HUNGER); i++) {
+            env.tick();
+        }
+        MinecraftServer.setDifficulty(Difficulty.NORMAL);
+        assertTrue(affected(PotionEffect.HUNGER), () -> "health " + player.getHealth() + " husk at " + husk.getPosition());
+    }
+
+    @Test
+    void caveSpiderBitesPoison(Env env) {
+        setup(env);
+        MinecraftServer.setDifficulty(Difficulty.NORMAL);
+        Creature spider = spawn(EntityType.CAVE_SPIDER, new Pos(2, 40, 0));
+        for (int i = 0; i < 300 && !affected(PotionEffect.POISON); i++) {
+            env.tick();
+        }
+        assertTrue(affected(PotionEffect.POISON), () -> "health " + player.getHealth() + " spider at " + spider.getPosition());
     }
 }

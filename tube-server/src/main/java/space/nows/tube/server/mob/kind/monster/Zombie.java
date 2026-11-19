@@ -18,7 +18,7 @@ import space.nows.tube.server.mob.trait.SunBurn;
 
 import java.util.random.RandomGenerator;
 
-public final class Zombie extends Monster {
+public class Zombie extends Monster {
 
     private static final float BABY_CHANCE = 0.05f;
     private static final float WEAPON_CHANCE = 0.01f;
@@ -35,6 +35,10 @@ public final class Zombie extends Monster {
         return STATS;
     }
 
+    protected boolean burnsInSun() {
+        return true;
+    }
+
     @Override
     public void configure(Creature creature, Brain brain) {
         brain.add(3, new ArmsRaisedAttack(creature, 1.0, false));
@@ -47,7 +51,9 @@ public final class Zombie extends Monster {
                 || entity.getEntityType() == EntityType.WANDERING_TRADER, 10, false, entity -> true));
         brain.add(3, HuntNearest.of(creature, EntityType.IRON_GOLEM, true));
         brain.add(5, Turtles.hatchlingHunt(creature));
-        creature.addTrait(new SunBurn(creature));
+        if (burnsInSun()) {
+            creature.addTrait(new SunBurn(creature));
+        }
     }
 
     @Override
