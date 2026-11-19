@@ -34,7 +34,7 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
         this.player = player;
         this.permissions = permissions;
         this.service = service;
-        this.tabList = new MinestomTabList(player);
+        this.tabList = service.tabLists().of(player);
     }
 
     public net.minestom.server.entity.Player handle() {

@@ -29,6 +29,8 @@ public interface TabList {
 
     Collection<TabEntry> entries();
 
+    void reset();
+
     default Optional<TabEntry> entry(UUID id) {
         return entries().stream().filter(entry -> entry.id().equals(id)).findFirst();
     }

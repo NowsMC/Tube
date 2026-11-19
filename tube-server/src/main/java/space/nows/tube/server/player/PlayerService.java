@@ -3,6 +3,7 @@ package space.nows.tube.server.player;
 import space.nows.tube.api.entity.player.LoginMode;
 import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.server.access.PermissionService;
+import space.nows.tube.server.scoreboard.TabLists;
 import space.nows.tube.server.world.WorldService;
 
 import java.util.Collection;
@@ -18,6 +19,7 @@ public final class PlayerService {
     private volatile space.nows.tube.api.event.EventBus events;
     private final Map<UUID, LoginMode> loginModes = new ConcurrentHashMap<>();
     private final Map<UUID, MinestomPlayer> players = new ConcurrentHashMap<>();
+    private final TabLists tabLists = new TabLists();
     private final PlayerVisibility visibility = new PlayerVisibility();
 
     public PlayerService(WorldService worlds, PermissionService permissions) {
@@ -39,6 +41,10 @@ public final class PlayerService {
             handle.updateViewableRule(viewer -> visibility.canSee(viewer.getUuid(), uuid));
             return new MinestomPlayer(handle, worlds, permissions, this);
         });
+    }
+
+    public TabLists tabLists() {
+        return tabLists;
     }
 
     PlayerVisibility visibility() {

@@ -97,6 +97,14 @@ final class MinestomSidebar implements Sidebar {
     }
 
     @Override
+    public void remove() {
+        for (net.minestom.server.entity.Player viewer : Set.copyOf(sidebar.getViewers())) {
+            sidebar.removeViewer(viewer);
+        }
+        clear();
+    }
+
+    @Override
     public Set<Player> viewers() {
         Set<Player> viewers = new LinkedHashSet<>();
         for (net.minestom.server.entity.Player viewer : sidebar.getViewers()) {

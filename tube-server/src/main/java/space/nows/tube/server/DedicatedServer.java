@@ -349,6 +349,7 @@ public final class DedicatedServer implements Server {
         new LoginGate(settings.connection().onlineMode(), events, players).install(handler);
         new LoginHandler(settings, this::defaultGameMode, new AccessControl(whitelist, bans), userCache, players, playerData, worlds, resourcePacks.pack(), this::savePlayer).install(handler);
         ticks.install(handler);
+        scoreboards.install(handler);
         resourcePacks.install(handler);
         new StatusResponder(settings, events, name() + " " + minecraftVersion()).install(handler);
         EventBridge bridge = new EventBridge(events, players, worlds);

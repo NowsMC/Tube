@@ -29,4 +29,6 @@ public interface Sidebar {
     void hide(Player player);
 
     Set<Player> viewers();
+
+    void remove();
 }

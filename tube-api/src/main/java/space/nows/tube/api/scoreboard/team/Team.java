@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.entity.player.Player;
+import space.nows.tube.api.scoreboard.ScoreHolder;
 
 import java.util.Set;
 
@@ -43,6 +44,14 @@ public interface Team {
 
     void setSeeInvisibleMembers(boolean see);
 
+    boolean shared();
+
+    void show(Player player);
+
+    void hide(Player player);
+
+    Set<Player> viewers();
+
     Set<String> members();
 
     void addMember(String entry);
@@ -50,18 +59,15 @@ public interface Team {
     void removeMember(String entry);
 
     default void addMember(Entity entity) {
-        addMember(entry(entity));
+        addMember(ScoreHolder.of(entity));
     }
 
     default void removeMember(Entity entity) {
-        removeMember(entry(entity));
+        removeMember(ScoreHolder.of(entity));
     }
 
     default boolean hasMember(Entity entity) {
-        return members().contains(entry(entity));
+        return members().contains(ScoreHolder.of(entity));
     }
 
-    private static String entry(Entity entity) {
-        return entity instanceof Player player ? player.name() : entity.uuid().toString();
-    }
 }
