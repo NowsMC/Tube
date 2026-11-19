@@ -92,6 +92,16 @@ public final class MinestomMob extends MinestomLivingEntity implements Mob {
         creature.setAggressive(aggressive);
     }
 
+    @Override
+    public boolean isPersistent() {
+        return creature.isPersistent();
+    }
+
+    @Override
+    public void setPersistent(boolean persistent) {
+        creature.setPersistent(persistent);
+    }
+
     private static net.minestom.server.entity.Entity handleOf(Entity entity) {
         if (entity instanceof MinestomEntity wrapped) {
             return wrapped.minestom();

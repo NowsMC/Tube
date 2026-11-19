@@ -39,6 +39,14 @@ public interface CreatureKind {
         return type().key().value();
     }
 
+    default boolean leavesWhenFar(Creature creature) {
+        return true;
+    }
+
+    default int despawnRange() {
+        return 128;
+    }
+
     default boolean aquatic() {
         return false;
     }

@@ -36,6 +36,11 @@ abstract class Animal implements CreatureKind, Breedable {
     }
 
     @Override
+    public boolean leavesWhenFar(Creature creature) {
+        return false;
+    }
+
+    @Override
     public Disposition disposition() {
         return Disposition.PASSIVE;
     }

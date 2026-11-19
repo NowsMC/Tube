@@ -4,6 +4,7 @@ import net.minestom.server.entity.EntityProjectile;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.damage.Damage;
+import net.minestom.server.entity.metadata.monster.EndermanMeta;
 import space.nows.tube.api.entity.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
@@ -36,6 +37,11 @@ public final class Enderman extends Monster {
     @Override
     public CreatureStats stats() {
         return STATS;
+    }
+
+    @Override
+    public boolean leavesWhenFar(Creature creature) {
+        return !(creature.getEntityMeta() instanceof EndermanMeta meta && meta.getCarriedBlock() != null);
     }
 
     @Override

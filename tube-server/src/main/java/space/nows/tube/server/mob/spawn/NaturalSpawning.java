@@ -19,8 +19,6 @@ public final class NaturalSpawning {
     private static final int ANIMAL_CAP = 10;
     private static final int FISH_CAP = 15;
     private static final double CAP_RANGE = 128;
-    private static final double CALM_RANGE = 32;
-    private static final int FAR_DESPAWN_ONE_IN = 40;
     private static final int INTERVAL_TICKS = 20;
 
     private NaturalSpawning() {
@@ -41,7 +39,6 @@ public final class NaturalSpawning {
                     creatures.add(creature);
                 }
             }
-            despawn(creatures, players, difficulty, random);
             if (!SpawnSpots.overworld(instance)) {
                 continue;
             }
@@ -49,20 +46,6 @@ public final class NaturalSpawning {
                 if (player.getGameMode() != GameMode.SPECTATOR) {
                     populate(instance, player, creatures, difficulty, random);
                 }
-            }
-        }
-    }
-
-    private static void despawn(List<Creature> creatures, List<Player> players, Difficulty difficulty, ThreadLocalRandom random) {
-        for (Creature creature : creatures) {
-            double nearest = Double.MAX_VALUE;
-            for (Player player : players) {
-                nearest = Math.min(nearest, player.getPosition().distanceSquared(creature.getPosition()));
-            }
-            boolean hostile = creature.kind().disposition().hostile();
-            if (nearest > CAP_RANGE * CAP_RANGE || hostile && difficulty == Difficulty.PEACEFUL
-                    || hostile && nearest > CALM_RANGE * CALM_RANGE && random.nextInt(FAR_DESPAWN_ONE_IN) == 0) {
-                creature.remove();
             }
         }
     }

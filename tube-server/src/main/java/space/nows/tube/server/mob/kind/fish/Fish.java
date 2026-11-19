@@ -18,6 +18,11 @@ abstract class Fish implements CreatureKind {
     }
 
     @Override
+    public int despawnRange() {
+        return 64;
+    }
+
+    @Override
     public boolean aquatic() {
         return true;
     }

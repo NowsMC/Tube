@@ -20,6 +20,7 @@ import space.nows.tube.server.mob.sense.Sight;
 import space.nows.tube.server.mob.sound.AmbientSound;
 import space.nows.tube.server.mob.sound.DeathEffect;
 import space.nows.tube.server.mob.trait.Crowding;
+import space.nows.tube.server.mob.trait.Despawn;
 import space.nows.tube.server.mob.trait.Trait;
 
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public final class Creature extends EntityCreature {
     private final Harm harm = new Harm();
     private final List<Trait> traits = new ArrayList<>();
     private boolean jumping;
+    private boolean persistent;
+    private int idleTicks;
 
     public Creature(CreatureKind kind) {
         super(kind.type());
@@ -54,6 +57,7 @@ public final class Creature extends EntityCreature {
         this.brain = new CreatureBrain(getEntityId());
         kind.configure(this, brain);
         traits.add(new Crowding(this));
+        traits.add(new Despawn(this));
         if (kind.ambientSounds()) {
             traits.add(new AmbientSound(this));
         }
@@ -110,6 +114,22 @@ public final class Creature extends EntityCreature {
                 || getEntityMeta() instanceof ZombieMeta zombie && zombie.isBaby();
     }
 
+    public boolean isPersistent() {
+        return persistent;
+    }
+
+    public void setPersistent(boolean persistent) {
+        this.persistent = persistent;
+    }
+
+    public int idleTicks() {
+        return idleTicks;
+    }
+
+    public void resetIdle() {
+        idleTicks = 0;
+    }
+
     public void jump() {
         jumping = true;
     }
@@ -157,6 +177,7 @@ public final class Creature extends EntityCreature {
         boolean hurt = super.damage(damage);
         if (hurt) {
             harm.record(damage, getAliveTicks());
+            idleTicks = 0;
             kind.damaged(this, damage);
         }
         return hurt;
@@ -176,6 +197,7 @@ public final class Creature extends EntityCreature {
 
     private void think() {
         sight.forget();
+        idleTicks++;
         brain.tick(getAliveTicks());
         for (Trait trait : traits) {
             trait.tick();

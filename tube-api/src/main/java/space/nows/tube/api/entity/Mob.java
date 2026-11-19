@@ -32,4 +32,8 @@ public interface Mob extends LivingEntity {
     boolean isAggressive();
 
     void setAggressive(boolean aggressive);
+
+    boolean isPersistent();
+
+    void setPersistent(boolean persistent);
 }
