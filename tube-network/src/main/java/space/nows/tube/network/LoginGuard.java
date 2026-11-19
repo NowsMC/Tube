@@ -8,9 +8,10 @@ import java.util.function.LongSupplier;
 final class LoginGuard {
 
     private static final int MAX_FAILURES = 3;
-    private static final long LOCK_MILLIS = 60_000;
+    private static final long WINDOW_MILLIS = 60_000;
+    private static final int MAX_TRACKED = 10_000;
 
-    private record Failures(int count, long lockedUntil) {
+    private record Failures(int count, long last) {
     }
 
     private final Map<InetAddress, Failures> failures = new ConcurrentHashMap<>();
@@ -25,21 +26,31 @@ final class LoginGuard {
         if (entry == null) {
             return false;
         }
-        if (entry.lockedUntil() != 0 && entry.lockedUntil() <= clock.getAsLong()) {
+        if (expired(entry, clock.getAsLong())) {
             failures.remove(address, entry);
             return false;
         }
-        return entry.lockedUntil() != 0;
+        return entry.count() >= MAX_FAILURES;
     }
 
     void failed(InetAddress address) {
-        failures.compute(address, (key, entry) -> {
-            int count = entry == null ? 1 : entry.count() + 1;
-            return new Failures(count, count >= MAX_FAILURES ? clock.getAsLong() + LOCK_MILLIS : 0);
-        });
+        long now = clock.getAsLong();
+        if (failures.size() >= MAX_TRACKED) {
+            failures.values().removeIf(entry -> expired(entry, now));
+        }
+        failures.compute(address, (key, entry) -> entry == null || expired(entry, now)
+                ? new Failures(1, now) : new Failures(entry.count() + 1, now));
     }
 
     void succeeded(InetAddress address) {
         failures.remove(address);
+    }
+
+    int tracked() {
+        return failures.size();
+    }
+
+    private static boolean expired(Failures entry, long now) {
+        return now - entry.last() >= WINDOW_MILLIS;
     }
 }

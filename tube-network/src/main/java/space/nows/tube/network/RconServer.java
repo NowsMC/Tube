@@ -93,7 +93,9 @@ public final class RconServer implements AutoCloseable {
 
         @Override
         public void channelInactive(ChannelHandlerContext context) {
-            loginTimeout.cancel(false);
+            if (loginTimeout != null) {
+                loginTimeout.cancel(false);
+            }
             context.fireChannelInactive();
         }
 
@@ -111,6 +113,11 @@ public final class RconServer implements AutoCloseable {
 
             if (type == TYPE_LOGIN) {
                 InetAddress address = ((InetSocketAddress) context.channel().remoteAddress()).getAddress();
+                if (guard.locked(address)) {
+                    respond(context, -1, TYPE_COMMAND, "");
+                    context.close();
+                    return;
+                }
                 if (MessageDigest.isEqual(password, raw)) {
                     authenticated = true;
                     guard.succeeded(address);

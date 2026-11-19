@@ -156,6 +156,37 @@ class NetworkTest {
     }
 
     @Test
+    void closingATcpServerClosesItsConnections() throws IOException {
+        var server = network.listenTcp(new InetSocketAddress(LOCAL, 0), (connection, data) -> connection.send(data));
+        try (Socket socket = new Socket(LOCAL, server.address().getPort())) {
+            socket.setSoTimeout(5000);
+            socket.getOutputStream().write(1);
+            assertEquals(1, socket.getInputStream().read());
+
+            server.close();
+
+            assertEquals(-1, socket.getInputStream().read());
+        }
+    }
+
+    @Test
+    void rconLockoutAlsoStopsConnectionsOpenedBeforeIt() throws IOException {
+        try (RconServer server = new RconServer(network, new InetSocketAddress(LOCAL, 0), "secret", command -> CompletableFuture.completedFuture("ran"));
+             Socket waiting = new Socket(LOCAL, server.address().getPort())) {
+            waiting.setSoTimeout(5000);
+            for (int attempt = 0; attempt < 3; attempt++) {
+                try (Socket socket = new Socket(LOCAL, server.address().getPort())) {
+                    socket.setSoTimeout(5000);
+                    rcon(socket.getOutputStream(), attempt, 3, "wrong");
+                    assertEquals(-1, read(socket.getInputStream()).id());
+                }
+            }
+            rcon(waiting.getOutputStream(), 9, 3, "secret");
+            assertEquals(-1, read(waiting.getInputStream()).id());
+        }
+    }
+
+    @Test
     void rconRefusesCommandsBeforeLogin() throws IOException {
         try (RconServer server = new RconServer(network, new InetSocketAddress(LOCAL, 0), "secret", command -> CompletableFuture.completedFuture("ran"));
              Socket socket = new Socket(LOCAL, server.address().getPort())) {

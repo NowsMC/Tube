@@ -1,5 +1,6 @@
 package space.nows.tube.network;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,5 +40,24 @@ class LoginGuardTest {
         guard.failed(ADDRESS);
 
         assertFalse(guard.locked(ADDRESS));
+    }
+
+    @Test
+    void failuresOlderThanAMinuteAreForgotten() throws Exception {
+        AtomicLong now = new AtomicLong();
+        LoginGuard guard = new LoginGuard(now::get);
+
+        guard.failed(ADDRESS);
+        guard.failed(ADDRESS);
+        now.set(60_000);
+        guard.failed(ADDRESS);
+        assertFalse(guard.locked(ADDRESS));
+
+        for (int i = 0; i < 10_000; i++) {
+            guard.failed(InetAddress.getByAddress(new byte[] {10, 0, (byte) (i >> 8), (byte) i}));
+        }
+        now.set(200_000);
+        guard.failed(InetAddress.getByAddress(new byte[] {10, 1, 0, 0}));
+        assertEquals(1, guard.tracked());
     }
 }

@@ -18,7 +18,7 @@ final class Binding {
             return bind.channel();
         }
         Throwable cause = bind.cause();
-        IOException failure = cause instanceof IOException io ? io : new IOException(cause);
-        throw new UncheckedIOException("Could not bind " + address + ": " + cause.getMessage(), failure);
+        IOException failure = cause instanceof IOException io ? io : new IOException(cause == null ? "binding was cancelled" : cause.toString(), cause);
+        throw new UncheckedIOException("Could not bind " + address + ": " + failure.getMessage(), failure);
     }
 }

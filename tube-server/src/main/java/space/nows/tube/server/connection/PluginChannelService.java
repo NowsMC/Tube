@@ -51,7 +51,11 @@ public final class PluginChannelService implements PluginChannels {
     @Override
     public Subscription register(String channel, ChannelHandler handler) {
         String key = normalize(channel);
-        handlers.computeIfAbsent(key, ignored -> new CopyOnWriteArrayList<>()).add(handler);
+        handlers.compute(key, (ignored, list) -> {
+            List<ChannelHandler> registered = list == null ? new CopyOnWriteArrayList<>() : list;
+            registered.add(handler);
+            return registered;
+        });
         return () -> handlers.computeIfPresent(key, (ignored, list) -> {
             list.remove(handler);
             return list.isEmpty() ? null : list;

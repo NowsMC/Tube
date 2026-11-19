@@ -12,6 +12,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -27,6 +29,7 @@ import space.nows.tube.api.network.udp.UdpSocket;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 public final class NettyNetwork implements Network, AutoCloseable {
 
@@ -53,22 +56,24 @@ public final class NettyNetwork implements Network, AutoCloseable {
 
     @Override
     public TcpServer listenTcp(InetSocketAddress address, TcpHandler handler) {
+        ChannelGroup connections = new DefaultChannelGroup(group.next());
         Channel channel = Binding.await(new ServerBootstrap()
                 .group(group)
                 .channel(transport.serverChannel())
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel child) {
+                        connections.add(child);
                         child.pipeline().addLast(new TcpAdapter(handler, connectionIds.incrementAndGet()));
                     }
                 })
                 .bind(address), address);
-        return new BoundTcp(channel);
+        return new BoundTcp(channel, connections);
     }
 
     @Override
     public UdpSocket bindUdp(InetSocketAddress address, UdpHandler handler) {
-        BoundUdp[] holder = new BoundUdp[1];
+        AtomicReference<BoundUdp> holder = new AtomicReference<>();
         Channel channel = Binding.await(new Bootstrap()
                 .group(group)
                 .channel(transport.datagramChannel())
@@ -78,15 +83,17 @@ public final class NettyNetwork implements Network, AutoCloseable {
                         byte[] data = new byte[packet.content().readableBytes()];
                         packet.content().readBytes(data);
                         try {
-                            handler.received(holder[0], packet.sender(), data);
+                            BoundUdp socket = holder.get();
+                            handler.received(socket != null ? socket : new BoundUdp(context.channel()), packet.sender(), data);
                         } catch (RuntimeException e) {
                             LOGGER.warn("A UDP handler failed on {}", context.channel().localAddress(), e);
                         }
                     }
                 })
                 .bind(address), address);
-        holder[0] = new BoundUdp(channel);
-        return holder[0];
+        BoundUdp socket = new BoundUdp(channel);
+        holder.set(socket);
+        return socket;
     }
 
     @Override
@@ -102,9 +109,11 @@ public final class NettyNetwork implements Network, AutoCloseable {
     private static final class BoundTcp implements TcpServer {
 
         private final Channel channel;
+        private final ChannelGroup connections;
 
-        BoundTcp(Channel channel) {
+        BoundTcp(Channel channel, ChannelGroup connections) {
             this.channel = channel;
+            this.connections = connections;
         }
 
         @Override
@@ -115,6 +124,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
         @Override
         public void close() {
             channel.close().syncUninterruptibly();
+            connections.close().awaitUninterruptibly();
         }
     }
 
