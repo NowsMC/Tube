@@ -15,11 +15,21 @@ public final class ParticleSpawner {
         if (particle == null) {
             return false;
         }
-        instance.sendGroupedPacket(new ParticlePacket(particle, x, y, z, (float) spreadX, (float) spreadY, (float) spreadZ, (float) speed, count));
+        spawn(instance, particle, x, y, z, count, spreadX, spreadY, spreadZ, speed);
         return true;
     }
 
     public static boolean spawn(Instance instance, String key, Point at, int count, double spread, double speed) {
         return spawn(instance, key, at.x(), at.y(), at.z(), count, spread, spread, spread, speed);
+    }
+
+    public static void spawn(Instance instance, Particle particle, Point at, int count, double spread, double speed) {
+        spawn(instance, particle, at.x(), at.y(), at.z(), count, spread, spread, spread, speed);
+    }
+
+    private static void spawn(Instance instance, Particle particle, double x, double y, double z, int count, double spreadX, double spreadY, double spreadZ, double speed) {
+        if (instance != null) {
+            instance.sendGroupedPacket(new ParticlePacket(particle, x, y, z, (float) spreadX, (float) spreadY, (float) spreadZ, (float) speed, count));
+        }
     }
 }

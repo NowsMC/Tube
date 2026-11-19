@@ -9,12 +9,12 @@ import net.minestom.server.world.Difficulty;
 import space.nows.tube.api.entity.mob.brain.Behavior;
 import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
+import space.nows.tube.server.world.effect.EntityEffect;
 
 final class Beam extends Behavior {
 
     private static final double TOO_CLOSE = 9;
     private static final int WARMUP = -10;
-    private static final byte BEAM_SOUND = 21;
     private static final float BASE_MAGIC = 1;
     private static final float HARD_MAGIC = 2;
     private static final float ELDER_MAGIC = 2;
@@ -79,7 +79,7 @@ final class Beam extends Behavior {
         charge++;
         if (charge == 0) {
             aim(target);
-            guardian.triggerStatus(BEAM_SOUND);
+            EntityEffect.GUARDIAN_ATTACK.play(guardian);
         } else if (charge >= duration) {
             float magic = BASE_MAGIC + (MinecraftServer.getDifficulty() == Difficulty.HARD ? HARD_MAGIC : 0) + (elder ? ELDER_MAGIC : 0);
             target.damage(new Damage(DamageType.INDIRECT_MAGIC, guardian, guardian, guardian.getPosition(), magic));

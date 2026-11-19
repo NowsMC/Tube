@@ -7,6 +7,7 @@ import space.nows.tube.api.entity.mob.brain.Behavior;
 import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.world.effect.BlockBreakEffect;
+import space.nows.tube.server.world.effect.EntityEffect;
 
 import java.util.Set;
 
@@ -16,7 +17,6 @@ public final class Graze extends Behavior {
     private static final int BABY_CHANCE = 50;
     private static final int EAT_TICKS = 40;
     private static final int BITE_AT = 4;
-    private static final byte EAT_ANIMATION = 10;
     private static final Set<Block> EDIBLE = Set.of(Block.SHORT_GRASS, Block.SHORT_DRY_GRASS, Block.TALL_DRY_GRASS, Block.FERN);
 
     private final Creature creature;
@@ -42,7 +42,7 @@ public final class Graze extends Behavior {
     @Override
     public void start() {
         remaining = ticks(EAT_TICKS);
-        creature.triggerStatus(EAT_ANIMATION);
+        EntityEffect.EAT_GRASS.play(creature);
         creature.navigation().stop();
     }
 

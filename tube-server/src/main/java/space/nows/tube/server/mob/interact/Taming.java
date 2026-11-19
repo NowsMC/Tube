@@ -6,11 +6,9 @@ import net.minestom.server.item.ItemStack;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.life.Tamable;
 import space.nows.tube.server.mob.life.Tameness;
+import space.nows.tube.server.world.effect.EntityEffect;
 
 final class Taming {
-
-    private static final byte HEARTS = 7;
-    private static final byte SMOKE = 6;
 
     private Taming() {
     }
@@ -36,9 +34,9 @@ final class Taming {
                 tamable.tamed(creature);
                 creature.navigation().stop();
                 creature.setTarget(null);
-                creature.triggerStatus(HEARTS);
+                EntityEffect.TAMING_SUCCEEDED.play(creature);
             } else {
-                creature.triggerStatus(SMOKE);
+                EntityEffect.TAMING_FAILED.play(creature);
             }
             return true;
         }

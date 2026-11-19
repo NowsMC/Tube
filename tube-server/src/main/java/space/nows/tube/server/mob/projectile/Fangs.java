@@ -5,6 +5,7 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.entity.damage.DamageType;
+import space.nows.tube.server.world.effect.EntityEffect;
 
 public final class Fangs extends Entity {
 
@@ -12,7 +13,6 @@ public final class Fangs extends Entity {
     private static final int LIFE = 22;
     private static final double REACH = 0.2;
     private static final float DAMAGE = 6;
-    private static final byte SPIKE_EVENT = 4;
 
     private final Entity owner;
     private int warmup;
@@ -44,7 +44,7 @@ public final class Fangs extends Entity {
             }
         }
         if (!spiked) {
-            triggerStatus(SPIKE_EVENT);
+            EntityEffect.FANGS_BITE.play(this);
             spiked = true;
         }
         if (--life < 0) {

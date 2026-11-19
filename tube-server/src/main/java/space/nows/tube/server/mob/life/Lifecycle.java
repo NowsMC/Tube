@@ -2,8 +2,10 @@ package space.nows.tube.server.mob.life;
 
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.metadata.AgeableMobMeta;
+import net.minestom.server.particle.Particle;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.trait.Trait;
+import space.nows.tube.server.world.effect.EntityEffect;
 import space.nows.tube.server.world.effect.ParticleSpawner;
 
 public final class Lifecycle implements Trait {
@@ -12,7 +14,6 @@ public final class Lifecycle implements Trait {
     public static final int BREEDING_COOLDOWN = 6000;
     private static final int LOVE_TICKS = 600;
     private static final int HEART_EVERY = 10;
-    private static final byte LOVE_EVENT = 18;
     private static final float FEEDING_SPEED_UP = 0.1f;
 
     private final Creature creature;
@@ -66,7 +67,7 @@ public final class Lifecycle implements Trait {
     public void fallInLove(Player player) {
         love = LOVE_TICKS;
         lover = player;
-        creature.triggerStatus(LOVE_EVENT);
+        EntityEffect.IN_LOVE.play(creature);
     }
 
     public Player lover() {
@@ -76,7 +77,7 @@ public final class Lifecycle implements Trait {
     public void bred() {
         setAge(BREEDING_COOLDOWN);
         love = 0;
-        creature.triggerStatus(LOVE_EVENT);
+        EntityEffect.IN_LOVE.play(creature);
     }
 
     @Override
@@ -94,7 +95,7 @@ public final class Lifecycle implements Trait {
             love = 0;
         }
         if (love > 0 && --love % HEART_EVERY == 0) {
-            ParticleSpawner.spawn(creature.getInstance(), "heart", creature.getPosition().add(0, creature.getBoundingBox().height() + 0.5, 0), 1, 0.4, 0.02);
+            ParticleSpawner.spawn(creature.getInstance(), Particle.HEART, creature.getPosition().add(0, creature.getBoundingBox().height() + 0.5, 0), 1, 0.4, 0.02);
         }
     }
 }

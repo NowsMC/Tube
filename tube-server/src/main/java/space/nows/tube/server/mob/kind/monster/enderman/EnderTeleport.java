@@ -8,6 +8,7 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.move.Liquids;
+import space.nows.tube.server.world.effect.EntityEffect;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 final class EnderTeleport {
@@ -17,7 +18,6 @@ final class EnderTeleport {
     private static final double TOWARDS_SPREAD = 8.0;
     private static final int TOWARDS_HEIGHT = 16;
     private static final double TOWARDS_DISTANCE = 16.0;
-    private static final byte PORTAL_EVENT = 46;
     private static final String SOUND = "minecraft:entity.enderman.teleport";
 
     private EnderTeleport() {
@@ -61,7 +61,7 @@ final class EnderTeleport {
         Pos from = enderman.getPosition();
         enderman.teleport(landing);
         enderman.navigation().stop();
-        enderman.triggerStatus(PORTAL_EVENT);
+        EntityEffect.TELEPORT.play(enderman);
         SoundPlayer.play(instance, SOUND, Sound.Source.HOSTILE, from, 1f, 1f);
         SoundPlayer.play(instance, SOUND, Sound.Source.HOSTILE, landing, 1f, 1f);
         return true;

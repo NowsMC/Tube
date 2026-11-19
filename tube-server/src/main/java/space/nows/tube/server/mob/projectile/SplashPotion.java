@@ -8,7 +8,7 @@ import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.metadata.item.SplashPotionMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.item.Material;
-import net.minestom.server.network.packet.server.play.WorldEventPacket;
+import space.nows.tube.server.world.effect.WorldEffect;
 
 public final class SplashPotion extends Entity {
 
@@ -17,8 +17,6 @@ public final class SplashPotion extends Entity {
     private static final double TICKS_PER_SECOND = 20;
     private static final double SPLASH_RANGE = 4;
     private static final int LIFETIME = 1200;
-    private static final int SPLASH_EVENT = 2002;
-    private static final int INSTANT_EVENT = 2007;
 
     private final Entity owner;
     private final Brew brew;
@@ -68,7 +66,7 @@ public final class SplashPotion extends Entity {
                 brew.apply(living, strength);
             }
         }
-        instance.sendGroupedPacket(new WorldEventPacket(brew.instant() ? INSTANT_EVENT : SPLASH_EVENT, getPosition(), brew.color(), false));
+        (brew.instant() ? WorldEffect.INSTANT_SPLASH_POTION : WorldEffect.SPLASH_POTION).play(instance, getPosition(), brew.color());
         remove();
     }
 }
