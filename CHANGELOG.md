@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.2611.5 - 2026-11-20
+
+### Plugin API
+
+- The API packages are reorganized, so plugins built for 0.2611.4 need their imports updated. Player types (`Player`, `GameMode`, `LoginMode`, `Skin`, `ResourcePack`) are in `entity.player`, `Mob` in `entity.mob`, `PotionEffect` in `entity.effect`, and `Text`, `Chat` and `ChatText` in `text`. Events are split into `event.block`, `event.entity`, `event.inventory`, `event.player` and `event.server`. Permissions, command arguments, TCP and UDP, scoreboard teams and the tab list, and world generation have their own packages. `Difficulty` is in `world`. ([`e064f8f`](https://github.com/NowsMC/Tube/commit/e064f8f0988a6e3aae996ce0919d37ca11d1de96))
+- Plugins can reach a mob's brain through `Mob.brain()`: add or remove behaviors with a priority, run them in activities, keep memories that expire, and add senses that update them on a timer. ([`8385cb2`](https://github.com/NowsMC/Tube/commit/8385cb2ed9264c7b7b1567bd6371932a40ba9dd3), [`e663e3f`](https://github.com/NowsMC/Tube/commit/e663e3f61802f0ca13538195425d43081245d847))
+- `TabList.entry(id)` finds an entry a plugin added, and `Scoreboards.teamOf(entity)` finds the team of a player or entity. Tab entry names longer than 16 characters are refused, since the client disconnects on them, and a sidebar no longer lists players who went offline. ([`4b72402`](https://github.com/NowsMC/Tube/commit/4b72402b32d477cc0d113e6a993b12f1fbb7230b), [`e731f21`](https://github.com/NowsMC/Tube/commit/e731f21647415aa5b4ac1c49cb8597757f6bfc0b))
+
+### Mobs
+
+- Every vanilla mob has a brain built on vanilla's behaviors, priorities and attributes: animals, fish, squids, golems, villagers and traders, pets, every overworld, Nether and End monster, illagers with their spells, the warden, the breeze, and the wither and ender dragon. ([`4b17a64`](https://github.com/NowsMC/Tube/commit/4b17a64460457b1ef698d9b11a8915a2478fff71), [`4458a8e`](https://github.com/NowsMC/Tube/commit/4458a8e29541a1d7a8c665b3c67a89c13e928d29), [`9e441df`](https://github.com/NowsMC/Tube/commit/9e441df2a31b218a8fb0823c4dd36db19325e767), [`8e7c584`](https://github.com/NowsMC/Tube/commit/8e7c584a35720a913f1b82b4d3327e8c91e1daa3), [`6314597`](https://github.com/NowsMC/Tube/commit/63145979e332d580b5c99afe71013fb03d1b37c5), [`53ceadc`](https://github.com/NowsMC/Tube/commit/53ceadcb75dadacf3ac50e5f6cbdb747151d41e2), [`6977559`](https://github.com/NowsMC/Tube/commit/6977559156eff4adc2aa0d03708abd584d244b32), [`edb8dca`](https://github.com/NowsMC/Tube/commit/edb8dca6dd7382c3697300e50880d97f308b850d), [`2e73adc`](https://github.com/NowsMC/Tube/commit/2e73adcbe48b2a7730c8b22f2a544392e5ff5118), [`fcd0a30`](https://github.com/NowsMC/Tube/commit/fcd0a30c76f64a4f209088e2e4aa7ab2429f26a3))
+- Goal priorities and attributes were checked against vanilla 26.2 and corrected where they differed. ([`e66b44c`](https://github.com/NowsMC/Tube/commit/e66b44c06c9e1c30b3949a9bcd4992a7a4521713), [`01cf0d2`](https://github.com/NowsMC/Tube/commit/01cf0d292d2cff8abd12f586c78648b6289f301f))
+- Mobs speed up gradually like vanilla instead of moving at full speed at once, and stop wandering when no player has been near for a while. ([`c5f4867`](https://github.com/NowsMC/Tube/commit/c5f486790f06ca015ecaafc8a9e564cfd8c67fa0), [`3569d9c`](https://github.com/NowsMC/Tube/commit/3569d9cd03b10f5fcd069cd143a6683d929dbad6))
+- Mobs despawn by vanilla's rules. Before, every mob was removed when no player was online. ([`4ca95ed`](https://github.com/NowsMC/Tube/commit/4ca95edd9fcb722ae923fe03ff307afa5372fa6b))
+- Mobs no longer read or walk into unloaded chunks, which used to crash the server near the edge of the loaded world. ([`8bca6f9`](https://github.com/NowsMC/Tube/commit/8bca6f981e899d81bb80a76248d03732806ee41f), [`2f44e8b`](https://github.com/NowsMC/Tube/commit/2f44e8b3fd11226d83654ec20d72fd299caac28d))
+- Wolves, cats, frogs, pigs, cows and chickens get the variant vanilla picks for their biome. ([`e6a9d4a`](https://github.com/NowsMC/Tube/commit/e6a9d4a89d01ab3ac0c243af2f9470f300cc00ed), [`48d1c2b`](https://github.com/NowsMC/Tube/commit/48d1c2b0f6c3f2930529e89f0d52fb5dcde84f58))
+- Players can tame wolves, cats, parrots and other pets and order them to sit, and pets follow their owner and defend them. ([`c8e2c12`](https://github.com/NowsMC/Tube/commit/c8e2c121d0cd3a7c14c8c776c7f7815f9bc0da09), [`6e2d3bc`](https://github.com/NowsMC/Tube/commit/6e2d3bcc59cc127cf62e2ef51ed6aa119cc05d22))
+- Fireproof mobs ignore fire and lava, and zombies, piglins and hoglins outside the Nether turn into their zombie forms. ([`aeac63b`](https://github.com/NowsMC/Tube/commit/aeac63bafa03a08147e2591b5af2275df740742a), [`d48c80d`](https://github.com/NowsMC/Tube/commit/d48c80d9b19b9fab1903e6fecc742bfec4bdf13a))
+
+### Combat
+
+- Arrows can carry a potion effect, as from strays, bogged and parched, and witches throw splash potions. ([`4816e20`](https://github.com/NowsMC/Tube/commit/4816e207913b6c029dcbdfd3f705876637432660), [`a3f2d8a`](https://github.com/NowsMC/Tube/commit/a3f2d8a650e4650bcb1dd90625e64eb11b5b7083))
+
+### Internals
+
+- Registry tags, sound pitch and playback, entity status effects and world events are each handled in one shared place instead of many copies. ([`a485f5f`](https://github.com/NowsMC/Tube/commit/a485f5f457470430106ad74ddeb1feedce901c5c), [`ee93f4a`](https://github.com/NowsMC/Tube/commit/ee93f4a0e5c47f3f07b98b47970dbd9437180838), [`0348735`](https://github.com/NowsMC/Tube/commit/0348735f631b4af0004415ec9e494e8f54bf0333))
+
 ## 0.2611.4 - 2026-11-18
 
 ### Builds
