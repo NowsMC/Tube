@@ -1,4 +1,4 @@
-package space.nows.tube.server.mob.kind.monster;
+package space.nows.tube.server.mob.kind.monster.zombie;
 
 import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.attribute.AttributeModifier;

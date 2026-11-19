@@ -1,4 +1,4 @@
-package space.nows.tube.server.mob.kind.monster;
+package space.nows.tube.server.mob.kind.monster.zombie;
 
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.item.ItemStack;
@@ -13,6 +13,9 @@ import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Retaliate;
+import space.nows.tube.server.mob.kind.monster.ArmorRoll;
+import space.nows.tube.server.mob.kind.monster.Monster;
+import space.nows.tube.server.mob.kind.monster.Turtles;
 import space.nows.tube.server.mob.spawn.LocalDifficulty;
 import space.nows.tube.server.mob.trait.SunBurn;
 
@@ -41,19 +44,23 @@ public class Zombie extends Monster {
 
     @Override
     public void configure(Creature creature, Brain brain) {
-        brain.add(3, new ArmsRaisedAttack(creature, 1.0, false));
-        brain.add(7, Wander.onLand(creature, 1.0));
         brain.add(8, WatchNearby.players(creature, 8f));
         brain.add(8, new LookAround(creature));
+        behaviors(creature, brain);
+        if (burnsInSun()) {
+            creature.addTrait(new SunBurn(creature));
+        }
+    }
+
+    protected void behaviors(Creature creature, Brain brain) {
+        brain.add(3, new ArmsRaisedAttack(creature, 1.0, false));
+        brain.add(7, Wander.onLand(creature, 1.0));
         brain.add(1, new Retaliate(creature).alertingOthers(EntityType.ZOMBIFIED_PIGLIN));
         brain.add(2, HuntNearest.players(creature, true));
         brain.add(3, HuntNearest.of(creature, entity -> entity.getEntityType() == EntityType.VILLAGER
                 || entity.getEntityType() == EntityType.WANDERING_TRADER, 10, false, entity -> true));
         brain.add(3, HuntNearest.of(creature, EntityType.IRON_GOLEM, true));
         brain.add(5, Turtles.hatchlingHunt(creature));
-        if (burnsInSun()) {
-            creature.addTrait(new SunBurn(creature));
-        }
     }
 
     @Override
@@ -62,6 +69,10 @@ public class Zombie extends Monster {
         if (random.nextFloat() < BABY_CHANCE) {
             BabyZombie.make(creature);
         }
+        equip(creature, difficulty, random);
+    }
+
+    protected void equip(Creature creature, LocalDifficulty difficulty, RandomGenerator random) {
         ArmorRoll.dress(creature, difficulty, random);
         if (random.nextFloat() < (difficulty.base() == Difficulty.HARD ? HARD_WEAPON_CHANCE : WEAPON_CHANCE)) {
             int roll = random.nextInt(6);
