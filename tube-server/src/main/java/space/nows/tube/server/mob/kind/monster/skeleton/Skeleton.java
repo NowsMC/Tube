@@ -50,6 +50,10 @@ public class Skeleton extends Monster {
         return null;
     }
 
+    protected Material weapon() {
+        return Material.BOW;
+    }
+
     protected boolean burnsInSun() {
         return true;
     }
@@ -76,6 +80,6 @@ public class Skeleton extends Monster {
     @Override
     public void prepare(Creature creature, RandomGenerator random) {
         ArmorRoll.dress(creature, LocalDifficulty.at(creature.getInstance(), 0), random);
-        creature.setItemInMainHand(ItemStack.of(Material.BOW));
+        creature.setItemInMainHand(ItemStack.of(weapon()));
     }
 }
