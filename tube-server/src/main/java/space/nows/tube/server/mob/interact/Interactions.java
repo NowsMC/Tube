@@ -13,7 +13,8 @@ public final class Interactions {
     public static void install(GlobalEventHandler handler) {
         handler.addListener(PlayerEntityInteractEvent.class, event -> {
             if (event.getHand() == PlayerHand.MAIN && event.getTarget() instanceof Creature creature) {
-                boolean handled = Feeding.apply(event.getPlayer(), creature)
+                boolean handled = Taming.apply(event.getPlayer(), creature)
+                        || Feeding.apply(event.getPlayer(), creature)
                         || Shearing.apply(event.getPlayer(), creature)
                         || Milking.apply(event.getPlayer(), creature);
                 if (handled) {
