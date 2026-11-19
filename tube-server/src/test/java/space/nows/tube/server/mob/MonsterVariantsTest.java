@@ -198,4 +198,17 @@ class MonsterVariantsTest {
         }
         assertTrue(cast, "evoker never cast");
     }
+
+    @Test
+    void witchesThrowPotions(Env env) {
+        setup(env);
+        spawn(EntityType.WITCH, new Pos(6, 40, 0));
+        boolean thrown = false;
+        for (int i = 0; i < 300 && !thrown; i++) {
+            env.tick();
+            thrown = instance.getEntities().stream().anyMatch(entity -> entity.getEntityType() == EntityType.SPLASH_POTION)
+                    || !player.getActiveEffects().isEmpty();
+        }
+        assertTrue(thrown, "witch never threw a potion");
+    }
 }
