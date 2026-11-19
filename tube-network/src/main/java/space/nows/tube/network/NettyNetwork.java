@@ -28,17 +28,23 @@ import space.nows.tube.api.network.udp.UdpHandler;
 import space.nows.tube.api.network.udp.UdpSocket;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class NettyNetwork implements Network, AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("tube-network");
+    private static final int PAUSE_READING_BYTES = 1 << 20;
+    private static final int RESUME_READING_BYTES = 256 << 10;
+    private static final int MAX_QUEUED_DATAGRAMS = 1024;
 
     private final Transport transport;
     private final EventLoopGroup group;
     private final PluginChannels channels;
     private final AtomicLong connectionIds = new AtomicLong();
+    private final ExecutorService handlers = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("tube-network-handler-", 0).factory());
 
     public NettyNetwork(PluginChannels channels, Transport transport) {
         this.channels = channels;
@@ -64,7 +70,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
                     @Override
                     protected void initChannel(SocketChannel child) {
                         connections.add(child);
-                        child.pipeline().addLast(new TcpAdapter(handler, connectionIds.incrementAndGet()));
+                        child.pipeline().addLast(new TcpAdapter(handler, connectionIds.incrementAndGet(), new SerialExecutor(handlers)));
                     }
                 })
                 .bind(address), address);
@@ -74,20 +80,29 @@ public final class NettyNetwork implements Network, AutoCloseable {
     @Override
     public UdpSocket bindUdp(InetSocketAddress address, UdpHandler handler) {
         AtomicReference<BoundUdp> holder = new AtomicReference<>();
+        SerialExecutor queue = new SerialExecutor(handlers);
         Channel channel = Binding.await(new Bootstrap()
                 .group(group)
                 .channel(transport.datagramChannel())
                 .handler(new SimpleChannelInboundHandler<DatagramPacket>() {
                     @Override
                     protected void channelRead0(ChannelHandlerContext context, DatagramPacket packet) {
+                        if (queue.queued() >= MAX_QUEUED_DATAGRAMS) {
+                            LOGGER.debug("Dropping a datagram from {}, the handler on {} is behind", packet.sender(), context.channel().localAddress());
+                            return;
+                        }
                         byte[] data = new byte[packet.content().readableBytes()];
                         packet.content().readBytes(data);
-                        try {
-                            BoundUdp socket = holder.get();
-                            handler.received(socket != null ? socket : new BoundUdp(context.channel()), packet.sender(), data);
-                        } catch (RuntimeException e) {
-                            LOGGER.warn("A UDP handler failed on {}", context.channel().localAddress(), e);
-                        }
+                        BoundUdp current = holder.get();
+                        BoundUdp socket = current != null ? current : new BoundUdp(context.channel());
+                        InetSocketAddress sender = packet.sender();
+                        queue.execute(() -> {
+                            try {
+                                handler.received(socket, sender, data);
+                            } catch (RuntimeException e) {
+                                LOGGER.warn("A UDP handler failed on {}", socket.address(), e);
+                            }
+                        });
                     }
                 })
                 .bind(address), address);
@@ -103,6 +118,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
 
     @Override
     public void close() {
+        handlers.shutdown();
         group.shutdownGracefully(0, 2, java.util.concurrent.TimeUnit.SECONDS).syncUninterruptibly();
     }
 
@@ -156,35 +172,50 @@ public final class NettyNetwork implements Network, AutoCloseable {
 
         private final TcpHandler handler;
         private final long id;
+        private final SerialExecutor queue;
+        private final AtomicLong pending = new AtomicLong();
         private volatile Channel channel;
 
-        TcpAdapter(TcpHandler handler, long id) {
+        TcpAdapter(TcpHandler handler, long id, SerialExecutor queue) {
             this.handler = handler;
             this.id = id;
+            this.queue = queue;
         }
 
         @Override
         public void channelActive(ChannelHandlerContext context) {
             channel = context.channel();
-            guard(context, () -> handler.connected(this));
+            queue.execute(() -> guard(() -> handler.connected(this)));
             context.fireChannelActive();
         }
 
         @Override
         public void channelRead(ChannelHandlerContext context, Object message) {
             ByteBuf buffer = (ByteBuf) message;
+            byte[] data;
             try {
-                byte[] data = new byte[buffer.readableBytes()];
+                data = new byte[buffer.readableBytes()];
                 buffer.readBytes(data);
-                guard(context, () -> handler.received(this, data));
             } finally {
                 buffer.release();
             }
+            if (pending.addAndGet(data.length) > PAUSE_READING_BYTES) {
+                channel.config().setAutoRead(false);
+            }
+            queue.execute(() -> {
+                try {
+                    guard(() -> handler.received(this, data));
+                } finally {
+                    if (pending.addAndGet(-data.length) < RESUME_READING_BYTES && !channel.config().isAutoRead()) {
+                        channel.config().setAutoRead(true);
+                    }
+                }
+            });
         }
 
         @Override
         public void channelInactive(ChannelHandlerContext context) {
-            guard(context, () -> handler.closed(this));
+            queue.execute(() -> guard(() -> handler.closed(this)));
             context.fireChannelInactive();
         }
 
@@ -194,12 +225,12 @@ public final class NettyNetwork implements Network, AutoCloseable {
             context.close();
         }
 
-        private void guard(ChannelHandlerContext context, Runnable action) {
+        private void guard(Runnable action) {
             try {
                 action.run();
             } catch (RuntimeException e) {
-                LOGGER.warn("A TCP handler failed for {}", context.channel().remoteAddress(), e);
-                context.close();
+                LOGGER.warn("A TCP handler failed for {}", channel.remoteAddress(), e);
+                channel.close();
             }
         }
 

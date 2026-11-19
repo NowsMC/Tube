@@ -25,8 +25,11 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 class NetworkTest {
 
@@ -183,6 +186,80 @@ class NetworkTest {
             }
             rcon(waiting.getOutputStream(), 9, 3, "secret");
             assertEquals(-1, read(waiting.getInputStream()).id());
+        }
+    }
+
+    @Test
+    void slowPluginHandlersDoNotHoldUpRcon() throws Exception {
+        CountDownLatch release = new CountDownLatch(1);
+        var server = network.listenTcp(new InetSocketAddress(LOCAL, 0), (connection, data) -> {
+            try {
+                release.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        List<Socket> stuck = new ArrayList<>();
+        try (RconServer rcon = new RconServer(network, new InetSocketAddress(LOCAL, 0), "secret", command -> CompletableFuture.completedFuture("ran"))) {
+            for (int i = 0; i < 4; i++) {
+                Socket socket = new Socket(LOCAL, server.address().getPort());
+                socket.getOutputStream().write(1);
+                stuck.add(socket);
+            }
+            try (Socket socket = new Socket(LOCAL, rcon.address().getPort())) {
+                socket.setSoTimeout(1000);
+                rcon(socket.getOutputStream(), 5, 3, "secret");
+                assertEquals(5, read(socket.getInputStream()).id());
+            }
+        } finally {
+            release.countDown();
+            for (Socket socket : stuck) {
+                socket.close();
+            }
+            server.close();
+        }
+    }
+
+    @Test
+    void aConnectionReceivesEverythingInOrderEvenWhenItsHandlerFallsBehind() throws Exception {
+        int size = 4 << 20;
+        CountDownLatch release = new CountDownLatch(1);
+        ByteArrayOutputStream received = new ByteArrayOutputStream();
+        CountDownLatch done = new CountDownLatch(1);
+        var server = network.listenTcp(new InetSocketAddress(LOCAL, 0), (connection, data) -> {
+            try {
+                release.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            synchronized (received) {
+                received.writeBytes(data);
+                if (received.size() == size) {
+                    done.countDown();
+                }
+            }
+        });
+        byte[] sent = new byte[size];
+        for (int i = 0; i < size; i++) {
+            sent[i] = (byte) (i * 31);
+        }
+        try (Socket socket = new Socket(LOCAL, server.address().getPort())) {
+            Thread writer = Thread.ofVirtual().start(() -> {
+                try {
+                    socket.getOutputStream().write(sent);
+                } catch (IOException e) {
+                    throw new java.io.UncheckedIOException(e);
+                }
+            });
+            Thread.sleep(300);
+            release.countDown();
+            assertTrue(done.await(10, TimeUnit.SECONDS));
+            writer.join();
+            synchronized (received) {
+                assertArrayEquals(sent, received.toByteArray());
+            }
+        } finally {
+            server.close();
         }
     }
 
