@@ -3,6 +3,7 @@ package space.nows.tube.server.mob;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.damage.Damage;
+import space.nows.tube.api.entity.brain.Brain;
 import space.nows.tube.server.mob.ai.GoalSelector;
 
 import java.util.random.RandomGenerator;
@@ -15,7 +16,12 @@ public interface CreatureKind {
 
     Disposition disposition();
 
-    void configure(Creature creature, GoalSelector goals, GoalSelector targets);
+    default void configure(Creature creature, Brain brain) {
+        configure(creature, new GoalSelector(brain), new GoalSelector(brain));
+    }
+
+    default void configure(Creature creature, GoalSelector goals, GoalSelector targets) {
+    }
 
     default float walkPreference(Creature creature, Point at) {
         return 0f;

@@ -11,7 +11,7 @@ import net.minestom.server.entity.metadata.MobMeta;
 import net.minestom.server.entity.metadata.monster.zombie.ZombieMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
-import space.nows.tube.server.mob.ai.GoalSelector;
+import space.nows.tube.server.mob.brain.CreatureBrain;
 import space.nows.tube.server.mob.look.Gaze;
 import space.nows.tube.server.mob.move.Liquids;
 import space.nows.tube.server.mob.move.Navigation;
@@ -36,8 +36,7 @@ public final class Creature extends EntityCreature {
     private static final int REMOVAL_DELAY_MILLIS = 1000;
 
     private final CreatureKind kind;
-    private final GoalSelector goals = new GoalSelector();
-    private final GoalSelector targets = new GoalSelector();
+    private final CreatureBrain brain;
     private final Navigation navigation;
     private final Gaze gaze;
     private final Sight sight;
@@ -52,7 +51,8 @@ public final class Creature extends EntityCreature {
         this.navigation = new Navigation(this);
         this.gaze = new Gaze(this, kind.headTurnSpeed(), kind.maxHeadPitch(), kind.maxHeadTurn());
         this.sight = new Sight(this);
-        kind.configure(this, goals, targets);
+        this.brain = new CreatureBrain(getEntityId());
+        kind.configure(this, brain);
         traits.add(new Crowding(this));
         if (kind.ambientSounds()) {
             traits.add(new AmbientSound(this));
@@ -80,8 +80,8 @@ public final class Creature extends EntityCreature {
         return harm;
     }
 
-    public GoalSelector goals() {
-        return goals;
+    public CreatureBrain brain() {
+        return brain;
     }
 
     public RandomGenerator random() {
@@ -176,14 +176,7 @@ public final class Creature extends EntityCreature {
 
     private void think() {
         sight.forget();
-        long ticks = getAliveTicks();
-        if ((ticks + getEntityId()) % 2 != 0 && ticks > 1) {
-            targets.tickRunning(false);
-            goals.tickRunning(false);
-        } else {
-            targets.tick();
-            goals.tick();
-        }
+        brain.tick(getAliveTicks());
         for (Trait trait : traits) {
             trait.tick();
         }

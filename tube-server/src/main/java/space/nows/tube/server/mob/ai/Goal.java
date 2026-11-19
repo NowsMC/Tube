@@ -1,48 +1,14 @@
 package space.nows.tube.server.mob.ai;
 
-import java.util.EnumSet;
-import java.util.Set;
+import space.nows.tube.api.entity.brain.Behavior;
 
-public abstract class Goal {
+import java.util.Arrays;
 
-    private final Set<Control> controls;
+public abstract class Goal extends Behavior {
 
     protected Goal(Control... controls) {
-        this.controls = controls.length == 0 ? EnumSet.noneOf(Control.class) : EnumSet.of(controls[0], controls);
-    }
-
-    public abstract boolean canStart();
-
-    public boolean canContinue() {
-        return canStart();
-    }
-
-    public boolean interruptible() {
-        return true;
-    }
-
-    public boolean everyTick() {
-        return false;
-    }
-
-    public void start() {
-    }
-
-    public void stop() {
-    }
-
-    public void tick() {
-    }
-
-    public final Set<Control> controls() {
-        return controls;
-    }
-
-    protected final int ticks(int ticks) {
-        return everyTick() ? ticks : halved(ticks);
-    }
-
-    protected static int halved(int ticks) {
-        return Math.floorDiv(ticks + 1, 2);
+        super(Arrays.stream(controls)
+                .map(control -> space.nows.tube.api.entity.brain.Control.valueOf(control.name()))
+                .toArray(space.nows.tube.api.entity.brain.Control[]::new));
     }
 }
