@@ -10,6 +10,7 @@ public final class Wander extends Behavior {
 
     private static final int DEFAULT_INTERVAL = 120;
     private static final float WATER_WANDER_CHANCE = 0.001f;
+    private static final int RESTLESS_LIMIT = 100;
 
     private final Creature creature;
     private final double speed;
@@ -45,7 +46,7 @@ public final class Wander extends Behavior {
 
     @Override
     public boolean canStart() {
-        if (creature.random().nextInt(halved(interval)) != 0) {
+        if (creature.idleTicks() >= RESTLESS_LIMIT || creature.random().nextInt(halved(interval)) != 0) {
             return false;
         }
         wanted = pick();
