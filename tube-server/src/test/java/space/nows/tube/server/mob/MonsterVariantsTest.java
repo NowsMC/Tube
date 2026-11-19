@@ -131,4 +131,21 @@ class MonsterVariantsTest {
         ticks(env, 10);
         assertTrue(llama.target() == null, "llama kept its target after spitting");
     }
+
+    @Test
+    void slimesHopAndSplit(Env env) {
+        setup(env);
+        Creature slime = spawn(EntityType.SLIME, new Pos(6, 40, 6));
+        Pos start = slime.getPosition();
+        ticks(env, 200);
+        assertTrue(slime.getPosition().distance(start) > 1, "slime never moved");
+        if (slime.getEntityMeta() instanceof net.minestom.server.entity.metadata.cube.AbstractCubeMeta meta) {
+            meta.setSize(2);
+        }
+        slime.kill();
+        ticks(env, 5);
+        long alive = instance.getEntities().stream()
+                .filter(entity -> entity.getEntityType() == EntityType.SLIME && !((Creature) entity).isDead()).count();
+        assertTrue(alive >= 2, () -> "split into " + alive);
+    }
 }
