@@ -41,15 +41,19 @@ import space.nows.tube.server.mob.kind.flier.Allay;
 import space.nows.tube.server.mob.kind.flier.Bee;
 import space.nows.tube.server.mob.kind.flier.HappyGhast;
 import space.nows.tube.server.mob.kind.flier.Parrot;
+import space.nows.tube.server.mob.kind.flier.Phantom;
 import space.nows.tube.server.mob.kind.golem.CopperGolem;
 import space.nows.tube.server.mob.kind.golem.IronGolem;
 import space.nows.tube.server.mob.kind.golem.SnowGolem;
 import space.nows.tube.server.mob.kind.monster.Endermite;
 import space.nows.tube.server.mob.kind.monster.Giant;
 import space.nows.tube.server.mob.kind.monster.blaze.Blaze;
+import space.nows.tube.server.mob.kind.monster.breeze.Breeze;
+import space.nows.tube.server.mob.kind.monster.creaking.Creaking;
 import space.nows.tube.server.mob.kind.monster.creeper.Creeper;
 import space.nows.tube.server.mob.kind.monster.cube.MagmaCube;
 import space.nows.tube.server.mob.kind.monster.cube.Slime;
+import space.nows.tube.server.mob.kind.monster.cube.SulfurCube;
 import space.nows.tube.server.mob.kind.monster.enderman.Enderman;
 import space.nows.tube.server.mob.kind.monster.ghast.Ghast;
 import space.nows.tube.server.mob.kind.monster.guardian.ElderGuardian;
@@ -63,6 +67,7 @@ import space.nows.tube.server.mob.kind.monster.illager.Ravager;
 import space.nows.tube.server.mob.kind.monster.illager.Vindicator;
 import space.nows.tube.server.mob.kind.monster.piglin.Piglin;
 import space.nows.tube.server.mob.kind.monster.piglin.PiglinBrute;
+import space.nows.tube.server.mob.kind.monster.shulker.Shulker;
 import space.nows.tube.server.mob.kind.monster.silverfish.Silverfish;
 import space.nows.tube.server.mob.kind.monster.skeleton.Bogged;
 import space.nows.tube.server.mob.kind.monster.skeleton.Parched;
@@ -72,6 +77,7 @@ import space.nows.tube.server.mob.kind.monster.skeleton.WitherSkeleton;
 import space.nows.tube.server.mob.kind.monster.spider.CaveSpider;
 import space.nows.tube.server.mob.kind.monster.spider.Spider;
 import space.nows.tube.server.mob.kind.monster.vex.Vex;
+import space.nows.tube.server.mob.kind.monster.warden.Warden;
 import space.nows.tube.server.mob.kind.monster.witch.Witch;
 import space.nows.tube.server.mob.kind.monster.zombie.Drowned;
 import space.nows.tube.server.mob.kind.monster.zombie.Husk;
@@ -99,7 +105,7 @@ public final class CreatureKinds {
     private static final Map<EntityType, CreatureKind> KINDS = new HashMap<>();
 
     static {
-        for (CreatureKind kind : List.of(new Cow(), new HappyGhast(), new Allay(), new Parrot(), new Bee(), new Illusioner(), new PiglinBrute(), new Piglin(), new CopperGolem(), new WanderingTrader(), new Villager(), new Fox(), new Panda(), new Strider(), new Sniffer(), new CamelHusk(), new Camel(), new Armadillo(), new Goat(), new Frog(), new Axolotl(), new Turtle(), new Tadpole(), new ZombieNautilus(), new Nautilus(), new Dolphin(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Wolf(), new Cat(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
+        for (CreatureKind kind : List.of(new Cow(), new Shulker(), new Warden(), new Breeze(), new SulfurCube(), new Creaking(), new Phantom(), new HappyGhast(), new Allay(), new Parrot(), new Bee(), new Illusioner(), new PiglinBrute(), new Piglin(), new CopperGolem(), new WanderingTrader(), new Villager(), new Fox(), new Panda(), new Strider(), new Sniffer(), new CamelHusk(), new Camel(), new Armadillo(), new Goat(), new Frog(), new Axolotl(), new Turtle(), new Tadpole(), new ZombieNautilus(), new Nautilus(), new Dolphin(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Wolf(), new Cat(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
                 new Zombie(), new Husk(), new Drowned(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Slime(), new MagmaCube(), new Blaze(), new Ghast(), new Vex(), new Bat(), new Pillager(), new Vindicator(), new Evoker(), new Witch(), new Guardian(), new ElderGuardian(), new Hoglin(), new Zoglin(), new Ravager(), new Enderman(), new IronGolem(), new SnowGolem(), new Squid(), new GlowSquid(), new Cod(), new Pufferfish(), new TropicalFish(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }
