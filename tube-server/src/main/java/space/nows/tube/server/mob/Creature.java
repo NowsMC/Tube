@@ -167,6 +167,7 @@ public final class Creature extends EntityCreature {
     public void kill() {
         super.kill();
         DeathEffect.play(this);
+        kind.died(this);
     }
 
     @Override

@@ -33,6 +33,9 @@ public interface CreatureKind {
     default void damaged(Creature creature, Damage damage) {
     }
 
+    default void died(Creature creature) {
+    }
+
     default float attackDamage(Creature creature) {
         return (float) creature.getAttributeValue(Attribute.ATTACK_DAMAGE);
     }
