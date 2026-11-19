@@ -14,6 +14,12 @@
 
 - Below-name and tab list objectives of Bukkit scoreboards are shown, and the teams of every scoreboard reach the players using that scoreboard, not only those of the main scoreboard. Teams allow friendly fire by default, as in vanilla. Scores from criteria such as `health` are not filled in by the server yet. ([`34d9df5`](https://github.com/NowsMC/Tube/commit/34d9df5673170d0c5dd0aff268d33848bb7b38a0))
 
+### Network
+
+- RCON closes a client that does not log in within 30 seconds and refuses an address for a minute after three wrong passwords. ([`cd45364`](https://github.com/NowsMC/Tube/commit/cd453641dd2e1eed094116d6faa27ef5d4c136f4))
+- If the RCON or Query port, or a port a plugin listens on, is already in use, Tube reports which address could not be bound instead of failing to start. ([`cd45364`](https://github.com/NowsMC/Tube/commit/cd453641dd2e1eed094116d6faa27ef5d4c136f4))
+- Query keeps its handshake tokens in check under a flood of requests and no longer accepts expired ones. ([`cd45364`](https://github.com/NowsMC/Tube/commit/cd453641dd2e1eed094116d6faa27ef5d4c136f4))
+
 ### Mobs
 
 - Every vanilla mob has a brain built on vanilla's behaviors, priorities and attributes: animals, fish, squids, golems, villagers and traders, pets, every overworld, Nether and End monster, illagers with their spells, the warden, the breeze, and the wither and ender dragon. ([`4b17a64`](https://github.com/NowsMC/Tube/commit/4b17a64460457b1ef698d9b11a8915a2478fff71), [`4458a8e`](https://github.com/NowsMC/Tube/commit/4458a8e29541a1d7a8c665b3c67a89c13e928d29), [`9e441df`](https://github.com/NowsMC/Tube/commit/9e441df2a31b218a8fb0823c4dd36db19325e767), [`8e7c584`](https://github.com/NowsMC/Tube/commit/8e7c584a35720a913f1b82b4d3327e8c91e1daa3), [`6314597`](https://github.com/NowsMC/Tube/commit/63145979e332d580b5c99afe71013fb03d1b37c5), [`53ceadc`](https://github.com/NowsMC/Tube/commit/53ceadcb75dadacf3ac50e5f6cbdb747151d41e2), [`6977559`](https://github.com/NowsMC/Tube/commit/6977559156eff4adc2aa0d03708abd584d244b32), [`edb8dca`](https://github.com/NowsMC/Tube/commit/edb8dca6dd7382c3697300e50880d97f308b850d), [`2e73adc`](https://github.com/NowsMC/Tube/commit/2e73adcbe48b2a7730c8b22f2a544392e5ff5118), [`fcd0a30`](https://github.com/NowsMC/Tube/commit/fcd0a30c76f64a4f209088e2e4aa7ab2429f26a3))
