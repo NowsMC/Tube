@@ -17,7 +17,7 @@
 - Mobs no longer read or walk into unloaded chunks, which used to crash the server near the edge of the loaded world. ([`8bca6f9`](https://github.com/NowsMC/Tube/commit/8bca6f981e899d81bb80a76248d03732806ee41f), [`2f44e8b`](https://github.com/NowsMC/Tube/commit/2f44e8b3fd11226d83654ec20d72fd299caac28d))
 - Wolves, cats, frogs, pigs, cows and chickens get the variant vanilla picks for their biome. ([`e6a9d4a`](https://github.com/NowsMC/Tube/commit/e6a9d4a89d01ab3ac0c243af2f9470f300cc00ed), [`48d1c2b`](https://github.com/NowsMC/Tube/commit/48d1c2b0f6c3f2930529e89f0d52fb5dcde84f58))
 - Players can tame wolves, cats, parrots and other pets and order them to sit, and pets follow their owner and defend them. ([`c8e2c12`](https://github.com/NowsMC/Tube/commit/c8e2c121d0cd3a7c14c8c776c7f7815f9bc0da09), [`6e2d3bc`](https://github.com/NowsMC/Tube/commit/6e2d3bcc59cc127cf62e2ef51ed6aa119cc05d22))
-- Fireproof mobs ignore fire and lava, and zombies, piglins and hoglins outside the Nether turn into their zombie forms. ([`aeac63b`](https://github.com/NowsMC/Tube/commit/aeac63bafa03a08147e2591b5af2275df740742a), [`d48c80d`](https://github.com/NowsMC/Tube/commit/d48c80d9b19b9fab1903e6fecc742bfec4bdf13a))
+- Fireproof mobs ignore fire and lava, and piglins and hoglins outside the Nether turn into their zombie forms. ([`aeac63b`](https://github.com/NowsMC/Tube/commit/aeac63bafa03a08147e2591b5af2275df740742a), [`d48c80d`](https://github.com/NowsMC/Tube/commit/d48c80d9b19b9fab1903e6fecc742bfec4bdf13a))
 
 ### Combat
 
