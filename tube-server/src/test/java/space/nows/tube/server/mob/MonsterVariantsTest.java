@@ -173,4 +173,14 @@ class MonsterVariantsTest {
         assertTrue(seen[0], "blaze never shot");
         assertTrue(seen[1], "ghast never shot");
     }
+
+    @Test
+    void pillagersShootCrossbows(Env env) {
+        setup(env);
+        Creature pillager = spawn(EntityType.PILLAGER, new Pos(8, 40, 0));
+        for (int i = 0; i < 300 && player.getHealth() >= 20; i++) {
+            env.tick();
+        }
+        assertTrue(player.getHealth() < 20, () -> "pillager at " + pillager.getPosition() + " never hit");
+    }
 }
