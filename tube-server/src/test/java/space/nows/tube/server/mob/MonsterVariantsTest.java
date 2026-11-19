@@ -95,4 +95,14 @@ class MonsterVariantsTest {
         }
         assertTrue(affected(PotionEffect.POISON), () -> "health " + player.getHealth() + " spider at " + spider.getPosition());
     }
+
+    @Test
+    void witherSkeletonsWither(Env env) {
+        setup(env);
+        Creature skeleton = spawn(EntityType.WITHER_SKELETON, new Pos(2, 40, 0));
+        for (int i = 0; i < 300 && !affected(PotionEffect.WITHER); i++) {
+            env.tick();
+        }
+        assertTrue(affected(PotionEffect.WITHER), () -> "health " + player.getHealth() + " skeleton at " + skeleton.getPosition());
+    }
 }

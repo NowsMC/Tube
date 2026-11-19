@@ -31,6 +31,10 @@ public final class Wander extends Behavior {
         return new Wander(creature, speed, DEFAULT_INTERVAL, false, 1f);
     }
 
+    public static Wander anywhere(Creature creature, double speed, int interval) {
+        return new Wander(creature, speed, interval, false, 1f);
+    }
+
     public static Wander onLand(Creature creature, double speed) {
         return new Wander(creature, speed, DEFAULT_INTERVAL, true, WATER_WANDER_CHANCE);
     }
