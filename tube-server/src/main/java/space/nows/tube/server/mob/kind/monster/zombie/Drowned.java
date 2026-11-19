@@ -7,6 +7,7 @@ import net.minestom.server.item.Material;
 import space.nows.tube.api.entity.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.brain.combat.ArmsRaisedAttack;
+import space.nows.tube.server.mob.brain.combat.SwimStrike;
 import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Retaliate;
@@ -20,6 +21,7 @@ import java.util.random.RandomGenerator;
 public final class Drowned extends Zombie {
 
     private static final float ARMED_CHANCE = 0.1f;
+    private static final double SWIM_SPEED = 0.08;
 
     @Override
     public EntityType type() {
@@ -34,7 +36,7 @@ public final class Drowned extends Zombie {
     @Override
     protected void behaviors(Creature creature, Brain brain) {
         brain.add(1, new SeekWater(creature));
-        brain.add(2, new Dive(creature));
+        brain.add(2, new SwimStrike(creature, SWIM_SPEED));
         brain.add(2, new ArmsRaisedAttack(creature, 1.0, false));
         brain.add(6, new Surface(creature));
         brain.add(7, Wander.anywhere(creature, 1.0));

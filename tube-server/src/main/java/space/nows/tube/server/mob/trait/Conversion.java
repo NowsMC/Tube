@@ -7,6 +7,8 @@ import net.minestom.server.potion.PotionEffect;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureKinds;
 
+import java.util.function.Predicate;
+
 public final class Conversion implements Trait {
 
     private static final int DELAY = 300;
@@ -14,11 +16,19 @@ public final class Conversion implements Trait {
 
     private final Creature creature;
     private final EntityType into;
+    private final int delay;
+    private final Predicate<Creature> when;
     private int exposed;
 
-    public Conversion(Creature creature, EntityType into) {
+    public Conversion(Creature creature, EntityType into, int delay, Predicate<Creature> when) {
         this.creature = creature;
         this.into = into;
+        this.delay = delay;
+        this.when = when;
+    }
+
+    public static Conversion zombify(Creature creature, EntityType into) {
+        return new Conversion(creature, into, DELAY, mob -> zombifies(mob.getInstance()));
     }
 
     public static boolean zombifies(Instance instance) {
@@ -27,11 +37,11 @@ public final class Conversion implements Trait {
 
     @Override
     public void tick() {
-        if (creature.isDead() || !zombifies(creature.getInstance())) {
+        if (creature.isDead() || !when.test(creature)) {
             exposed = 0;
             return;
         }
-        if (++exposed < DELAY) {
+        if (++exposed < delay) {
             return;
         }
         Creature converted = new Creature(CreatureKinds.of(into).orElseThrow());

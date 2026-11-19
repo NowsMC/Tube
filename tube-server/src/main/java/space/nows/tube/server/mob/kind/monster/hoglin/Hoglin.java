@@ -61,7 +61,7 @@ public final class Hoglin extends Animal {
     public void configure(Creature creature, Brain brain) {
         Lifecycle life = lifecycle(creature);
         creature.getAttribute(Attribute.ATTACK_KNOCKBACK).setBaseValue(1);
-        creature.addTrait(new Conversion(creature, EntityType.ZOGLIN));
+        creature.addTrait(Conversion.zombify(creature, EntityType.ZOGLIN));
         brain.addActivity(FIGHT, mind -> creature.target() != null);
         brain.add(FIGHT, 1, new MeleeAttack(creature, 1.0, true, creature.isBaby() ? BABY_INTERVAL : ADULT_INTERVAL));
         brain.add(Activity.IDLE, 1, new Breed(creature, life, 0.6));
