@@ -12,15 +12,15 @@ import space.nows.tube.server.mob.brain.idle.Tempted;
 import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.Breed;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class Turtle extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(30, 0.25);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:turtle_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:turtle_food");
     private static final double SWIM_SPEED = 0.05;
 
     @Override

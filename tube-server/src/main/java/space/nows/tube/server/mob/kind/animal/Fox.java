@@ -17,16 +17,16 @@ import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.Breed;
 import space.nows.tube.server.mob.brain.social.FollowParent;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.monster.Turtles;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class Fox extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(10, 0.3).withDamage(2).withFollowRange(32);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:fox_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:fox_food");
     private static final Set<EntityType> PREY = Set.of(EntityType.CHICKEN, EntityType.RABBIT);
     private static final Set<EntityType> FISH = Set.of(EntityType.COD, EntityType.SALMON, EntityType.TROPICAL_FISH);
 

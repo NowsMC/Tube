@@ -3,16 +3,16 @@ package space.nows.tube.server.mob.kind.animal.llama;
 import net.minestom.server.entity.EntityType;
 import space.nows.tube.api.entity.mob.brain.Brain;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.EntityTags;
 import space.nows.tube.server.mob.brain.idle.Panic;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class TraderLlama extends Llama {
 
-    private static final Set<EntityType> FOES = EntityTags.of("minecraft:illager");
-    private static final Set<EntityType> ZOMBIES = EntityTags.of("minecraft:zombies");
+    private static final Set<EntityType> FOES = RegistryTags.entities("minecraft:illager");
+    private static final Set<EntityType> ZOMBIES = RegistryTags.entities("minecraft:zombies");
 
     @Override
     public EntityType type() {

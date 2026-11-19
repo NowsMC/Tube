@@ -11,16 +11,16 @@ import space.nows.tube.server.mob.brain.idle.Tempted;
 import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.FollowParent;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.animal.Animal;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 import java.util.random.RandomGenerator;
 
 abstract class Equine extends Animal {
 
-    private static final Set<Material> TEMPT = ItemTags.of("minecraft:horse_tempt_items");
+    private static final Set<Material> TEMPT = RegistryTags.items("minecraft:horse_tempt_items");
 
     protected boolean floats() {
         return true;

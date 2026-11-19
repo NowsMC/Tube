@@ -23,9 +23,8 @@ import net.minestom.server.inventory.click.Click;
 import net.minestom.server.inventory.type.FurnaceInventory;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.registry.RegistryTag;
-import net.minestom.server.registry.TagKey;
 import net.minestom.server.tag.Tag;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -368,7 +367,6 @@ public final class Furnaces {
     }
 
     private static boolean has(String tag, Material material) {
-        RegistryTag<Material> registryTag = Material.staticRegistry().getTag(TagKey.ofHash(tag));
-        return registryTag != null && registryTag.contains(material);
+        return RegistryTags.has(material, tag);
     }
 }

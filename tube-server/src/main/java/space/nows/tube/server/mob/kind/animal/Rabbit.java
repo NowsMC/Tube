@@ -17,8 +17,8 @@ import space.nows.tube.server.mob.brain.idle.Tempted;
 import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.Breed;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 import java.util.function.Predicate;
@@ -27,7 +27,7 @@ import java.util.random.RandomGenerator;
 public final class Rabbit extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(3, 0.3).withDamage(3);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:rabbit_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:rabbit_food");
     private static final Set<String> WHITE_BIOMES = Set.of("snowy_plains", "ice_spikes", "frozen_ocean", "snowy_taiga", "frozen_river",
             "snowy_beach", "frozen_peaks", "jagged_peaks", "snowy_slopes", "grove");
     private static final Set<String> GOLD_BIOMES = Set.of("desert");

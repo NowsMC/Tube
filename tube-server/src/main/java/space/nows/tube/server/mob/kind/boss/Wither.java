@@ -7,7 +7,6 @@ import net.minestom.server.entity.attribute.Attribute;
 import space.nows.tube.api.entity.mob.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
-import space.nows.tube.server.mob.EntityTags;
 import space.nows.tube.server.mob.brain.idle.FloatAround;
 import space.nows.tube.server.mob.brain.idle.LookAround;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
@@ -15,13 +14,14 @@ import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Retaliate;
 import space.nows.tube.server.mob.kind.monster.Monster;
 import space.nows.tube.server.mob.move.FloatControl;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class Wither extends Monster {
 
     private static final CreatureStats STATS = CreatureStats.monster(300, 0.6).withArmor(4).withFollowRange(40);
-    private static final Set<EntityType> UNDEAD = EntityTags.of("minecraft:undead");
+    private static final Set<EntityType> UNDEAD = RegistryTags.entities("minecraft:undead");
     private static final double FLYING_SPEED = 0.1;
 
     @Override

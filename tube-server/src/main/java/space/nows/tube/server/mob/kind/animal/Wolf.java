@@ -24,12 +24,12 @@ import space.nows.tube.server.mob.brain.social.StaySeated;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Loyalty;
 import space.nows.tube.server.mob.brain.target.Retaliate;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.monster.Turtles;
 import space.nows.tube.server.mob.life.Lifecycle;
 import space.nows.tube.server.mob.life.Tamable;
 import space.nows.tube.server.mob.life.Tameness;
 import space.nows.tube.server.mob.sense.Grudge;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 import java.util.random.RandomGenerator;
@@ -37,7 +37,7 @@ import java.util.random.RandomGenerator;
 public final class Wolf extends Animal implements Tamable {
 
     private static final CreatureStats STATS = CreatureStats.animal(8, 0.3).withDamage(4);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:wolf_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:wolf_food");
     private static final Set<Material> BONES = Set.of(Material.BONE);
     private static final Set<EntityType> PREY = Set.of(EntityType.SHEEP, EntityType.RABBIT, EntityType.FOX);
     private static final Set<EntityType> SKELETONS = Set.of(EntityType.SKELETON, EntityType.STRAY, EntityType.WITHER_SKELETON,

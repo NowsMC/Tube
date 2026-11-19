@@ -4,8 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.registry.RegistryTag;
-import net.minestom.server.registry.TagKey;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -255,15 +254,7 @@ public final class RecipeBook {
 
         private static void addIngredient(String id, Set<Material> materials) {
             if (id.startsWith("#")) {
-                RegistryTag<Material> tag = Material.staticRegistry().getTag(TagKey.ofHash(id));
-                if (tag != null) {
-                    for (var key : tag) {
-                        Material material = Material.fromKey(key.key());
-                        if (material != null) {
-                            materials.add(material);
-                        }
-                    }
-                }
+                materials.addAll(RegistryTags.items(id));
                 return;
             }
             Material material = Material.fromKey(id);

@@ -14,8 +14,8 @@ import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.Breed;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 import java.util.random.RandomGenerator;
@@ -23,7 +23,7 @@ import java.util.random.RandomGenerator;
 public final class Frog extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(10, 1.0).withDamage(10);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:frog_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:frog_food");
     private static final double SWIM = 0.05;
 
     @Override

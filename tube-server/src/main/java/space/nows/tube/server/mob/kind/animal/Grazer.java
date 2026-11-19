@@ -11,8 +11,8 @@ import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.Breed;
 import space.nows.tube.server.mob.brain.social.FollowParent;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
@@ -28,7 +28,7 @@ abstract class Grazer extends Animal {
 
     private Set<Material> food() {
         if (food == null) {
-            food = ItemTags.of(foodTag());
+            food = RegistryTags.items(foodTag());
         }
         return food;
     }

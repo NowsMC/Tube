@@ -6,8 +6,7 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockFace;
 import net.minestom.server.instance.block.rule.BlockPlacementRule;
-import net.minestom.server.registry.RegistryTag;
-import net.minestom.server.registry.TagKey;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -125,8 +124,7 @@ final class PlacementRule extends BlockPlacementRule {
     }
 
     static boolean tagged(Block block, String tag) {
-        RegistryTag<Block> registryTag = Block.staticRegistry().getTag(TagKey.ofHash(tag));
-        return registryTag != null && registryTag.contains(block);
+        return RegistryTags.has(block, tag);
     }
 
     @Override

@@ -11,18 +11,18 @@ import space.nows.tube.server.mob.brain.idle.Panic;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.FollowOwner;
 import space.nows.tube.server.mob.brain.social.StaySeated;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.animal.Animal;
 import space.nows.tube.server.mob.life.Tamable;
 import space.nows.tube.server.mob.life.Tameness;
 import space.nows.tube.server.mob.move.FloatControl;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class Parrot extends Animal implements Tamable {
 
     private static final CreatureStats STATS = CreatureStats.animal(6, 0.2).withDamage(3);
-    private static final Set<Material> SEEDS = ItemTags.of("minecraft:parrot_food");
+    private static final Set<Material> SEEDS = RegistryTags.items("minecraft:parrot_food");
     private static final double FLYING_SPEED = 0.05;
     private static final int RANGE = 6;
 

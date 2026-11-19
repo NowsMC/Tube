@@ -9,15 +9,15 @@ import net.minestom.server.entity.metadata.water.fish.PufferfishMeta;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.EntityTags;
 import space.nows.tube.server.mob.sound.MobVoice;
 import space.nows.tube.server.mob.trait.Trait;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 final class Puffing implements Trait {
 
-    private static final Set<net.minestom.server.entity.EntityType> NOT_SCARY = EntityTags.of("minecraft:not_scary_for_pufferfish");
+    private static final Set<net.minestom.server.entity.EntityType> NOT_SCARY = RegistryTags.entities("minecraft:not_scary_for_pufferfish");
     private static final int FULL_AFTER = 40;
     private static final int HALF_DEFLATE_AFTER = 60;
     private static final int DEFLATE_AFTER = 100;

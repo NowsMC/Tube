@@ -12,15 +12,15 @@ import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.Breed;
 import space.nows.tube.server.mob.brain.social.FollowParent;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class Goat extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(10, 0.2).withDamage(2);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:goat_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:goat_food");
 
     @Override
     public EntityType type() {

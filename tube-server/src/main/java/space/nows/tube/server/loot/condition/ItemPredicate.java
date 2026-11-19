@@ -4,9 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.registry.RegistryTag;
-import net.minestom.server.registry.TagKey;
 import space.nows.tube.server.item.Enchantments;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +56,7 @@ record ItemPredicate(List<String> items, List<EnchantRequirement> enchantments) 
 
     private static boolean matches(String id, Material material) {
         if (id.startsWith("#")) {
-            RegistryTag<Material> tag = Material.staticRegistry().getTag(TagKey.ofHash(id));
-            return tag != null && tag.contains(material);
+            return RegistryTags.has(material, id);
         }
         return material.key().asString().equals(id);
     }

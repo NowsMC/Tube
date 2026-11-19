@@ -22,19 +22,19 @@ import space.nows.tube.server.mob.brain.social.Breed;
 import space.nows.tube.server.mob.brain.social.FollowParent;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Retaliate;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.animal.Animal;
 import space.nows.tube.server.mob.life.Lifecycle;
 import space.nows.tube.server.mob.move.FloatControl;
 import space.nows.tube.server.mob.sense.Grudge;
 import space.nows.tube.server.mob.trait.Lifespan;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class Bee extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(10, 0.3).withDamage(2);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:bee_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:bee_food");
     private static final double FLYING_SPEED = 0.06;
     private static final int RANGE = 8;
     private static final int MIN_ANGER = 400;

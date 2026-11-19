@@ -17,11 +17,11 @@ import space.nows.tube.server.mob.brain.social.Breed;
 import space.nows.tube.server.mob.brain.social.FollowOwner;
 import space.nows.tube.server.mob.brain.social.StaySeated;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.monster.Turtles;
 import space.nows.tube.server.mob.life.Lifecycle;
 import space.nows.tube.server.mob.life.Tamable;
 import space.nows.tube.server.mob.life.Tameness;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 import java.util.random.RandomGenerator;
@@ -29,7 +29,7 @@ import java.util.random.RandomGenerator;
 public final class Cat extends Animal implements Tamable {
 
     private static final CreatureStats STATS = CreatureStats.animal(10, 0.3).withDamage(3);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:cat_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:cat_food");
 
     @Override
     public EntityType type() {

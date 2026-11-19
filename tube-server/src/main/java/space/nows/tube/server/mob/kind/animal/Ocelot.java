@@ -13,16 +13,16 @@ import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.Breed;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.monster.Turtles;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class Ocelot extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(10, 0.3).withDamage(3);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:ocelot_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:ocelot_food");
 
     @Override
     public EntityType type() {

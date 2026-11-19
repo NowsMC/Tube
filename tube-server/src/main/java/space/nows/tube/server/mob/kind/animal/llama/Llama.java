@@ -16,9 +16,9 @@ import space.nows.tube.server.mob.brain.idle.Tempted;
 import space.nows.tube.server.mob.brain.idle.Wander;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.FollowParent;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.animal.Animal;
 import space.nows.tube.server.mob.life.Lifecycle;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 import java.util.random.RandomGenerator;
@@ -26,7 +26,7 @@ import java.util.random.RandomGenerator;
 public class Llama extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.animal(53, 0.175);
-    private static final Set<Material> TEMPT = ItemTags.of("minecraft:llama_tempt_items");
+    private static final Set<Material> TEMPT = RegistryTags.items("minecraft:llama_tempt_items");
     private static final double JUMP = 0.5;
     private static final float STRONG_CHANCE = 0.04f;
 

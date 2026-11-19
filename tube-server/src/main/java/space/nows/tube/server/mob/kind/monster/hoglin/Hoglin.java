@@ -19,17 +19,17 @@ import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.Breed;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Retaliate;
-import space.nows.tube.server.mob.interact.ItemTags;
 import space.nows.tube.server.mob.kind.animal.Animal;
 import space.nows.tube.server.mob.life.Lifecycle;
 import space.nows.tube.server.mob.trait.Conversion;
+import space.nows.tube.server.registry.RegistryTags;
 
 import java.util.Set;
 
 public final class Hoglin extends Animal {
 
     private static final CreatureStats STATS = CreatureStats.monster(40, 0.3).withKnockbackResistance(0.6).withDamage(6);
-    private static final Set<Material> FOOD = ItemTags.of("minecraft:hoglin_food");
+    private static final Set<Material> FOOD = RegistryTags.items("minecraft:hoglin_food");
     private static final Set<Block> REPELLENTS = Set.of(Block.WARPED_FUNGUS, Block.NETHER_PORTAL, Block.RESPAWN_ANCHOR,
             Block.POTTED_WARPED_FUNGUS);
     private static final Activity FIGHT = Activity.of("minecraft:fight");
