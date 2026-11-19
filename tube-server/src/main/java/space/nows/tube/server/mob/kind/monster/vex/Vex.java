@@ -1,8 +1,10 @@
 package space.nows.tube.server.mob.kind.monster.vex;
 
+import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import space.nows.tube.api.entity.brain.Brain;
+import space.nows.tube.api.entity.brain.MemoryKey;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
@@ -11,6 +13,10 @@ import space.nows.tube.server.mob.brain.target.Retaliate;
 import space.nows.tube.server.mob.kind.monster.Monster;
 
 public final class Vex extends Monster {
+
+    public static final MemoryKey<Creature> OWNER = MemoryKey.of("tube:owner", Creature.class);
+    public static final MemoryKey<Point> HOME = MemoryKey.of("tube:home", Point.class);
+    public static final MemoryKey<Integer> LIFE = MemoryKey.of("tube:life", Integer.class);
 
     private static final CreatureStats STATS = CreatureStats.monster(14, 0.7).withDamage(4);
 
@@ -29,10 +35,12 @@ public final class Vex extends Monster {
         Glide glide = new Glide(creature);
         creature.addTrait(glide);
         brain.add(4, new Charge(creature, glide));
-        brain.add(8, new Haunt(creature, glide, null));
+        brain.add(8, new Haunt(creature, glide));
         brain.add(9, WatchNearby.of(creature, entity -> entity instanceof Player, 3f));
         brain.add(10, WatchNearby.of(creature, entity -> entity instanceof Creature, 8f));
         brain.add(1, new Retaliate(creature).alertingOthers());
+        brain.add(2, new Obey(creature));
         brain.add(3, HuntNearest.players(creature, true));
+        creature.addTrait(new Fading(creature));
     }
 }

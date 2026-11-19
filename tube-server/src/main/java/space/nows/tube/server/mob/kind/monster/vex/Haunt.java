@@ -14,13 +14,11 @@ final class Haunt extends Behavior {
 
     private final Creature vex;
     private final Glide glide;
-    private final Point home;
 
-    Haunt(Creature vex, Glide glide, Point home) {
+    Haunt(Creature vex, Glide glide) {
         super(Control.MOVE);
         this.vex = vex;
         this.glide = glide;
-        this.home = home;
     }
 
     @Override
@@ -35,7 +33,8 @@ final class Haunt extends Behavior {
 
     @Override
     public void start() {
-        Point origin = home != null ? home : new Vec(vex.getPosition().blockX(), vex.getPosition().blockY(), vex.getPosition().blockZ());
+        Point origin = vex.brain().recall(Vex.HOME)
+                .orElseGet(() -> new Vec(vex.getPosition().blockX(), vex.getPosition().blockY(), vex.getPosition().blockZ()));
         for (int attempt = 0; attempt < ATTEMPTS; attempt++) {
             Point spot = origin.add(vex.random().nextInt(15) - 7, vex.random().nextInt(11) - 5, vex.random().nextInt(15) - 7);
             if (vex.blockAt(spot).air()) {
