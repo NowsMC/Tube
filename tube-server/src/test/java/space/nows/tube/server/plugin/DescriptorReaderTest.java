@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import space.nows.tube.api.PermissionDefault;
+import space.nows.tube.api.permission.PermissionDefault;
 import space.nows.tube.api.plugin.PluginCommand;
 import space.nows.tube.api.plugin.PluginDescriptor;
 import space.nows.tube.api.plugin.PluginPermission;

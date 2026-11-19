@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.junit.jupiter.api.Test;
-import space.nows.tube.api.Text;
+import space.nows.tube.api.text.Text;
 
 class TextTest {
 

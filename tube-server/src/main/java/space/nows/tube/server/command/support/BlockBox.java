@@ -1,7 +1,7 @@
 package space.nows.tube.server.command.support;
 
 import space.nows.tube.api.command.CommandFailure;
-import space.nows.tube.api.command.Positions;
+import space.nows.tube.api.command.argument.Positions;
 
 public record BlockBox(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
 

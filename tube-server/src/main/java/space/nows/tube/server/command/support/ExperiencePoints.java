@@ -1,6 +1,6 @@
 package space.nows.tube.server.command.support;
 
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
 
 public final class ExperiencePoints {
 

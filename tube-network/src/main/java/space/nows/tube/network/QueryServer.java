@@ -1,6 +1,6 @@
 package space.nows.tube.network;
 
-import space.nows.tube.api.network.UdpSocket;
+import space.nows.tube.api.network.udp.UdpSocket;
 
 import java.io.ByteArrayOutputStream;
 import java.net.InetSocketAddress;

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import space.nows.tube.api.event.PlayerChatEvent;
-import space.nows.tube.api.event.PlayerJoinEvent;
+import space.nows.tube.api.event.player.PlayerChatEvent;
+import space.nows.tube.api.event.player.PlayerJoinEvent;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -244,9 +244,9 @@ class BukkitLayerTest {
     void sneakSprintAndGlideChangesReachBukkitListeners() throws IOException {
         var player = stub.player("Steve");
 
-        stub.events.post(new space.nows.tube.api.event.PlayerSneakEvent(player, true));
-        stub.events.post(new space.nows.tube.api.event.PlayerSprintEvent(player, false));
-        stub.events.post(new space.nows.tube.api.event.EntityGlideEvent(player, true));
+        stub.events.post(new space.nows.tube.api.event.player.PlayerSneakEvent(player, true));
+        stub.events.post(new space.nows.tube.api.event.player.PlayerSprintEvent(player, false));
+        stub.events.post(new space.nows.tube.api.event.entity.EntityGlideEvent(player, true));
 
         assertEquals(List.of("sneak:Steve:true:false", "sprint:false", "glide:Steve:true"), log().subList(log().size() - 3, log().size()));
     }
@@ -268,8 +268,8 @@ class BukkitLayerTest {
         var world = (space.nows.tube.api.world.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class<?>[] {space.nows.tube.api.world.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
 
-        var allowed = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 1, 64, 2, space.nows.tube.api.world.Block.of("stone")));
-        var denied = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 13, 64, 2, space.nows.tube.api.world.Block.of("stone")));
+        var allowed = stub.events.post(new space.nows.tube.api.event.block.BlockBreakEvent(player, world, 1, 64, 2, space.nows.tube.api.world.Block.of("stone")));
+        var denied = stub.events.post(new space.nows.tube.api.event.block.BlockBreakEvent(player, world, 13, 64, 2, space.nows.tube.api.world.Block.of("stone")));
 
         assertTrue(!allowed.isCancelled());
         assertTrue(denied.isCancelled());
@@ -282,16 +282,16 @@ class BukkitLayerTest {
         var world = (space.nows.tube.api.world.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class<?>[] {space.nows.tube.api.world.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
 
-        var death = stub.events.post(new space.nows.tube.api.event.EntityDeathEvent(player,
+        var death = stub.events.post(new space.nows.tube.api.event.entity.EntityDeathEvent(player,
                 java.util.List.of(space.nows.tube.api.inventory.ItemStack.of("stone", 3)), 10));
         assertEquals("death:1:10", log().getLast());
         assertEquals(java.util.List.of("minecraft:diamond"), death.drops().stream().map(space.nows.tube.api.inventory.ItemStack::type).toList());
         assertEquals(3, death.experience());
 
-        var damage = stub.events.post(new space.nows.tube.api.event.EntityDamageEvent(player, 4));
+        var damage = stub.events.post(new space.nows.tube.api.event.entity.EntityDamageEvent(player, 4));
         assertEquals(5, damage.damage());
 
-        var noDrops = stub.events.post(new space.nows.tube.api.event.BlockBreakEvent(player, world, 7, 64, 2, space.nows.tube.api.world.Block.of("stone")));
+        var noDrops = stub.events.post(new space.nows.tube.api.event.block.BlockBreakEvent(player, world, 7, 64, 2, space.nows.tube.api.world.Block.of("stone")));
         assertTrue(!noDrops.dropItems());
     }
 
@@ -302,8 +302,8 @@ class BukkitLayerTest {
                 new Class<?>[] {space.nows.tube.api.world.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
         var from = new space.nows.tube.api.world.Location(world, 0, 64, 0);
 
-        var allowed = stub.events.post(new space.nows.tube.api.event.PlayerMoveEvent(player, from, new space.nows.tube.api.world.Location(world, 5, 64, 0)));
-        var denied = stub.events.post(new space.nows.tube.api.event.PlayerMoveEvent(player, from, new space.nows.tube.api.world.Location(world, 200, 64, 0)));
+        var allowed = stub.events.post(new space.nows.tube.api.event.player.PlayerMoveEvent(player, from, new space.nows.tube.api.world.Location(world, 5, 64, 0)));
+        var denied = stub.events.post(new space.nows.tube.api.event.player.PlayerMoveEvent(player, from, new space.nows.tube.api.world.Location(world, 200, 64, 0)));
 
         assertTrue(!allowed.isCancelled());
         assertTrue(denied.isCancelled());
@@ -313,10 +313,10 @@ class BukkitLayerTest {
     void itemDropsAndPickupsCanBeCancelled() {
         var player = stub.player("Steve");
 
-        var keptDrop = stub.events.post(new space.nows.tube.api.event.PlayerDropItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 3))));
-        var cancelledDrop = stub.events.post(new space.nows.tube.api.event.PlayerDropItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 64))));
-        var keptPickup = stub.events.post(new space.nows.tube.api.event.EntityPickupItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 1))));
-        var cancelledPickup = stub.events.post(new space.nows.tube.api.event.EntityPickupItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("diamond", 1))));
+        var keptDrop = stub.events.post(new space.nows.tube.api.event.player.PlayerDropItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 3))));
+        var cancelledDrop = stub.events.post(new space.nows.tube.api.event.player.PlayerDropItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 64))));
+        var keptPickup = stub.events.post(new space.nows.tube.api.event.entity.EntityPickupItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("stone", 1))));
+        var cancelledPickup = stub.events.post(new space.nows.tube.api.event.entity.EntityPickupItemEvent(player, droppedItem(space.nows.tube.api.inventory.ItemStack.of("diamond", 1))));
 
         assertTrue(!keptDrop.isCancelled());
         assertTrue(cancelledDrop.isCancelled());
@@ -326,8 +326,8 @@ class BukkitLayerTest {
 
     @Test
     void preLoginCanBeDeniedByPlugins() {
-        var allowed = stub.events.post(new space.nows.tube.api.event.PlayerPreLoginEvent("Steve", java.util.UUID.randomUUID(), null, space.nows.tube.api.entity.LoginMode.ONLINE));
-        var denied = stub.events.post(new space.nows.tube.api.event.PlayerPreLoginEvent("BadGuy", java.util.UUID.randomUUID(), null, space.nows.tube.api.entity.LoginMode.OFFLINE));
+        var allowed = stub.events.post(new space.nows.tube.api.event.player.PlayerPreLoginEvent("Steve", java.util.UUID.randomUUID(), null, space.nows.tube.api.entity.player.LoginMode.ONLINE));
+        var denied = stub.events.post(new space.nows.tube.api.event.player.PlayerPreLoginEvent("BadGuy", java.util.UUID.randomUUID(), null, space.nows.tube.api.entity.player.LoginMode.OFFLINE));
 
         assertTrue(allowed.denyReason().isEmpty());
         assertEquals("Go away BadGuy", net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(denied.denyReason().orElseThrow()));
@@ -379,7 +379,7 @@ class BukkitLayerTest {
         var world = (space.nows.tube.api.world.World) java.lang.reflect.Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class<?>[] {space.nows.tube.api.world.World.class}, (proxy, method, args) -> method.getName().equals("name") ? "world" : null);
 
-        var respawn = stub.events.post(new space.nows.tube.api.event.PlayerRespawnEvent(player, new space.nows.tube.api.world.Location(world, 0, 64, 0)));
+        var respawn = stub.events.post(new space.nows.tube.api.event.player.PlayerRespawnEvent(player, new space.nows.tube.api.world.Location(world, 0, 64, 0)));
 
         assertEquals(10, respawn.location().x());
         assertEquals(70, respawn.location().y());
@@ -414,8 +414,8 @@ class BukkitLayerTest {
         var three = chestHolding(space.nows.tube.api.inventory.ItemStack.of("stone", 3));
         var two = chestHolding(space.nows.tube.api.inventory.ItemStack.of("stone", 2));
 
-        var cancelled = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, three, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 3), space.nows.tube.api.inventory.ClickType.LEFT, -1));
-        var kept = stub.events.post(new space.nows.tube.api.event.InventoryClickEvent(player, two, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 2), space.nows.tube.api.inventory.ClickType.LEFT, -1));
+        var cancelled = stub.events.post(new space.nows.tube.api.event.inventory.InventoryClickEvent(player, three, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 3), space.nows.tube.api.inventory.ClickType.LEFT, -1));
+        var kept = stub.events.post(new space.nows.tube.api.event.inventory.InventoryClickEvent(player, two, 5, space.nows.tube.api.inventory.ItemStack.of("stone", 2), space.nows.tube.api.inventory.ClickType.LEFT, -1));
 
         assertTrue(cancelled.isCancelled());
         assertTrue(!kept.isCancelled());

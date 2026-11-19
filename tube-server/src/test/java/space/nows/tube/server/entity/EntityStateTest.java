@@ -41,7 +41,7 @@ class EntityStateTest {
     void entitiesReportTheirState(Env env) {
         setup();
         var player = env.createPlayer(world.instance(), new Pos(0, 42, 0));
-        space.nows.tube.api.entity.Player tube = players.wrap(player);
+        space.nows.tube.api.entity.player.Player tube = players.wrap(player);
 
         assertFalse(tube.isSneaking());
         assertFalse(tube.isSprinting());
@@ -68,7 +68,7 @@ class EntityStateTest {
     void anOpenContainerIsReported(Env env) {
         setup();
         var player = env.createPlayer(world.instance(), new Pos(0, 42, 0));
-        space.nows.tube.api.entity.Player tube = players.wrap(player);
+        space.nows.tube.api.entity.player.Player tube = players.wrap(player);
         assertTrue(tube.openedInventory().isEmpty());
 
         player.openInventory(new Inventory(InventoryType.CHEST_3_ROW, "Chest"));

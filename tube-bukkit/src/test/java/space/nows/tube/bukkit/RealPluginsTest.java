@@ -28,11 +28,11 @@ class RealPluginsTest {
 
     private static List<String> playScenario(StubServer stub) {
         List<String> output = new ArrayList<>();
-        var login = stub.events.post(new space.nows.tube.api.event.PlayerPreLoginEvent("Steve", java.util.UUID.nameUUIDFromBytes("Steve".getBytes()),
-                new java.net.InetSocketAddress("127.0.0.1", 50000), space.nows.tube.api.entity.LoginMode.OFFLINE));
+        var login = stub.events.post(new space.nows.tube.api.event.player.PlayerPreLoginEvent("Steve", java.util.UUID.nameUUIDFromBytes("Steve".getBytes()),
+                new java.net.InetSocketAddress("127.0.0.1", 50000), space.nows.tube.api.entity.player.LoginMode.OFFLINE));
         output.add("pre-login Steve: " + login.denyReason().map(reason -> "denied " + net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(reason)).orElse("allowed"));
         var player = stub.player("Steve");
-        stub.events.post(new space.nows.tube.api.event.PlayerJoinEvent(player));
+        stub.events.post(new space.nows.tube.api.event.player.PlayerJoinEvent(player));
         for (int i = 0; i < 40; i++) {
             stub.scheduler.tick();
         }

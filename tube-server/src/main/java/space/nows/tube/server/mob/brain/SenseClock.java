@@ -1,7 +1,7 @@
 package space.nows.tube.server.mob.brain;
 
-import space.nows.tube.api.entity.brain.Brain;
-import space.nows.tube.api.entity.brain.Sense;
+import space.nows.tube.api.entity.mob.brain.Brain;
+import space.nows.tube.api.entity.mob.brain.Sense;
 
 final class SenseClock {
 

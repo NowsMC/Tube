@@ -1,17 +1,17 @@
 package space.nows.tube.bukkit;
 
 import net.kyori.adventure.text.Component;
-import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.Command;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.entity.GameMode;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.GameMode;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.event.Event;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
 import space.nows.tube.api.event.Subscription;
+import space.nows.tube.api.permission.PermissionManager;
 import space.nows.tube.api.scheduler.ScheduledTask;
 import space.nows.tube.api.scheduler.Scheduler;
 import space.nows.tube.api.world.Location;
@@ -224,7 +224,7 @@ final class StubServer {
                 case "viewers" -> Set.of();
                 default -> null;
             });
-            case "createTeam" -> Proxy.newProxyInstance(loader, new Class<?>[] {space.nows.tube.api.scoreboard.Team.class}, (p, m, a) -> {
+            case "createTeam" -> Proxy.newProxyInstance(loader, new Class<?>[] {space.nows.tube.api.scoreboard.team.Team.class}, (p, m, a) -> {
                 if (m.getName().startsWith("set") || m.getName().endsWith("Member")) {
                     scoreboardLog.add("team." + m.getName() + ":" + a[0]);
                 }
@@ -243,7 +243,7 @@ final class StubServer {
             case "tags" -> java.util.Set.copyOf(tags);
             case "addTag" -> tags.add((String) args[0]);
             case "removeTag" -> tags.remove((String) args[0]);
-            case "loginMode" -> space.nows.tube.api.entity.LoginMode.OFFLINE;
+            case "loginMode" -> space.nows.tube.api.entity.player.LoginMode.OFFLINE;
             case "skin", "clientBrand" -> Optional.empty();
             case "latency", "protocolVersion", "heldSlot", "fireTicks" -> 0;
             case "isSneaking", "isSprinting", "isSwimming", "isGlowing", "isGliding" -> false;

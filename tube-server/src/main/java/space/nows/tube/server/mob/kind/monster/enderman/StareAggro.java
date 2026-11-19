@@ -3,8 +3,8 @@ package space.nows.tube.server.mob.kind.monster.enderman;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.attribute.Attribute;
-import space.nows.tube.api.entity.brain.Behavior;
-import space.nows.tube.api.entity.brain.Control;
+import space.nows.tube.api.entity.mob.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.brain.target.Targeting;
 

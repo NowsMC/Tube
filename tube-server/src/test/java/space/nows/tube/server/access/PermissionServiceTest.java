@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import space.nows.tube.api.PermissionDefault;
+import space.nows.tube.api.permission.PermissionDefault;
 
 import java.nio.file.Path;
 import java.util.Map;

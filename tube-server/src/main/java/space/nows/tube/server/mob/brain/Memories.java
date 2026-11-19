@@ -1,6 +1,6 @@
 package space.nows.tube.server.mob.brain;
 
-import space.nows.tube.api.entity.brain.MemoryKey;
+import space.nows.tube.api.entity.mob.brain.MemoryKey;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -2,11 +2,11 @@ package space.nows.tube.server.mob.kind.animal;
 
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.ItemEntity;
+import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.instance.block.Block;
-import space.nows.tube.api.entity.brain.Behavior;
-import space.nows.tube.api.entity.brain.Control;
+import space.nows.tube.api.entity.mob.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.sound.MobVoice;
 

@@ -13,8 +13,8 @@ import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.command.CommandInfo;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.event.CommandDispatchEvent;
 import space.nows.tube.api.event.EventBus;
+import space.nows.tube.api.event.server.CommandDispatchEvent;
 import space.nows.tube.server.config.Markup;
 import space.nows.tube.server.player.PlayerService;
 

@@ -4,7 +4,7 @@ import net.minestom.server.coordinate.Vec;
 import net.minestom.server.instance.generator.GenerationUnit;
 import net.minestom.server.registry.RegistryKey;
 import space.nows.tube.api.world.Block;
-import space.nows.tube.api.world.ChunkBuilder;
+import space.nows.tube.api.world.generation.ChunkBuilder;
 
 final class MinestomChunkBuilder implements ChunkBuilder {
 

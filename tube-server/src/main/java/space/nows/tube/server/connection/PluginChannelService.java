@@ -4,7 +4,7 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerPluginMessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.event.Subscription;
 import space.nows.tube.api.network.PluginChannels;
 import space.nows.tube.server.player.MinestomPlayer;

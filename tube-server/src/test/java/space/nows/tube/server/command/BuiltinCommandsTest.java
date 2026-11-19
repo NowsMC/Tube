@@ -62,7 +62,7 @@ class BuiltinCommandsTest {
         List<String> messages = new ArrayList<>();
         MinestomPlayer player = setup.player();
         CommandSender recorder = (CommandSender) Proxy.newProxyInstance(CommandSender.class.getClassLoader(),
-                new Class<?>[] {CommandSender.class, space.nows.tube.api.entity.Player.class}, (proxy, method, args) -> {
+                new Class<?>[] {CommandSender.class, space.nows.tube.api.entity.player.Player.class}, (proxy, method, args) -> {
                     if (method.getName().equals("sendMessage") && args[0] instanceof Component component) {
                         messages.add(PlainTextComponentSerializer.plainText().serialize(component));
                         return null;

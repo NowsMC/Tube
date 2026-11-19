@@ -1,13 +1,13 @@
 package space.nows.tube.network;
 
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.event.Subscription;
 import space.nows.tube.api.network.Network;
 import space.nows.tube.api.network.PluginChannels;
-import space.nows.tube.api.network.TcpHandler;
-import space.nows.tube.api.network.TcpServer;
-import space.nows.tube.api.network.UdpHandler;
-import space.nows.tube.api.network.UdpSocket;
+import space.nows.tube.api.network.tcp.TcpHandler;
+import space.nows.tube.api.network.tcp.TcpServer;
+import space.nows.tube.api.network.udp.UdpHandler;
+import space.nows.tube.api.network.udp.UdpSocket;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;

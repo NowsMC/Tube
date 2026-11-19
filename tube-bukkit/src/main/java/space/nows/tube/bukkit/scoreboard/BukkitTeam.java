@@ -4,8 +4,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import space.nows.tube.api.scoreboard.CollisionRule;
-import space.nows.tube.api.scoreboard.NameTagVisibility;
+import space.nows.tube.api.scoreboard.team.CollisionRule;
+import space.nows.tube.api.scoreboard.team.NameTagVisibility;
 
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
@@ -18,7 +18,7 @@ final class BukkitTeam implements Team {
     private final String name;
     private final Set<String> entries = new LinkedHashSet<>();
     private final Map<Option, OptionStatus> options = new EnumMap<>(Option.class);
-    private final space.nows.tube.api.scoreboard.Team tube;
+    private final space.nows.tube.api.scoreboard.team.Team tube;
     private String displayName;
     private String prefix = "";
     private String suffix = "";
@@ -36,7 +36,7 @@ final class BukkitTeam implements Team {
         this.tube = scoreboard.isMain() ? backing(scoreboard, name) : null;
     }
 
-    private static space.nows.tube.api.scoreboard.Team backing(BukkitScoreboard scoreboard, String name) {
+    private static space.nows.tube.api.scoreboard.team.Team backing(BukkitScoreboard scoreboard, String name) {
         var scoreboards = scoreboard.runtime().tube().scoreboards();
         return scoreboards.team(name).orElseGet(() -> scoreboards.createTeam(name));
     }

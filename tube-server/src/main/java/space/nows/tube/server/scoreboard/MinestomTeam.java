@@ -4,9 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.color.TeamColor;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
-import space.nows.tube.api.scoreboard.CollisionRule;
-import space.nows.tube.api.scoreboard.NameTagVisibility;
-import space.nows.tube.api.scoreboard.Team;
+import space.nows.tube.api.scoreboard.team.CollisionRule;
+import space.nows.tube.api.scoreboard.team.NameTagVisibility;
+import space.nows.tube.api.scoreboard.team.Team;
 
 import java.util.Locale;
 import java.util.Set;

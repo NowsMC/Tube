@@ -1,8 +1,8 @@
 package space.nows.tube.server.event;
 
 import net.kyori.adventure.text.Component;
-import space.nows.tube.api.chat.Chat;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
+import space.nows.tube.api.text.Chat;
 
 final class ChatFormat {
 

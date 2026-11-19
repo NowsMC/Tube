@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.entity.GameMode;
+import space.nows.tube.api.entity.player.GameMode;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.command.builtin.BuiltinCommands;
 import space.nows.tube.server.player.MinestomPlayer;

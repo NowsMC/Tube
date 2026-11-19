@@ -3,7 +3,7 @@ package space.nows.tube.server.mob.kind.squid;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.instance.block.Block;
-import space.nows.tube.api.entity.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Behavior;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.move.Liquids;
 

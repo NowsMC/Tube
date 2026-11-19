@@ -1,8 +1,8 @@
 package space.nows.tube.server.mob.brain.idle;
 
 import net.minestom.server.instance.block.Block;
-import space.nows.tube.api.entity.brain.Behavior;
-import space.nows.tube.api.entity.brain.Control;
+import space.nows.tube.api.entity.mob.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
 
 public final class ClimbPowderSnow extends Behavior {

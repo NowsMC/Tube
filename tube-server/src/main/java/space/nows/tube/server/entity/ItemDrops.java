@@ -8,9 +8,9 @@ import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.item.PickupItemEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import space.nows.tube.api.entity.LivingEntity;
-import space.nows.tube.api.event.EntityPickupItemEvent;
 import space.nows.tube.api.event.EventBus;
-import space.nows.tube.api.event.PlayerDropItemEvent;
+import space.nows.tube.api.event.entity.EntityPickupItemEvent;
+import space.nows.tube.api.event.player.PlayerDropItemEvent;
 import space.nows.tube.server.player.PlayerService;
 import space.nows.tube.server.world.WorldService;
 

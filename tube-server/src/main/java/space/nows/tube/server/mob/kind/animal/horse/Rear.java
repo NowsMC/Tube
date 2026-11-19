@@ -1,6 +1,6 @@
 package space.nows.tube.server.mob.kind.animal.horse;
 
-import space.nows.tube.api.entity.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Behavior;
 import space.nows.tube.server.mob.Creature;
 
 final class Rear extends Behavior {

@@ -1,7 +1,7 @@
 package space.nows.tube.server.world.vanilla;
 
-import space.nows.tube.api.world.ChunkBuilder;
-import space.nows.tube.api.world.WorldGenerator;
+import space.nows.tube.api.world.generation.ChunkBuilder;
+import space.nows.tube.api.world.generation.WorldGenerator;
 import space.nows.tube.server.world.vanilla.biome.BiomeInfo;
 import space.nows.tube.server.world.vanilla.biome.BiomeSampler;
 import space.nows.tube.server.world.vanilla.biome.BiomeTree;

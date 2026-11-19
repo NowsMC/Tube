@@ -2,7 +2,7 @@ package space.nows.tube.server.plugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.api.PermissionDefault;
+import space.nows.tube.api.permission.PermissionDefault;
 import space.nows.tube.api.plugin.PluginCommand;
 import space.nows.tube.api.plugin.PluginDescriptor;
 import space.nows.tube.api.plugin.PluginPermission;

@@ -1,7 +1,7 @@
 package space.nows.tube.server.mob.kind.fish;
 
 import net.minestom.server.entity.Entity;
-import space.nows.tube.api.entity.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Behavior;
 import space.nows.tube.server.mob.Creature;
 
 final class Puff extends Behavior {

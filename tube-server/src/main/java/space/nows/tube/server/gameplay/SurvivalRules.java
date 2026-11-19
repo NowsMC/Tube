@@ -2,8 +2,8 @@ package space.nows.tube.server.gameplay;
 
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
-import space.nows.tube.api.event.CraftItemEvent;
 import space.nows.tube.api.event.EventBus;
+import space.nows.tube.api.event.inventory.CraftItemEvent;
 import space.nows.tube.server.event.DeathDrops;
 import space.nows.tube.server.gameplay.block.BlockInteractions;
 import space.nows.tube.server.gameplay.block.PlaceSound;
@@ -53,7 +53,7 @@ public final class SurvivalRules {
         Containers.install(handler);
         Explosions.configure(events, worlds);
         new CraftingGrids(this::recipes, (player, result) -> !events.post(new CraftItemEvent(
-                (space.nows.tube.api.entity.Player) worlds.wrap(player), ItemMapper.fromMinestom(result))).isCancelled()).install(handler);
+                (space.nows.tube.api.entity.player.Player) worlds.wrap(player), ItemMapper.fromMinestom(result))).isCancelled()).install(handler);
         new Furnaces(this::recipes).install(handler);
         Combat.install(handler);
         Falling.install(handler);

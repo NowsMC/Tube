@@ -17,10 +17,10 @@ import net.minestom.testing.Env;
 import net.minestom.testing.EnvTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import space.nows.tube.api.event.BlockBreakEvent;
-import space.nows.tube.api.event.BlockPlaceEvent;
-import space.nows.tube.api.event.PlayerJoinEvent;
-import space.nows.tube.api.event.PlayerQuitEvent;
+import space.nows.tube.api.event.block.BlockBreakEvent;
+import space.nows.tube.api.event.block.BlockPlaceEvent;
+import space.nows.tube.api.event.player.PlayerJoinEvent;
+import space.nows.tube.api.event.player.PlayerQuitEvent;
 import space.nows.tube.api.world.Block;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.player.PlayerService;
@@ -71,8 +71,8 @@ class EventBridgeTest {
     @Test
     void postsSprintAndGlideChanges(Env env) {
         install();
-        bus.subscribe(space.nows.tube.api.event.PlayerSprintEvent.class, event -> log.add("sprint:" + event.sprinting()));
-        bus.subscribe(space.nows.tube.api.event.EntityGlideEvent.class, event -> log.add("glide:" + event.gliding() + ":" + event.entity().type()));
+        bus.subscribe(space.nows.tube.api.event.player.PlayerSprintEvent.class, event -> log.add("sprint:" + event.sprinting()));
+        bus.subscribe(space.nows.tube.api.event.entity.EntityGlideEvent.class, event -> log.add("glide:" + event.gliding() + ":" + event.entity().type()));
         var player = env.createPlayer(instance(), new Pos(0, 42, 0));
 
         EventDispatcher.call(new net.minestom.server.event.player.PlayerStartSprintingEvent(player));
@@ -89,7 +89,7 @@ class EventBridgeTest {
         var player = env.createPlayer(instance(), new Pos(0, 42, 0));
         var recipients = (Collection<net.minestom.server.entity.Player>) List.of(player);
 
-        bus.subscribe(space.nows.tube.api.event.PlayerChatEvent.class, event -> {
+        bus.subscribe(space.nows.tube.api.event.player.PlayerChatEvent.class, event -> {
             if (event.message().contains("secret")) {
                 event.setCancelled(true);
             } else {
@@ -129,8 +129,8 @@ class EventBridgeTest {
         install();
         var player = env.createPlayer(instance(), new Pos(0, 42, 0));
         var recipients = (Collection<net.minestom.server.entity.Player>) List.of(player);
-        bus.subscribe(space.nows.tube.api.event.PlayerChatEvent.class, event ->
-                event.setFormatted(space.nows.tube.api.chat.Chat.text("[VIP] " + event.message()).copyOnClick(event.message()).build()));
+        bus.subscribe(space.nows.tube.api.event.player.PlayerChatEvent.class, event ->
+                event.setFormatted(space.nows.tube.api.text.Chat.text("[VIP] " + event.message()).copyOnClick(event.message()).build()));
 
         var chat = new net.minestom.server.event.player.PlayerChatEvent(player, recipients, "hi");
         EventDispatcher.call(chat);

@@ -8,18 +8,18 @@ import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.world.Difficulty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.ServerExtension;
 import space.nows.tube.api.TickReport;
 import space.nows.tube.api.command.CommandRegistry;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.command.TargetResolver;
-import space.nows.tube.api.entity.GameMode;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.command.argument.TargetResolver;
+import space.nows.tube.api.entity.player.GameMode;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.api.network.Network;
+import space.nows.tube.api.permission.PermissionManager;
 import space.nows.tube.api.plugin.PluginDescriptor;
 import space.nows.tube.api.registry.Registries;
 import space.nows.tube.api.scheduler.Scheduler;
@@ -232,12 +232,12 @@ public final class DedicatedServer implements Server {
     }
 
     @Override
-    public space.nows.tube.api.Difficulty difficulty() {
-        return space.nows.tube.api.Difficulty.valueOf(MinecraftServer.getDifficulty().name());
+    public space.nows.tube.api.world.Difficulty difficulty() {
+        return space.nows.tube.api.world.Difficulty.valueOf(MinecraftServer.getDifficulty().name());
     }
 
     @Override
-    public void setDifficulty(space.nows.tube.api.Difficulty difficulty) {
+    public void setDifficulty(space.nows.tube.api.world.Difficulty difficulty) {
         MinecraftServer.setDifficulty(Difficulty.valueOf(difficulty.name()));
         ServerProperties.set(propertiesFile, "difficulty", difficulty.name().toLowerCase(Locale.ROOT));
     }

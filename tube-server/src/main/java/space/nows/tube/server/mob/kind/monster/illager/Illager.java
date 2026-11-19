@@ -2,7 +2,7 @@ package space.nows.tube.server.mob.kind.monster.illager;
 
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
-import space.nows.tube.api.entity.brain.Brain;
+import space.nows.tube.api.entity.mob.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.brain.flee.AvoidNearby;
 import space.nows.tube.server.mob.brain.idle.StayAfloat;

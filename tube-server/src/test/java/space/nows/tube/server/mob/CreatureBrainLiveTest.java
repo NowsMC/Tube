@@ -10,11 +10,11 @@ import net.minestom.server.instance.Instance;
 import net.minestom.testing.Env;
 import net.minestom.testing.EnvTest;
 import org.junit.jupiter.api.Test;
-import space.nows.tube.api.entity.brain.Behavior;
-import space.nows.tube.api.entity.brain.Brain;
-import space.nows.tube.api.entity.brain.Control;
-import space.nows.tube.api.entity.brain.MemoryKey;
-import space.nows.tube.api.entity.brain.Sense;
+import space.nows.tube.api.entity.mob.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Brain;
+import space.nows.tube.api.entity.mob.brain.Control;
+import space.nows.tube.api.entity.mob.brain.MemoryKey;
+import space.nows.tube.api.entity.mob.brain.Sense;
 
 import java.util.Optional;
 

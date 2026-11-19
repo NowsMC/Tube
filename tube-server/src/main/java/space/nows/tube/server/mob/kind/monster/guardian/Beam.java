@@ -6,8 +6,8 @@ import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.entity.damage.DamageType;
 import net.minestom.server.entity.metadata.monster.GuardianMeta;
 import net.minestom.server.world.Difficulty;
-import space.nows.tube.api.entity.brain.Behavior;
-import space.nows.tube.api.entity.brain.Control;
+import space.nows.tube.api.entity.mob.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
 
 final class Beam extends Behavior {

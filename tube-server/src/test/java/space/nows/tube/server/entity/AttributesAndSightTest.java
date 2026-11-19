@@ -38,7 +38,7 @@ class AttributesAndSightTest {
     void attributesAreReadAndChangedByKey(Env env) {
         setup();
         var player = env.createPlayer(world.instance(), new Pos(0, 42, 0));
-        space.nows.tube.api.entity.Player tube = players.wrap(player);
+        space.nows.tube.api.entity.player.Player tube = players.wrap(player);
 
         assertEquals(20, tube.defaultAttribute("minecraft:max_health"), 1.0E-9);
         assertEquals(20, tube.baseAttribute("max_health"), 1.0E-9);
@@ -54,8 +54,8 @@ class AttributesAndSightTest {
         setup();
         var watcher = env.createPlayer(world.instance(), new Pos(0, 42, 0));
         var target = env.createPlayer(world.instance(), new Pos(8, 42, 0));
-        space.nows.tube.api.entity.Player tubeWatcher = players.wrap(watcher);
-        space.nows.tube.api.entity.Player tubeTarget = players.wrap(target);
+        space.nows.tube.api.entity.player.Player tubeWatcher = players.wrap(watcher);
+        space.nows.tube.api.entity.player.Player tubeTarget = players.wrap(target);
 
         assertTrue(tubeWatcher.hasLineOfSight(tubeTarget));
 

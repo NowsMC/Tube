@@ -1,12 +1,12 @@
 package space.nows.tube.server.command.builtin.server;
 
-import space.nows.tube.api.Difficulty;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.command.Suggestions;
-import space.nows.tube.api.command.Typing;
+import space.nows.tube.api.command.argument.Suggestions;
+import space.nows.tube.api.command.argument.Typing;
+import space.nows.tube.api.world.Difficulty;
 import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.ServerCommand;
 

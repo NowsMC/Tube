@@ -2,11 +2,11 @@ package space.nows.tube.server.player;
 
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.GameMode;
-import net.minestom.server.network.packet.server.play.PlayerInfoUpdatePacket;
 import net.minestom.server.network.packet.server.play.PlayerInfoUpdatePacket.Action;
-import space.nows.tube.api.entity.Player;
-import space.nows.tube.api.scoreboard.TabEntry;
-import space.nows.tube.api.scoreboard.TabList;
+import net.minestom.server.network.packet.server.play.PlayerInfoUpdatePacket;
+import space.nows.tube.api.entity.player.Player;
+import space.nows.tube.api.scoreboard.tab.TabEntry;
+import space.nows.tube.api.scoreboard.tab.TabList;
 
 import java.util.Collection;
 import java.util.EnumSet;

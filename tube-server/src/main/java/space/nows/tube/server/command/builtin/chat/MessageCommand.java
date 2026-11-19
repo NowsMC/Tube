@@ -1,13 +1,13 @@
 package space.nows.tube.server.command.builtin.chat;
 
+import net.kyori.adventure.text.Component;
 import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.command.CommandInput;
-import net.kyori.adventure.text.Component;
-import space.nows.tube.api.chat.Chat;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.command.Suggestions;
-import space.nows.tube.api.command.Typing;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.command.argument.Suggestions;
+import space.nows.tube.api.command.argument.Typing;
+import space.nows.tube.api.entity.player.Player;
+import space.nows.tube.api.text.Chat;
 import space.nows.tube.server.command.support.ServerCommand;
 import space.nows.tube.server.command.support.Targets;
 

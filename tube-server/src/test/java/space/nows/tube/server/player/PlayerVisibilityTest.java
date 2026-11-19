@@ -44,8 +44,8 @@ class PlayerVisibilityTest {
         var watcher = env.createPlayer(instance, new Pos(0, 42, 0));
         var hider = env.createPlayer(instance, new Pos(2, 42, 0));
         var other = env.createPlayer(instance, new Pos(0, 42, 2));
-        space.nows.tube.api.entity.Player tubeWatcher = players.wrap(watcher);
-        space.nows.tube.api.entity.Player tubeHider = players.wrap(hider);
+        space.nows.tube.api.entity.player.Player tubeWatcher = players.wrap(watcher);
+        space.nows.tube.api.entity.player.Player tubeHider = players.wrap(hider);
         players.wrap(other);
         assertTrue(hider.getViewers().contains(watcher));
         assertTrue(tubeWatcher.canSee(tubeHider));

@@ -3,15 +3,15 @@ package space.nows.tube.server.access;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import space.nows.tube.api.PermissionDefault;
-import space.nows.tube.api.PermissionManager;
+import space.nows.tube.api.permission.PermissionDefault;
+import space.nows.tube.api.permission.PermissionManager;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;

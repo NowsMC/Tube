@@ -5,11 +5,11 @@ import net.kyori.adventure.sound.SoundStop;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import net.minestom.server.entity.PlayerSkin;
-import space.nows.tube.api.ResourcePack;
-import space.nows.tube.api.entity.GameMode;
-import space.nows.tube.api.entity.LoginMode;
-import space.nows.tube.api.entity.Player;
-import space.nows.tube.api.entity.Skin;
+import space.nows.tube.api.entity.player.GameMode;
+import space.nows.tube.api.entity.player.LoginMode;
+import space.nows.tube.api.entity.player.Player;
+import space.nows.tube.api.entity.player.ResourcePack;
+import space.nows.tube.api.entity.player.Skin;
 import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.entity.MinestomLivingEntity;
@@ -41,7 +41,7 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     }
 
     @Override
-    public space.nows.tube.api.scoreboard.TabList tabList() {
+    public space.nows.tube.api.scoreboard.tab.TabList tabList() {
         return tabList;
     }
 
@@ -49,7 +49,7 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     public java.util.concurrent.CompletableFuture<Void> teleport(space.nows.tube.api.world.Location target) {
         var bus = service.events();
         if (bus != null) {
-            var posted = bus.post(new space.nows.tube.api.event.PlayerTeleportEvent(this, location(), target));
+            var posted = bus.post(new space.nows.tube.api.event.player.PlayerTeleportEvent(this, location(), target));
             if (posted.isCancelled()) {
                 return java.util.concurrent.CompletableFuture.completedFuture(null);
             }
@@ -194,23 +194,23 @@ public final class MinestomPlayer extends MinestomLivingEntity implements Player
     }
 
     @Override
-    public void hidePlayer(space.nows.tube.api.entity.Player other) {
+    public void hidePlayer(space.nows.tube.api.entity.player.Player other) {
         service.visibility().hide(uuid(), other.uuid());
         refreshViewers(other);
     }
 
     @Override
-    public void showPlayer(space.nows.tube.api.entity.Player other) {
+    public void showPlayer(space.nows.tube.api.entity.player.Player other) {
         service.visibility().show(uuid(), other.uuid());
         refreshViewers(other);
     }
 
     @Override
-    public boolean canSee(space.nows.tube.api.entity.Player other) {
+    public boolean canSee(space.nows.tube.api.entity.player.Player other) {
         return service.visibility().canSee(uuid(), other.uuid());
     }
 
-    private static void refreshViewers(space.nows.tube.api.entity.Player target) {
+    private static void refreshViewers(space.nows.tube.api.entity.player.Player target) {
         if (target instanceof MinestomPlayer minestom) {
             minestom.player.updateViewableRule();
         }

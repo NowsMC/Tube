@@ -7,7 +7,7 @@ import net.minestom.server.entity.metadata.monster.EndermanMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockFace;
-import space.nows.tube.api.entity.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Behavior;
 import space.nows.tube.api.world.GameRule;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.world.rule.RuleBook;

@@ -1,12 +1,12 @@
 package space.nows.tube.server.world;
 
-import space.nows.tube.api.PermissionManager;
-import space.nows.tube.api.entity.Player;
-import space.nows.tube.api.event.BlockBreakEvent;
-import space.nows.tube.api.event.BlockPlaceEvent;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.event.Cancellable;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
+import space.nows.tube.api.event.block.BlockBreakEvent;
+import space.nows.tube.api.event.block.BlockPlaceEvent;
+import space.nows.tube.api.permission.PermissionManager;
 import space.nows.tube.api.world.World;
 import space.nows.tube.api.world.WorldManager;
 

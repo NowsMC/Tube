@@ -2,8 +2,8 @@ package space.nows.tube.server.mob.kind.monster.vex;
 
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Vec;
-import space.nows.tube.api.entity.brain.Behavior;
-import space.nows.tube.api.entity.brain.Control;
+import space.nows.tube.api.entity.mob.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
 
 final class Haunt extends Behavior {

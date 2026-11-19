@@ -19,11 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.network.Network;
 import space.nows.tube.api.network.PluginChannels;
-import space.nows.tube.api.network.TcpConnection;
-import space.nows.tube.api.network.TcpHandler;
-import space.nows.tube.api.network.TcpServer;
-import space.nows.tube.api.network.UdpHandler;
-import space.nows.tube.api.network.UdpSocket;
+import space.nows.tube.api.network.tcp.TcpConnection;
+import space.nows.tube.api.network.tcp.TcpHandler;
+import space.nows.tube.api.network.tcp.TcpServer;
+import space.nows.tube.api.network.udp.UdpHandler;
+import space.nows.tube.api.network.udp.UdpSocket;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicLong;

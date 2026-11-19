@@ -1,7 +1,7 @@
 package space.nows.tube.server.world.generator;
 
 import space.nows.tube.api.world.Block;
-import space.nows.tube.api.world.ChunkBuilder;
+import space.nows.tube.api.world.generation.ChunkBuilder;
 
 final class ChunkColumns {
 

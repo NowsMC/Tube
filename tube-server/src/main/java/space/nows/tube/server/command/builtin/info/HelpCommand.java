@@ -3,7 +3,7 @@ package space.nows.tube.server.command.builtin.info;
 import space.nows.tube.api.command.Command;
 import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.command.Suggestions;
+import space.nows.tube.api.command.argument.Suggestions;
 import space.nows.tube.server.command.CommandService;
 import space.nows.tube.server.command.support.ServerCommand;
 

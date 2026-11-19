@@ -1,7 +1,7 @@
 package space.nows.tube.server.mob.kind.squid;
 
 import net.minestom.server.coordinate.Vec;
-import space.nows.tube.api.entity.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Behavior;
 import space.nows.tube.server.mob.Creature;
 
 final class Drift extends Behavior {

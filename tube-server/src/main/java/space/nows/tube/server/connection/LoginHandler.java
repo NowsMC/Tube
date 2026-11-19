@@ -9,7 +9,7 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
-import space.nows.tube.api.ResourcePack;
+import space.nows.tube.api.entity.player.ResourcePack;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.server.access.AccessControl;
 import space.nows.tube.server.access.UserCache;
@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 public final class LoginHandler {
 
     private final ServerSettings settings;
-    private final Supplier<space.nows.tube.api.entity.GameMode> defaultGameMode;
+    private final Supplier<space.nows.tube.api.entity.player.GameMode> defaultGameMode;
     private final AccessControl access;
     private final UserCache userCache;
     private final PlayerService players;
@@ -36,7 +36,7 @@ public final class LoginHandler {
     private final Optional<ResourcePack> resourcePack;
     private final Consumer<Player> savePlayer;
 
-    public LoginHandler(ServerSettings settings, Supplier<space.nows.tube.api.entity.GameMode> defaultGameMode, AccessControl access, UserCache userCache, PlayerService players, PlayerDataStore playerData,
+    public LoginHandler(ServerSettings settings, Supplier<space.nows.tube.api.entity.player.GameMode> defaultGameMode, AccessControl access, UserCache userCache, PlayerService players, PlayerDataStore playerData,
                  WorldService worlds, Optional<ResourcePack> resourcePack, Consumer<Player> savePlayer) {
         this.settings = settings;
         this.defaultGameMode = defaultGameMode;

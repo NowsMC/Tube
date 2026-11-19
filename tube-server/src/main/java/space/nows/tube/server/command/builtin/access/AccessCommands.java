@@ -1,7 +1,7 @@
 package space.nows.tube.server.command.builtin.access;
 
-import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.Server;
+import space.nows.tube.api.permission.PermissionManager;
 import space.nows.tube.server.access.BanList;
 import space.nows.tube.server.access.Profiles;
 import space.nows.tube.server.access.Whitelist;

@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 public final class BukkitInventoryView implements InventoryView {
 
-    private final space.nows.tube.api.entity.Player tube;
+    private final space.nows.tube.api.entity.player.Player tube;
     private final HumanEntity player;
     private final Inventory top;
     private final Inventory bottom;
@@ -17,7 +17,7 @@ public final class BukkitInventoryView implements InventoryView {
     private String title;
     private ItemStack cursor;
 
-    public BukkitInventoryView(space.nows.tube.api.entity.Player tube, HumanEntity player, Inventory top, Inventory bottom, InventoryType type, String title) {
+    public BukkitInventoryView(space.nows.tube.api.entity.player.Player tube, HumanEntity player, Inventory top, Inventory bottom, InventoryType type, String title) {
         this.tube = tube;
         this.player = player;
         this.top = top;

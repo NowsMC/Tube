@@ -2,31 +2,31 @@ package space.nows.tube.bukkit.event;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import space.nows.tube.api.event.BlockBreakEvent;
-import space.nows.tube.api.event.BlockPlaceEvent;
-import space.nows.tube.api.event.CommandDispatchEvent;
-import space.nows.tube.api.event.EntityDamageEvent;
-import space.nows.tube.api.event.EntityDeathEvent;
-import space.nows.tube.api.event.EntityPickupItemEvent;
-import space.nows.tube.api.event.EntitySpawnEvent;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
-import space.nows.tube.api.event.ExplosionEvent;
-import space.nows.tube.api.event.InventoryClickEvent;
-import space.nows.tube.api.event.InventoryCloseEvent;
-import space.nows.tube.api.event.InventoryDragEvent;
-import space.nows.tube.api.event.InventoryOpenEvent;
-import space.nows.tube.api.event.PlayerChatEvent;
-import space.nows.tube.api.event.PlayerDropItemEvent;
-import space.nows.tube.api.event.PlayerGameModeChangeEvent;
-import space.nows.tube.api.event.PlayerInteractEvent;
-import space.nows.tube.api.event.PlayerJoinEvent;
-import space.nows.tube.api.event.PlayerMoveEvent;
-import space.nows.tube.api.event.PlayerPreLoginEvent;
-import space.nows.tube.api.event.PlayerQuitEvent;
-import space.nows.tube.api.event.PlayerRespawnEvent;
-import space.nows.tube.api.event.PlayerTeleportEvent;
 import space.nows.tube.api.event.Subscription;
+import space.nows.tube.api.event.block.BlockBreakEvent;
+import space.nows.tube.api.event.block.BlockPlaceEvent;
+import space.nows.tube.api.event.entity.EntityDamageEvent;
+import space.nows.tube.api.event.entity.EntityDeathEvent;
+import space.nows.tube.api.event.entity.EntityPickupItemEvent;
+import space.nows.tube.api.event.entity.EntitySpawnEvent;
+import space.nows.tube.api.event.entity.ExplosionEvent;
+import space.nows.tube.api.event.inventory.InventoryClickEvent;
+import space.nows.tube.api.event.inventory.InventoryCloseEvent;
+import space.nows.tube.api.event.inventory.InventoryDragEvent;
+import space.nows.tube.api.event.inventory.InventoryOpenEvent;
+import space.nows.tube.api.event.player.PlayerChatEvent;
+import space.nows.tube.api.event.player.PlayerDropItemEvent;
+import space.nows.tube.api.event.player.PlayerGameModeChangeEvent;
+import space.nows.tube.api.event.player.PlayerInteractEvent;
+import space.nows.tube.api.event.player.PlayerJoinEvent;
+import space.nows.tube.api.event.player.PlayerMoveEvent;
+import space.nows.tube.api.event.player.PlayerPreLoginEvent;
+import space.nows.tube.api.event.player.PlayerQuitEvent;
+import space.nows.tube.api.event.player.PlayerRespawnEvent;
+import space.nows.tube.api.event.player.PlayerTeleportEvent;
+import space.nows.tube.api.event.server.CommandDispatchEvent;
 import space.nows.tube.bukkit.BukkitRuntime;
 import space.nows.tube.bukkit.inventory.BukkitInventory;
 import space.nows.tube.bukkit.inventory.BukkitInventoryView;
@@ -48,11 +48,11 @@ public final class EventBridge {
     }
 
     public void install(EventBus bus, List<Subscription> subscriptions) {
-        subscriptions.add(bus.subscribe(space.nows.tube.api.event.PlayerSneakEvent.class, EventPriority.NORMAL, false,
+        subscriptions.add(bus.subscribe(space.nows.tube.api.event.player.PlayerSneakEvent.class, EventPriority.NORMAL, false,
                 event -> runtime.pluginManager().callEvent(new org.bukkit.event.player.PlayerToggleSneakEvent(runtime.adapters().player(event.player()), event.sneaking()))));
-        subscriptions.add(bus.subscribe(space.nows.tube.api.event.PlayerSprintEvent.class, EventPriority.NORMAL, false,
+        subscriptions.add(bus.subscribe(space.nows.tube.api.event.player.PlayerSprintEvent.class, EventPriority.NORMAL, false,
                 event -> runtime.pluginManager().callEvent(new org.bukkit.event.player.PlayerToggleSprintEvent(runtime.adapters().player(event.player()), event.sprinting()))));
-        subscriptions.add(bus.subscribe(space.nows.tube.api.event.EntityGlideEvent.class, EventPriority.NORMAL, false,
+        subscriptions.add(bus.subscribe(space.nows.tube.api.event.entity.EntityGlideEvent.class, EventPriority.NORMAL, false,
                 event -> runtime.pluginManager().callEvent(new org.bukkit.event.entity.EntityToggleGlideEvent((org.bukkit.entity.LivingEntity) runtime.adapters().entity(event.entity()), event.gliding()))));
         subscriptions.add(bus.subscribe(PlayerJoinEvent.class, EventPriority.NORMAL, false, this::join));
         subscriptions.add(bus.subscribe(PlayerQuitEvent.class, EventPriority.NORMAL, false, this::quit));
@@ -180,7 +180,7 @@ public final class EventBridge {
 
     private void command(CommandDispatchEvent event) {
         String line = event.line().startsWith("/") ? event.line().substring(1) : event.line();
-        if (event.sender() instanceof space.nows.tube.api.entity.Player tubePlayer) {
+        if (event.sender() instanceof space.nows.tube.api.entity.player.Player tubePlayer) {
             var bukkit = new org.bukkit.event.player.PlayerCommandPreprocessEvent(runtime.adapters().player(tubePlayer), "/" + line);
             runtime.pluginManager().callEvent(bukkit);
             if (bukkit.isCancelled()) {
@@ -223,7 +223,7 @@ public final class EventBridge {
             drops.add(ItemConverter.fromTube(item));
         }
         org.bukkit.event.entity.EntityDeathEvent bukkit;
-        if (event.entity() instanceof space.nows.tube.api.entity.Player tubePlayer) {
+        if (event.entity() instanceof space.nows.tube.api.entity.player.Player tubePlayer) {
             var player = runtime.adapters().player(tubePlayer);
             bukkit = new org.bukkit.event.entity.PlayerDeathEvent(player, drops, event.experience(), player.getName() + " died");
         } else {
@@ -348,7 +348,7 @@ public final class EventBridge {
         }
     }
 
-    private org.bukkit.inventory.InventoryView view(space.nows.tube.api.entity.Player owner, space.nows.tube.api.inventory.Inventory inventory) {
+    private org.bukkit.inventory.InventoryView view(space.nows.tube.api.entity.player.Player owner, space.nows.tube.api.inventory.Inventory inventory) {
         var player = runtime.adapters().player(owner);
         org.bukkit.inventory.Inventory own = player.getInventory();
         if (inventory.equals(owner.inventory())) {

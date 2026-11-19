@@ -1,6 +1,6 @@
 package space.nows.tube.api.plugin;
 
-import space.nows.tube.api.PermissionDefault;
+import space.nows.tube.api.permission.PermissionDefault;
 
 import java.util.Map;
 import java.util.Objects;

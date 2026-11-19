@@ -2,8 +2,8 @@ package space.nows.tube.server.world.generator;
 
 import de.articdive.jnoise.generators.noisegen.opensimplex.FastSimplexNoiseGenerator;
 import space.nows.tube.api.world.Block;
-import space.nows.tube.api.world.ChunkBuilder;
-import space.nows.tube.api.world.WorldGenerator;
+import space.nows.tube.api.world.generation.ChunkBuilder;
+import space.nows.tube.api.world.generation.WorldGenerator;
 
 import java.util.Map;
 import java.util.Random;

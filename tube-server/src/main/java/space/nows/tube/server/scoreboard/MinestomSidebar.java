@@ -3,7 +3,7 @@ package space.nows.tube.server.scoreboard;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.scoreboard.Sidebar.NumberFormat;
 import net.minestom.server.scoreboard.Sidebar.ScoreboardLine;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.scoreboard.Sidebar;
 import space.nows.tube.api.scoreboard.SidebarLine;
 import space.nows.tube.server.player.MinestomPlayer;

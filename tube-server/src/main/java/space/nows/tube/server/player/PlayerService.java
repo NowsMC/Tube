@@ -1,7 +1,7 @@
 package space.nows.tube.server.player;
 
-import space.nows.tube.api.entity.LoginMode;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.LoginMode;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.world.WorldService;
 

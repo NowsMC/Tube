@@ -1,7 +1,7 @@
 package space.nows.tube.server.command.builtin.server;
 
 import space.nows.tube.api.Server;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
 
 import java.util.List;
 

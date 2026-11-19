@@ -1,6 +1,6 @@
 package space.nows.tube.server.world.vanilla;
 
-import space.nows.tube.api.world.ChunkBuilder;
+import space.nows.tube.api.world.generation.ChunkBuilder;
 import space.nows.tube.server.world.vanilla.block.BlockState;
 import space.nows.tube.server.world.vanilla.terrain.ChunkDraft;
 

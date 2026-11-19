@@ -20,13 +20,13 @@ import java.util.Set;
 
 public final class BukkitPlayer extends BukkitLivingEntity implements Player {
 
-    private final space.nows.tube.api.entity.Player tube;
+    private final space.nows.tube.api.entity.player.Player tube;
     private String playerListHeader;
     private String playerListFooter;
     private String playerListName;
     private org.bukkit.scoreboard.Scoreboard scoreboard;
 
-    public BukkitPlayer(BukkitRuntime runtime, space.nows.tube.api.entity.Player tube) {
+    public BukkitPlayer(BukkitRuntime runtime, space.nows.tube.api.entity.player.Player tube) {
         super(runtime, tube);
         this.tube = tube;
     }
@@ -142,7 +142,7 @@ public final class BukkitPlayer extends BukkitLivingEntity implements Player {
 
     @Override
     public void setGameMode(GameMode mode) {
-        tube.setGameMode(space.nows.tube.api.entity.GameMode.valueOf(mode.name()));
+        tube.setGameMode(space.nows.tube.api.entity.player.GameMode.valueOf(mode.name()));
     }
 
     @Override

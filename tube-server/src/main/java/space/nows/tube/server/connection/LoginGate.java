@@ -11,10 +11,10 @@ import net.minestom.server.network.player.GameProfile;
 import net.minestom.server.network.player.PlayerConnection;
 import net.minestom.server.network.player.PlayerSocketConnection;
 import net.minestom.server.utils.StringUtils;
-import space.nows.tube.api.entity.LoginMode;
+import space.nows.tube.api.entity.player.LoginMode;
 import space.nows.tube.api.event.EventBus;
-import space.nows.tube.api.event.PlayerLoginStartEvent;
-import space.nows.tube.api.event.PlayerPreLoginEvent;
+import space.nows.tube.api.event.player.PlayerLoginStartEvent;
+import space.nows.tube.api.event.player.PlayerPreLoginEvent;
 import space.nows.tube.server.player.PlayerService;
 
 import java.nio.charset.StandardCharsets;

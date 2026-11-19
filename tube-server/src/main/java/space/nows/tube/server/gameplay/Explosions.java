@@ -17,7 +17,7 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import space.nows.tube.api.event.EventBus;
-import space.nows.tube.api.event.ExplosionEvent;
+import space.nows.tube.api.event.entity.ExplosionEvent;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.server.loot.LootContext;
 import space.nows.tube.server.loot.LootTables;

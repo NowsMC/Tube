@@ -28,7 +28,7 @@ public final class BukkitScoreboardManager implements ScoreboardManager {
         return main;
     }
 
-    public void playerJoined(space.nows.tube.api.entity.Player player) {
+    public void playerJoined(space.nows.tube.api.entity.player.Player player) {
         main.attach(player);
     }
 }

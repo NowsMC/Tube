@@ -76,7 +76,7 @@ public class BukkitLivingEntity extends BukkitEntity implements LivingEntity {
 
     @Override
     public boolean addPotionEffect(PotionEffect effect) {
-        tube.addEffect(new space.nows.tube.api.entity.PotionEffect(effect.getType().getKey().toString(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles(), effect.hasIcon()));
+        tube.addEffect(new space.nows.tube.api.entity.effect.PotionEffect(effect.getType().getKey().toString(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles(), effect.hasIcon()));
         return true;
     }
 
@@ -98,7 +98,7 @@ public class BukkitLivingEntity extends BukkitEntity implements LivingEntity {
     @Override
     public Collection<PotionEffect> getActivePotionEffects() {
         List<PotionEffect> result = new ArrayList<>();
-        for (space.nows.tube.api.entity.PotionEffect effect : tube.effects()) {
+        for (space.nows.tube.api.entity.effect.PotionEffect effect : tube.effects()) {
             PotionEffectType type = PotionEffectType.getByKey(NamespacedKey.minecraft(effect.type().replaceFirst("^minecraft:", "")));
             if (type != null) {
                 result.add(new PotionEffect(type, effect.duration(), effect.amplifier(), effect.ambient(), effect.particles(), effect.icon()));

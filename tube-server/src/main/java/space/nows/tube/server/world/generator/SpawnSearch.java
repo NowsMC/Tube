@@ -1,6 +1,6 @@
 package space.nows.tube.server.world.generator;
 
-import space.nows.tube.api.world.WorldGenerator;
+import space.nows.tube.api.world.generation.WorldGenerator;
 
 public final class SpawnSearch {
 

@@ -1,11 +1,11 @@
 package space.nows.tube.server.command.builtin.access;
 
-import space.nows.tube.api.PermissionManager;
 import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.command.Suggestions;
-import space.nows.tube.api.command.Typing;
+import space.nows.tube.api.command.argument.Suggestions;
+import space.nows.tube.api.command.argument.Typing;
+import space.nows.tube.api.permission.PermissionManager;
 import space.nows.tube.server.access.Profiles;
 import space.nows.tube.server.command.builtin.Permissions;
 import space.nows.tube.server.command.support.ServerCommand;

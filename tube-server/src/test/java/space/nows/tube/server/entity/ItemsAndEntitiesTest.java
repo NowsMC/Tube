@@ -18,15 +18,15 @@ import net.minestom.testing.Env;
 import net.minestom.testing.EnvTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import space.nows.tube.api.Text;
 import space.nows.tube.api.entity.LivingEntity;
-import space.nows.tube.api.event.EntityDamageEvent;
-import space.nows.tube.api.event.EntityDeathEvent;
-import space.nows.tube.api.event.EntitySpawnEvent;
-import space.nows.tube.api.event.InventoryClickEvent;
+import space.nows.tube.api.event.entity.EntityDamageEvent;
+import space.nows.tube.api.event.entity.EntityDeathEvent;
+import space.nows.tube.api.event.entity.EntitySpawnEvent;
+import space.nows.tube.api.event.inventory.InventoryClickEvent;
 import space.nows.tube.api.inventory.EquipmentSlot;
 import space.nows.tube.api.inventory.Inventory;
 import space.nows.tube.api.inventory.ItemStack;
+import space.nows.tube.api.text.Text;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.server.DedicatedServer;
 import space.nows.tube.server.access.PermissionService;
@@ -95,14 +95,14 @@ class ItemsAndEntitiesTest {
     void potionEffectsAreAppliedAndRemoved(Env env) {
         MinestomPlayer player = join(env);
 
-        player.addEffect(space.nows.tube.api.entity.PotionEffect.of("speed", 200, 1));
+        player.addEffect(space.nows.tube.api.entity.effect.PotionEffect.of("speed", 200, 1));
 
         assertEquals(1, player.effects().size());
         assertEquals("minecraft:speed", player.effects().getFirst().type());
         assertEquals(1, player.effects().getFirst().amplifier());
         player.removeEffect("speed");
         assertTrue(player.effects().isEmpty());
-        assertThrows(IllegalArgumentException.class, () -> player.addEffect(space.nows.tube.api.entity.PotionEffect.of("tube:nothing", 20, 0)));
+        assertThrows(IllegalArgumentException.class, () -> player.addEffect(space.nows.tube.api.entity.effect.PotionEffect.of("tube:nothing", 20, 0)));
     }
 
     @Test
@@ -122,7 +122,7 @@ class ItemsAndEntitiesTest {
     void cancelledTeleportsLeaveThePlayerInPlace(Env env) {
         MinestomPlayer player = join(env);
         players.attachEvents(bus);
-        bus.subscribe(space.nows.tube.api.event.PlayerTeleportEvent.class, event -> event.setCancelled(true));
+        bus.subscribe(space.nows.tube.api.event.player.PlayerTeleportEvent.class, event -> event.setCancelled(true));
         double before = player.location().x();
 
         player.teleport(new Location(player.world(), before + 50, 42, 0)).join();

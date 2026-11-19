@@ -6,7 +6,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.potion.Potion;
 import net.minestom.server.potion.PotionEffect;
-import space.nows.tube.api.entity.brain.Brain;
+import space.nows.tube.api.entity.mob.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
 import space.nows.tube.server.mob.brain.target.HuntNearest;

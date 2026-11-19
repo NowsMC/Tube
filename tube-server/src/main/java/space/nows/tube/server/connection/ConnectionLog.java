@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
-import space.nows.tube.api.event.PlayerJoinEvent;
-import space.nows.tube.api.event.PlayerQuitEvent;
+import space.nows.tube.api.event.player.PlayerJoinEvent;
+import space.nows.tube.api.event.player.PlayerQuitEvent;
 import space.nows.tube.api.world.Location;
 import space.nows.tube.server.access.AccessControl;
 

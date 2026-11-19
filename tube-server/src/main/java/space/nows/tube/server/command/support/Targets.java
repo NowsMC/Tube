@@ -3,10 +3,10 @@ package space.nows.tube.server.command.support;
 import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandFailure;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.command.Suggestions;
-import space.nows.tube.api.command.TargetResolver;
+import space.nows.tube.api.command.argument.Suggestions;
+import space.nows.tube.api.command.argument.TargetResolver;
 import space.nows.tube.api.entity.Entity;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.world.Location;
 
 import java.util.ArrayList;

@@ -39,8 +39,8 @@ class BukkitPlayerInventoryTest {
                     default -> throw new UnsupportedOperationException(method.getName());
                 });
         UUID id = UUID.randomUUID();
-        space.nows.tube.api.entity.Player player = (space.nows.tube.api.entity.Player) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] {space.nows.tube.api.entity.Player.class}, (proxy, method, args) -> switch (method.getName()) {
+        space.nows.tube.api.entity.player.Player player = (space.nows.tube.api.entity.player.Player) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class<?>[] {space.nows.tube.api.entity.player.Player.class}, (proxy, method, args) -> switch (method.getName()) {
                     case "inventory" -> backing;
                     case "uuid" -> id;
                     case "heldSlot" -> held;

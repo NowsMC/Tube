@@ -1,5 +1,6 @@
 package space.nows.tube.api.entity;
 
+import space.nows.tube.api.entity.effect.PotionEffect;
 import space.nows.tube.api.inventory.EquipmentSlot;
 import space.nows.tube.api.inventory.ItemStack;
 

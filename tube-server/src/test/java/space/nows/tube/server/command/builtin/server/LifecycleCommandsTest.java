@@ -15,7 +15,7 @@ import space.nows.tube.api.Server;
 import space.nows.tube.api.command.CommandSender;
 import space.nows.tube.api.event.Event;
 import space.nows.tube.api.event.EventBus;
-import space.nows.tube.api.event.ServerReloadEvent;
+import space.nows.tube.api.event.server.ServerReloadEvent;
 import space.nows.tube.server.AutosaveGate;
 import space.nows.tube.server.Restarter;
 import space.nows.tube.server.access.BanList;

@@ -1,7 +1,7 @@
 package space.nows.tube.server.command.support;
 
 import space.nows.tube.api.command.CommandFailure;
-import space.nows.tube.api.entity.GameMode;
+import space.nows.tube.api.entity.player.GameMode;
 
 import java.util.List;
 import java.util.Locale;

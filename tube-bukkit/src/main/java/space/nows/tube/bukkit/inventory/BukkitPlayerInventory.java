@@ -11,10 +11,10 @@ public final class BukkitPlayerInventory extends BukkitInventory implements Play
     private static final int STORAGE = 36;
     private static final int SIZE = 41;
 
-    private final space.nows.tube.api.entity.Player player;
+    private final space.nows.tube.api.entity.player.Player player;
     private final HumanEntity holder;
 
-    public BukkitPlayerInventory(space.nows.tube.api.entity.Player player, HumanEntity holder) {
+    public BukkitPlayerInventory(space.nows.tube.api.entity.player.Player player, HumanEntity holder) {
         super(player.inventory());
         this.player = player;
         this.holder = holder;

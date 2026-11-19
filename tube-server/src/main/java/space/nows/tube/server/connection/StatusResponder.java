@@ -34,7 +34,7 @@ public final class StatusResponder {
         }
         Status status = event.getStatus();
         int online = MinecraftServer.getConnectionManager().getOnlinePlayers().size();
-        var ping = events.post(new space.nows.tube.api.event.ServerListPingEvent(
+        var ping = events.post(new space.nows.tube.api.event.server.ServerListPingEvent(
                 event.getConnection() == null ? null : event.getConnection().getRemoteAddress(),
                 status.versionInfo().protocolVersion(), motd, online, settings.connection().maxPlayers(), settings.status().hideOnlinePlayers()));
         if (ping.isCancelled()) {

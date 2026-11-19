@@ -96,15 +96,15 @@ public class MinestomLivingEntity extends MinestomEntity implements LivingEntity
     }
 
     @Override
-    public java.util.List<space.nows.tube.api.entity.PotionEffect> effects() {
+    public java.util.List<space.nows.tube.api.entity.effect.PotionEffect> effects() {
         return living().getActiveEffects().stream().map(timed -> {
             var potion = timed.potion();
-            return new space.nows.tube.api.entity.PotionEffect(potion.effect().key().asString(), potion.duration(), potion.amplifier(), potion.isAmbient(), potion.hasParticles(), potion.hasIcon());
+            return new space.nows.tube.api.entity.effect.PotionEffect(potion.effect().key().asString(), potion.duration(), potion.amplifier(), potion.isAmbient(), potion.hasParticles(), potion.hasIcon());
         }).toList();
     }
 
     @Override
-    public void addEffect(space.nows.tube.api.entity.PotionEffect effect) {
+    public void addEffect(space.nows.tube.api.entity.effect.PotionEffect effect) {
         var type = net.minestom.server.potion.PotionEffect.fromKey(effect.type());
         if (type == null) {
             throw new IllegalArgumentException("Unknown potion effect: " + effect.type());

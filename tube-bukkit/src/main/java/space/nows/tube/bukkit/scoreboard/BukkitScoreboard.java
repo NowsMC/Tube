@@ -174,14 +174,14 @@ public final class BukkitScoreboard implements Scoreboard {
         }
     }
 
-    public synchronized void attach(space.nows.tube.api.entity.Player player) {
+    public synchronized void attach(space.nows.tube.api.entity.player.Player player) {
         viewers.add(player.uuid());
         if (sidebar != null) {
             sidebar.show(player);
         }
     }
 
-    public synchronized void detach(space.nows.tube.api.entity.Player player) {
+    public synchronized void detach(space.nows.tube.api.entity.player.Player player) {
         viewers.remove(player.uuid());
         if (sidebar != null) {
             sidebar.hide(player);

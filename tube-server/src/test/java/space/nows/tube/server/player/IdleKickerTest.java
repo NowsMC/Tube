@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
 
 import java.lang.reflect.Proxy;
 import java.util.UUID;

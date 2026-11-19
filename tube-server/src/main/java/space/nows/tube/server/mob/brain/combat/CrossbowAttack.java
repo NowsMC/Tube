@@ -3,8 +3,8 @@ package space.nows.tube.server.mob.brain.combat;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.metadata.monster.raider.PillagerMeta;
 import net.minestom.server.item.Material;
-import space.nows.tube.api.entity.brain.Behavior;
-import space.nows.tube.api.entity.brain.Control;
+import space.nows.tube.api.entity.mob.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Control;
 import space.nows.tube.server.mob.Creature;
 
 public final class CrossbowAttack extends Behavior {

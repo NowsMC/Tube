@@ -5,7 +5,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.LivingEntity;
-import space.nows.tube.api.entity.brain.MemoryKey;
+import space.nows.tube.api.entity.mob.brain.MemoryKey;
 import space.nows.tube.server.gameplay.SweptProjectile;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.brain.combat.Volley;

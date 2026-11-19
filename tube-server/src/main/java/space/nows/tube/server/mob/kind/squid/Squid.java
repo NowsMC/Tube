@@ -2,7 +2,7 @@ package space.nows.tube.server.mob.kind.squid;
 
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.damage.Damage;
-import space.nows.tube.api.entity.brain.Brain;
+import space.nows.tube.api.entity.mob.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureKind;
 import space.nows.tube.server.mob.CreatureStats;

@@ -6,7 +6,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import space.nows.tube.api.Server;
-import space.nows.tube.api.entity.Player;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.network.NettyNetwork;
 import space.nows.tube.network.QueryServer;
 import space.nows.tube.network.RconServer;

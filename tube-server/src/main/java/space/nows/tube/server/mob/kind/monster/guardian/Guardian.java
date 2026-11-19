@@ -6,7 +6,7 @@ import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.entity.damage.DamageType;
-import space.nows.tube.api.entity.brain.Brain;
+import space.nows.tube.api.entity.mob.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
 import space.nows.tube.server.mob.brain.idle.LookAround;

@@ -7,8 +7,8 @@ import net.minestom.server.MinecraftServer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import space.nows.tube.api.world.Block;
-import space.nows.tube.api.world.ChunkBuilder;
-import space.nows.tube.api.world.WorldGenerator;
+import space.nows.tube.api.world.generation.ChunkBuilder;
+import space.nows.tube.api.world.generation.WorldGenerator;
 import space.nows.tube.server.world.generator.NetherGenerator;
 import space.nows.tube.server.world.generator.TerrainGenerator;
 

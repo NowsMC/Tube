@@ -40,13 +40,13 @@ public final class Adapters {
     }
 
     public CommandSender sender(space.nows.tube.api.command.CommandSender sender) {
-        if (sender instanceof space.nows.tube.api.entity.Player player) {
+        if (sender instanceof space.nows.tube.api.entity.player.Player player) {
             return player(player);
         }
         return new BukkitCommandSender(runtime, sender);
     }
 
-    public Player player(space.nows.tube.api.entity.Player tube) {
+    public Player player(space.nows.tube.api.entity.player.Player tube) {
         return players.computeIfAbsent(tube.uuid(), uuid -> new BukkitPlayer(runtime, tube));
     }
 
@@ -55,7 +55,7 @@ public final class Adapters {
     }
 
     public LivingEntity living(space.nows.tube.api.entity.LivingEntity tube) {
-        if (tube instanceof space.nows.tube.api.entity.Player player) {
+        if (tube instanceof space.nows.tube.api.entity.player.Player player) {
             return player(player);
         }
         return new BukkitMob(runtime, tube);

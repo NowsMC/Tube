@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import space.nows.tube.api.entity.brain.Activity;
-import space.nows.tube.api.entity.brain.Behavior;
-import space.nows.tube.api.entity.brain.Brain;
-import space.nows.tube.api.entity.brain.Control;
-import space.nows.tube.api.entity.brain.MemoryKey;
-import space.nows.tube.api.entity.brain.Sense;
+import space.nows.tube.api.entity.mob.brain.Activity;
+import space.nows.tube.api.entity.mob.brain.Behavior;
+import space.nows.tube.api.entity.mob.brain.Brain;
+import space.nows.tube.api.entity.mob.brain.Control;
+import space.nows.tube.api.entity.mob.brain.MemoryKey;
+import space.nows.tube.api.entity.mob.brain.Sense;
 
 import java.util.Optional;
 

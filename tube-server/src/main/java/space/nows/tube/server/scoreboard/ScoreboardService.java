@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import space.nows.tube.api.scoreboard.Scoreboards;
 import space.nows.tube.api.scoreboard.Sidebar;
-import space.nows.tube.api.scoreboard.Team;
+import space.nows.tube.api.scoreboard.team.Team;
 import space.nows.tube.server.player.PlayerService;
 
 import java.util.Collection;

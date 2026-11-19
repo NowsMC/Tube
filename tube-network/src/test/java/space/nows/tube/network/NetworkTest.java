@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import space.nows.tube.api.network.TcpHandler;
-import space.nows.tube.api.network.TcpConnection;
+import space.nows.tube.api.network.tcp.TcpConnection;
+import space.nows.tube.api.network.tcp.TcpHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;

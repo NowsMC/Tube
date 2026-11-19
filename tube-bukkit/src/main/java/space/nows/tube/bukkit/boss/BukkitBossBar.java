@@ -59,7 +59,7 @@ public final class BukkitBossBar implements org.bukkit.boss.BossBar {
         };
     }
 
-    private space.nows.tube.api.entity.Player tube(UUID uuid) {
+    private space.nows.tube.api.entity.player.Player tube(UUID uuid) {
         return runtime.tube().players().stream().filter(player -> player.uuid().equals(uuid)).findFirst().orElse(null);
     }
 

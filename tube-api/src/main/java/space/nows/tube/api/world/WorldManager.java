@@ -1,5 +1,7 @@
 package space.nows.tube.api.world;
 
+import space.nows.tube.api.world.generation.WorldGenerator;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;

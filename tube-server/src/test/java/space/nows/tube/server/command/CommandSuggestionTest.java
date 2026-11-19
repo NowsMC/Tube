@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import space.nows.tube.api.command.Command;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.command.Suggestions;
+import space.nows.tube.api.command.argument.Suggestions;
 import space.nows.tube.server.access.PermissionService;
 import space.nows.tube.server.player.PlayerService;
 import space.nows.tube.server.world.WorldService;

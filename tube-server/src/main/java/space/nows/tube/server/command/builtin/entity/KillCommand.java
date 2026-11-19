@@ -2,8 +2,8 @@ package space.nows.tube.server.command.builtin.entity;
 
 import space.nows.tube.api.command.CommandInput;
 import space.nows.tube.api.command.CommandSender;
-import space.nows.tube.api.command.Suggestions;
-import space.nows.tube.api.command.Typing;
+import space.nows.tube.api.command.argument.Suggestions;
+import space.nows.tube.api.command.argument.Typing;
 import space.nows.tube.api.entity.Entity;
 import space.nows.tube.api.entity.LivingEntity;
 import space.nows.tube.server.command.builtin.Permissions;
@@ -36,7 +36,7 @@ final class KillCommand extends ServerCommand {
     }
 
     private static String describe(Entity entity) {
-        return entity instanceof space.nows.tube.api.entity.Player player ? player.name() : entity.type();
+        return entity instanceof space.nows.tube.api.entity.player.Player player ? player.name() : entity.type();
     }
 
     @Override

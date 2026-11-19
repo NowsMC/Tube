@@ -1,17 +1,17 @@
 package space.nows.tube.server.player;
 
 import space.nows.tube.api.Server;
-import space.nows.tube.api.entity.Player;
-import space.nows.tube.api.event.BlockBreakEvent;
-import space.nows.tube.api.event.BlockPlaceEvent;
+import space.nows.tube.api.entity.player.Player;
 import space.nows.tube.api.event.EventBus;
 import space.nows.tube.api.event.EventPriority;
-import space.nows.tube.api.event.InventoryClickEvent;
-import space.nows.tube.api.event.PlayerChatEvent;
-import space.nows.tube.api.event.PlayerInteractEvent;
-import space.nows.tube.api.event.PlayerJoinEvent;
-import space.nows.tube.api.event.PlayerMoveEvent;
-import space.nows.tube.api.event.PlayerQuitEvent;
+import space.nows.tube.api.event.block.BlockBreakEvent;
+import space.nows.tube.api.event.block.BlockPlaceEvent;
+import space.nows.tube.api.event.inventory.InventoryClickEvent;
+import space.nows.tube.api.event.player.PlayerChatEvent;
+import space.nows.tube.api.event.player.PlayerInteractEvent;
+import space.nows.tube.api.event.player.PlayerJoinEvent;
+import space.nows.tube.api.event.player.PlayerMoveEvent;
+import space.nows.tube.api.event.player.PlayerQuitEvent;
 
 import java.util.Map;
 import java.util.UUID;

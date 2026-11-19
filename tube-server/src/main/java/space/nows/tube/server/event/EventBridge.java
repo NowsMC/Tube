@@ -21,28 +21,28 @@ import net.minestom.server.event.player.PlayerStopFlyingWithElytraEvent;
 import net.minestom.server.event.player.PlayerStopSprintingEvent;
 import net.minestom.server.event.player.PlayerUseItemEvent;
 import net.minestom.server.inventory.click.Click;
-import space.nows.tube.api.entity.GameMode;
 import space.nows.tube.api.entity.LivingEntity;
-import space.nows.tube.api.event.BlockBreakEvent;
-import space.nows.tube.api.event.BlockPlaceEvent;
+import space.nows.tube.api.entity.player.GameMode;
 import space.nows.tube.api.event.Cancellable;
-import space.nows.tube.api.event.CommandDispatchEvent;
-import space.nows.tube.api.event.EntityDamageEvent;
-import space.nows.tube.api.event.EntityDeathEvent;
-import space.nows.tube.api.event.EntityGlideEvent;
-import space.nows.tube.api.event.EntitySpawnEvent;
 import space.nows.tube.api.event.EventBus;
-import space.nows.tube.api.event.InventoryClickEvent;
-import space.nows.tube.api.event.InventoryCloseEvent;
-import space.nows.tube.api.event.InventoryDragEvent;
-import space.nows.tube.api.event.InventoryOpenEvent;
-import space.nows.tube.api.event.PlayerGameModeChangeEvent;
-import space.nows.tube.api.event.PlayerInteractEvent;
-import space.nows.tube.api.event.PlayerJoinEvent;
-import space.nows.tube.api.event.PlayerMoveEvent;
-import space.nows.tube.api.event.PlayerQuitEvent;
-import space.nows.tube.api.event.PlayerSneakEvent;
-import space.nows.tube.api.event.PlayerSprintEvent;
+import space.nows.tube.api.event.block.BlockBreakEvent;
+import space.nows.tube.api.event.block.BlockPlaceEvent;
+import space.nows.tube.api.event.entity.EntityDamageEvent;
+import space.nows.tube.api.event.entity.EntityDeathEvent;
+import space.nows.tube.api.event.entity.EntityGlideEvent;
+import space.nows.tube.api.event.entity.EntitySpawnEvent;
+import space.nows.tube.api.event.inventory.InventoryClickEvent;
+import space.nows.tube.api.event.inventory.InventoryCloseEvent;
+import space.nows.tube.api.event.inventory.InventoryDragEvent;
+import space.nows.tube.api.event.inventory.InventoryOpenEvent;
+import space.nows.tube.api.event.player.PlayerGameModeChangeEvent;
+import space.nows.tube.api.event.player.PlayerInteractEvent;
+import space.nows.tube.api.event.player.PlayerJoinEvent;
+import space.nows.tube.api.event.player.PlayerMoveEvent;
+import space.nows.tube.api.event.player.PlayerQuitEvent;
+import space.nows.tube.api.event.player.PlayerSneakEvent;
+import space.nows.tube.api.event.player.PlayerSprintEvent;
+import space.nows.tube.api.event.server.CommandDispatchEvent;
 import space.nows.tube.api.inventory.ClickType;
 import space.nows.tube.server.inventory.ItemMapper;
 import space.nows.tube.server.inventory.MinestomInventory;
@@ -112,7 +112,7 @@ public final class EventBridge {
 
         node.addListener(PlayerChatEvent.class, event -> {
             var player = players.wrap(event.getPlayer());
-            var posted = bus.post(new space.nows.tube.api.event.PlayerChatEvent(player, event.getRawMessage()));
+            var posted = bus.post(new space.nows.tube.api.event.player.PlayerChatEvent(player, event.getRawMessage()));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
                 return;
@@ -184,7 +184,7 @@ public final class EventBridge {
             var player = players.wrap(event.getPlayer());
             var target = event.getRespawnPosition();
             var at = new space.nows.tube.api.world.Location(player.world(), target.x(), target.y(), target.z(), target.yaw(), target.pitch());
-            var posted = bus.post(new space.nows.tube.api.event.PlayerRespawnEvent(player, at));
+            var posted = bus.post(new space.nows.tube.api.event.player.PlayerRespawnEvent(player, at));
             if (!posted.location().equals(at)) {
                 var changed = posted.location();
                 event.setRespawnPosition(new net.minestom.server.coordinate.Pos(changed.x(), changed.y(), changed.z(), changed.yaw(), changed.pitch()));
@@ -208,7 +208,7 @@ public final class EventBridge {
             var posted = bus.post(new PlayerInteractEvent(
                     players.wrap(event.getPlayer()), worlds.of(event.getInstance()),
                     pos.blockX(), pos.blockY(), pos.blockZ(), BlockMapper.fromMinestom(event.getBlock()), true,
-                    space.nows.tube.api.event.InteractAction.LEFT_CLICK_BLOCK));
+                    space.nows.tube.api.event.player.InteractAction.LEFT_CLICK_BLOCK));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
             }
@@ -217,7 +217,7 @@ public final class EventBridge {
         node.addListener(PlayerUseItemEvent.class, event -> {
             var player = players.wrap(event.getPlayer());
             var posted = bus.post(new PlayerInteractEvent(player, player.world(), 0, 0, 0, space.nows.tube.api.world.Block.AIR,
-                    event.getHand() == net.minestom.server.entity.PlayerHand.MAIN, space.nows.tube.api.event.InteractAction.RIGHT_CLICK_AIR));
+                    event.getHand() == net.minestom.server.entity.PlayerHand.MAIN, space.nows.tube.api.event.player.InteractAction.RIGHT_CLICK_AIR));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
             }
@@ -226,7 +226,7 @@ public final class EventBridge {
         node.addListener(PlayerHandAnimationEvent.class, event -> {
             var player = players.wrap(event.getPlayer());
             var posted = bus.post(new PlayerInteractEvent(player, player.world(), 0, 0, 0, space.nows.tube.api.world.Block.AIR,
-                    event.getHand() == net.minestom.server.entity.PlayerHand.MAIN, space.nows.tube.api.event.InteractAction.LEFT_CLICK_AIR));
+                    event.getHand() == net.minestom.server.entity.PlayerHand.MAIN, space.nows.tube.api.event.player.InteractAction.LEFT_CLICK_AIR));
             if (posted.isCancelled()) {
                 event.setCancelled(true);
             }

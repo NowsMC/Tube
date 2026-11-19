@@ -3,7 +3,7 @@ package space.nows.tube.server.mob.kind.animal;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.item.Material;
-import space.nows.tube.api.entity.brain.Brain;
+import space.nows.tube.api.entity.mob.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
 import space.nows.tube.server.mob.brain.idle.LookAround;

@@ -2,7 +2,7 @@ package space.nows.tube.server.world.vanilla;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import space.nows.tube.api.world.WorldGenerator;
+import space.nows.tube.api.world.generation.WorldGenerator;
 import space.nows.tube.server.vanilla.MojangServerJar;
 import space.nows.tube.server.world.generator.TerrainGenerator;
 

@@ -1,6 +1,6 @@
 package space.nows.tube.server.config;
 
-import space.nows.tube.api.entity.GameMode;
+import space.nows.tube.api.entity.player.GameMode;
 
 public record ServerSettings(
         Connection connection,
