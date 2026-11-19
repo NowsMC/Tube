@@ -18,7 +18,7 @@ Tube is a Minecraft server built on Minestom with its own API and systems. Bukki
 - Bukkit support only translates. Add to `tube-bukkit-api` what plugins actually call, and implement it in `tube-bukkit` on top of the Tube API. If the Tube API cannot do it yet, extend the Tube API first.
 - `tools/bukkit` measures which Bukkit classes and methods plugins need.
 - Normal world generation is in `tube-server` under `world/vanilla`. It reads Mojang's world generation data, downloaded at run time.
-- Mobs are in `tube-server` under `mob`: `Creature` is the entity, each mob type is one `CreatureKind` in `mob/kind`, and goals, movement, senses and traits each have their own package.
+- Mobs are in `tube-server` under `mob`: `Creature` is the entity, each mob type is one `CreatureKind` in `mob/kind`, and the brain (`mob/brain`), movement, senses and traits each have their own package. Plugins reach a mob's brain through `Mob.brain()`.
 - The console and the log format are in `tube-server` under `console`, configured by `tube.yml`.
 - Plugins add commands through `PluginContext.commands()`. Argument reading, positions, target selectors and registry names for completion are in the API (`CommandInput`, `Positions`, `Server.targets()`, `Server.registries()`), so a plugin command parses like a built-in one.
 - Plugins shade the libraries they need into their own jar. Tube does not download libraries for plugins.
