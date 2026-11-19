@@ -14,11 +14,17 @@ public final class FloatAround extends Behavior {
 
     private final Creature creature;
     private final FloatControl control;
+    private final int range;
 
     public FloatAround(Creature creature, FloatControl control) {
+        this(creature, control, RANGE);
+    }
+
+    public FloatAround(Creature creature, FloatControl control, int range) {
         super(Control.MOVE);
         this.creature = creature;
         this.control = control;
+        this.range = range;
     }
 
     @Override
@@ -42,6 +48,6 @@ public final class FloatAround extends Behavior {
     }
 
     private double offset() {
-        return (creature.random().nextFloat() * 2 - 1) * RANGE;
+        return (creature.random().nextFloat() * 2 - 1) * range;
     }
 }

@@ -17,14 +17,26 @@ public final class Fireball extends Entity {
 
     private final Entity owner;
     private final Impact impact;
+    private final double acceleration;
+    private final double inertia;
     private Vec motion;
 
     public Fireball(EntityType type, Entity owner, Vec direction, Impact impact) {
+        this(type, owner, direction.normalize().mul(ACCELERATION), impact, ACCELERATION, INERTIA);
+    }
+
+    private Fireball(EntityType type, Entity owner, Vec motion, Impact impact, double acceleration, double inertia) {
         super(type);
         this.owner = owner;
         this.impact = impact;
-        this.motion = direction.normalize().mul(ACCELERATION);
+        this.motion = motion;
+        this.acceleration = acceleration;
+        this.inertia = inertia;
         setNoGravity(true);
+    }
+
+    public static Fireball steady(EntityType type, Entity owner, Vec motion, Impact impact) {
+        return new Fireball(type, owner, motion, impact, 0, 1);
     }
 
     public Entity owner() {
@@ -41,8 +53,8 @@ public final class Fireball extends Entity {
             remove();
             return;
         }
-        double inertia = Liquids.isWater(instance.getBlock(getPosition())) ? WATER_INERTIA : INERTIA;
-        motion = motion.add(motion.normalize().mul(ACCELERATION)).mul(inertia);
+        double drag = Liquids.isWater(instance.getBlock(getPosition())) ? Math.min(inertia, WATER_INERTIA) : inertia;
+        motion = motion.add(motion.normalize().mul(acceleration)).mul(drag);
         Trajectory path = Trajectory.sweep(this, owner, motion);
         if (path.entity() != null) {
             impact.hitEntity(this, path.entity());

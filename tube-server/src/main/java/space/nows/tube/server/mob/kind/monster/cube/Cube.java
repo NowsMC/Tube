@@ -55,6 +55,10 @@ abstract class Cube extends Monster {
         return size(cube) > 1 ? "jump" : "jump_small";
     }
 
+    protected boolean hunts() {
+        return true;
+    }
+
     @Override
     public void configure(Creature creature, Brain brain) {
         Hop hop = new Hop(creature, this);
@@ -64,6 +68,9 @@ abstract class Cube extends Monster {
         brain.add(2, new HopAttack(creature, this, hop));
         brain.add(4, new HopAbout(creature, hop));
         brain.add(5, new KeepHopping(creature, hop, false));
+        if (!hunts()) {
+            return;
+        }
         brain.add(1, HuntNearest.players(creature, true,
                 target -> Math.abs(target.getPosition().y() - creature.getPosition().y()) <= REACH_HEIGHT));
         brain.add(3, HuntNearest.of(creature, EntityType.IRON_GOLEM, true));
