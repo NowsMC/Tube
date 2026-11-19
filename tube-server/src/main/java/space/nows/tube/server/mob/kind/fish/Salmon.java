@@ -16,4 +16,9 @@ public final class Salmon extends Fish {
     public CreatureStats stats() {
         return STATS;
     }
+
+    @Override
+    protected int schoolSize() {
+        return 5;
+    }
 }
