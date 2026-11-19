@@ -118,4 +118,17 @@ class MonsterVariantsTest {
         assertTrue(piglin.target() == player, "did not retaliate");
         assertTrue(friend.target() == player, "friend not alerted");
     }
+
+    @Test
+    void llamasSpitBackOnce(Env env) {
+        setup(env);
+        Creature llama = spawn(EntityType.LLAMA, new Pos(6, 40, 0));
+        llama.damage(net.minestom.server.entity.damage.Damage.fromPlayer(player, 1));
+        for (int i = 0; i < 200 && player.getHealth() >= 20; i++) {
+            env.tick();
+        }
+        assertTrue(player.getHealth() < 20, "llama did not spit");
+        ticks(env, 10);
+        assertTrue(llama.target() == null, "llama kept its target after spitting");
+    }
 }
