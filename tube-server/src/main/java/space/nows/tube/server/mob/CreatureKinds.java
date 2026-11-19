@@ -9,6 +9,11 @@ import space.nows.tube.server.mob.kind.animal.Mooshroom;
 import space.nows.tube.server.mob.kind.animal.Ocelot;
 import space.nows.tube.server.mob.kind.animal.PolarBear;
 import space.nows.tube.server.mob.kind.animal.Rabbit;
+import space.nows.tube.server.mob.kind.animal.horse.Donkey;
+import space.nows.tube.server.mob.kind.animal.horse.Horse;
+import space.nows.tube.server.mob.kind.animal.horse.Mule;
+import space.nows.tube.server.mob.kind.animal.horse.SkeletonHorse;
+import space.nows.tube.server.mob.kind.animal.horse.ZombieHorse;
 import space.nows.tube.server.mob.kind.animal.Pig;
 import space.nows.tube.server.mob.kind.animal.Sheep;
 import space.nows.tube.server.mob.kind.fish.Cod;
@@ -43,7 +48,7 @@ public final class CreatureKinds {
     private static final Map<EntityType, CreatureKind> KINDS = new HashMap<>();
 
     static {
-        for (CreatureKind kind : List.of(new Cow(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(),
+        for (CreatureKind kind : List.of(new Cow(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(),
                 new Zombie(), new Husk(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Enderman(), new Cod(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }
