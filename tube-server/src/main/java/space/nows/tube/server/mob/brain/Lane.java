@@ -1,5 +1,6 @@
 package space.nows.tube.server.mob.brain;
 
+import space.nows.tube.api.entity.brain.Activity;
 import space.nows.tube.api.entity.brain.Behavior;
 import space.nows.tube.api.entity.brain.Control;
 
@@ -15,8 +16,8 @@ final class Lane {
     private final List<Slot> slots = new ArrayList<>();
     private final Map<Control, Slot> holders = new EnumMap<>(Control.class);
 
-    void add(int priority, Behavior behavior) {
-        slots.add(new Slot(priority, behavior));
+    void add(Activity activity, int priority, Behavior behavior) {
+        slots.add(new Slot(activity, priority, behavior));
     }
 
     void removeIf(Predicate<Behavior> match) {
@@ -44,15 +45,15 @@ final class Lane {
         }
     }
 
-    void tick(Set<Control> disabled) {
+    void tick(Set<Control> disabled, Predicate<Activity> active) {
         for (Slot slot : slots) {
-            if (slot.running() && (uses(slot, disabled) || !slot.behavior.canContinue())) {
+            if (slot.running() && (blocked(slot, disabled, active) || !slot.behavior.canContinue())) {
                 slot.stop();
             }
         }
         holders.values().removeIf(slot -> !slot.running());
         for (Slot slot : slots) {
-            if (!slot.running() && !uses(slot, disabled) && canTakeOver(slot) && slot.behavior.canStart()) {
+            if (!slot.running() && !blocked(slot, disabled, active) && canTakeOver(slot) && slot.behavior.canStart()) {
                 for (Control control : slot.behavior.controls()) {
                     Slot holder = holders.put(control, slot);
                     if (holder != null) {
@@ -71,6 +72,10 @@ final class Lane {
                 slot.behavior.tick();
             }
         }
+    }
+
+    private static boolean blocked(Slot slot, Set<Control> disabled, Predicate<Activity> active) {
+        return !active.test(slot.activity) || uses(slot, disabled);
     }
 
     private static boolean uses(Slot slot, Set<Control> controls) {

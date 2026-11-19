@@ -2,10 +2,17 @@ package space.nows.tube.api.entity.brain;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public interface Brain {
 
     void add(int priority, Behavior behavior);
+
+    void add(Activity activity, int priority, Behavior behavior);
+
+    void addActivity(Activity activity, Predicate<Brain> when);
+
+    Activity activity();
 
     void remove(Behavior behavior);
 

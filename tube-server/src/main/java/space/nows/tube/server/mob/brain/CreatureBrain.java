@@ -1,5 +1,6 @@
 package space.nows.tube.server.mob.brain;
 
+import space.nows.tube.api.entity.brain.Activity;
 import space.nows.tube.api.entity.brain.Behavior;
 import space.nows.tube.api.entity.brain.Brain;
 import space.nows.tube.api.entity.brain.Control;
@@ -11,6 +12,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class CreatureBrain implements Brain {
 
@@ -21,6 +23,8 @@ public final class CreatureBrain implements Brain {
     private final Memories memories = new Memories();
     private final List<SenseClock> senses = new ArrayList<>();
     private final Set<Control> disabled = EnumSet.noneOf(Control.class);
+    private final List<ActivityRule> activities = new ArrayList<>();
+    private Activity activity = Activity.IDLE;
     private final int offset;
     private long now;
 
@@ -30,7 +34,22 @@ public final class CreatureBrain implements Brain {
 
     @Override
     public void add(int priority, Behavior behavior) {
-        laneOf(behavior).add(priority, behavior);
+        add(Activity.CORE, priority, behavior);
+    }
+
+    @Override
+    public void add(Activity activity, int priority, Behavior behavior) {
+        laneOf(behavior).add(activity, priority, behavior);
+    }
+
+    @Override
+    public void addActivity(Activity activity, Predicate<Brain> when) {
+        activities.add(new ActivityRule(activity, when));
+    }
+
+    @Override
+    public Activity activity() {
+        return activity;
     }
 
     @Override
@@ -95,9 +114,23 @@ public final class CreatureBrain implements Brain {
             targeting.tickRunning(false);
             acting.tickRunning(false);
         } else {
-            targeting.tick(disabled);
-            acting.tick(disabled);
+            activity = chooseActivity();
+            targeting.tick(disabled, this::active);
+            acting.tick(disabled, this::active);
         }
+    }
+
+    private Activity chooseActivity() {
+        for (ActivityRule rule : activities) {
+            if (rule.when().test(this)) {
+                return rule.activity();
+            }
+        }
+        return Activity.IDLE;
+    }
+
+    private boolean active(Activity candidate) {
+        return candidate.equals(Activity.CORE) || candidate.equals(activity);
     }
 
     private Lane laneOf(Behavior behavior) {

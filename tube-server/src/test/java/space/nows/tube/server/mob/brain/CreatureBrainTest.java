@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import space.nows.tube.api.entity.brain.Activity;
 import space.nows.tube.api.entity.brain.Behavior;
 import space.nows.tube.api.entity.brain.Brain;
 import space.nows.tube.api.entity.brain.Control;
@@ -192,5 +193,42 @@ class CreatureBrainTest {
             think(brain, tick);
         }
         assertEquals(3, runs[0]);
+    }
+
+    @Test
+    void activityFollowsItsCondition() {
+        CreatureBrain brain = new CreatureBrain(0);
+        Activity fight = Activity.of("test:fight");
+        brain.addActivity(fight, mind -> mind.recall(SCENT).isPresent());
+        think(brain, 0);
+        assertEquals(Activity.IDLE, brain.activity());
+        brain.remember(SCENT, "blood");
+        think(brain, 2);
+        assertEquals(fight, brain.activity());
+    }
+
+    @Test
+    void onlyTheActiveActivityRunsBesideCore() {
+        CreatureBrain brain = new CreatureBrain(0);
+        Activity fight = Activity.of("test:fight");
+        brain.addActivity(fight, mind -> mind.recall(SCENT).isPresent());
+        Toggle breathe = new Toggle(Control.JUMP);
+        Toggle stroll = new Toggle(Control.MOVE);
+        Toggle charge = new Toggle(Control.LOOK);
+        brain.add(0, breathe);
+        brain.add(Activity.IDLE, 1, stroll);
+        brain.add(fight, 1, charge);
+        breathe.wanted = true;
+        stroll.wanted = true;
+        charge.wanted = true;
+        think(brain, 0);
+        assertTrue(brain.running(breathe));
+        assertTrue(brain.running(stroll));
+        assertFalse(brain.running(charge));
+        brain.remember(SCENT, "blood");
+        think(brain, 2);
+        assertTrue(brain.running(breathe));
+        assertFalse(brain.running(stroll));
+        assertTrue(brain.running(charge));
     }
 }
