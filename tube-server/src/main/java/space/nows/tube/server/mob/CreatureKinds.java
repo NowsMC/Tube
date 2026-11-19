@@ -19,6 +19,8 @@ import space.nows.tube.server.mob.kind.animal.llama.TraderLlama;
 import space.nows.tube.server.mob.kind.animal.Pig;
 import space.nows.tube.server.mob.kind.animal.Sheep;
 import space.nows.tube.server.mob.kind.fish.Cod;
+import space.nows.tube.server.mob.kind.golem.IronGolem;
+import space.nows.tube.server.mob.kind.golem.SnowGolem;
 import space.nows.tube.server.mob.kind.fish.Salmon;
 import space.nows.tube.server.mob.kind.monster.Endermite;
 import space.nows.tube.server.mob.kind.monster.Giant;
@@ -51,7 +53,7 @@ public final class CreatureKinds {
 
     static {
         for (CreatureKind kind : List.of(new Cow(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
-                new Zombie(), new Husk(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Enderman(), new Cod(), new Salmon())) {
+                new Zombie(), new Husk(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Enderman(), new IronGolem(), new SnowGolem(), new Cod(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }
     }
