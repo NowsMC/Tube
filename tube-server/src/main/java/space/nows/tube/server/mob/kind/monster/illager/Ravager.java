@@ -12,6 +12,7 @@ import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Retaliate;
 import space.nows.tube.server.mob.kind.monster.Monster;
+import space.nows.tube.server.mob.kind.monster.Raiders;
 
 public final class Ravager extends Monster {
 
@@ -38,7 +39,7 @@ public final class Ravager extends Monster {
         brain.add(5, Wander.onLand(creature, 0.4));
         brain.add(6, WatchNearby.players(creature, 6f));
         brain.add(10, WatchNearby.of(creature, entity -> entity instanceof Creature, 8f));
-        brain.add(2, new Retaliate(creature, Illager.RAIDERS).alertingOthers());
+        brain.add(2, new Retaliate(creature, Raiders.types()).alertingOthers());
         brain.add(3, HuntNearest.players(creature, true));
         brain.add(4, HuntNearest.of(creature, Illager::villager, 10, true, target -> !(target instanceof Creature villager && villager.isBaby())));
         brain.add(4, HuntNearest.of(creature, EntityType.IRON_GOLEM, true));
