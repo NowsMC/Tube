@@ -17,6 +17,7 @@ import net.minestom.server.event.entity.projectile.ProjectileCollideWithEntityEv
 import net.minestom.server.event.item.PlayerCancelItemUseEvent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.potion.Potion;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
 import space.nows.tube.server.item.Enchantments;
@@ -28,6 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class Archery {
 
     public static final Tag<Double> ARROW_DAMAGE = Tag.Transient("tube:arrow_damage");
+    public static final Tag<Potion> ARROW_EFFECT = Tag.Transient("tube:arrow_effect");
+    private static final int EFFECT_DIVISOR = 8;
     private static final Tag<Boolean> PICKUP = Tag.Transient("tube:arrow_pickup");
     private static final Tag<Long> STUCK_AT = Tag.Transient("tube:arrow_stuck");
     private static final Set<EntityProjectile> STUCK = ConcurrentHashMap.newKeySet();
@@ -51,7 +54,11 @@ public final class Archery {
                 return;
             }
             double damage = arrow.hasTag(ARROW_DAMAGE) ? arrow.getTag(ARROW_DAMAGE) : 2;
-            target.damage(new Damage(DamageType.ARROW, arrow, shooter, event.getCollisionPosition(), (float) damage));
+            boolean hurt = target.damage(new Damage(DamageType.ARROW, arrow, shooter, event.getCollisionPosition(), (float) damage));
+            Potion effect = arrow.getTag(ARROW_EFFECT);
+            if (hurt && effect != null) {
+                target.addEffect(new Potion(effect.effect(), effect.amplifier(), Math.max(effect.duration() / EFFECT_DIVISOR, 1), effect.flags()));
+            }
             if (shooter instanceof Player player && !(target instanceof Player)) {
                 KillCredit.hitBy(target, player);
             }
