@@ -35,7 +35,7 @@ public final class Shulker extends Monster {
         brain.setEnabled(Control.MOVE, false);
         creature.addTrait(new Peek(creature));
         brain.add(4, new Barrage(creature));
-        brain.add(7, WatchNearby.players(creature, 8f));
+        brain.add(1, WatchNearby.players(creature, 8f));
         brain.add(8, new LookAround(creature));
         brain.add(1, new Retaliate(creature).alertingOthers());
         brain.add(2, HuntNearest.players(creature, true));

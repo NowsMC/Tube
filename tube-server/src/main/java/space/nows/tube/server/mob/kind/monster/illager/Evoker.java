@@ -23,6 +23,11 @@ public final class Evoker extends Illager {
     }
 
     @Override
+    protected int caution() {
+        return 3;
+    }
+
+    @Override
     protected boolean seesVillagers() {
         return false;
     }

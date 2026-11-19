@@ -7,6 +7,8 @@ import space.nows.tube.server.mob.CreatureKind;
 import space.nows.tube.server.mob.CreatureStats;
 import space.nows.tube.server.mob.Disposition;
 import space.nows.tube.server.mob.brain.combat.SwimStrike;
+import space.nows.tube.server.mob.brain.flee.SwimAway;
+import space.nows.tube.server.mob.brain.idle.LookAround;
 import space.nows.tube.server.mob.brain.idle.SwimAbout;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.target.Retaliate;
@@ -39,9 +41,11 @@ public final class Dolphin implements CreatureKind {
 
     @Override
     public void configure(Creature creature, Brain brain) {
-        brain.add(2, new SwimStrike(creature, CHASE));
         brain.add(4, new SwimAbout(creature, CRUISE));
-        brain.add(6, WatchNearby.players(creature, 6f));
-        brain.add(1, new Retaliate(creature).alertingOthers());
+        brain.add(4, new LookAround(creature));
+        brain.add(5, WatchNearby.players(creature, 6f));
+        brain.add(6, new SwimStrike(creature, CHASE));
+        brain.add(9, new SwimAway(creature, entity -> entity.getEntityType() == EntityType.GUARDIAN, 8f, CRUISE, CRUISE));
+        brain.add(1, new Retaliate(creature, EntityType.GUARDIAN).alertingOthers());
     }
 }

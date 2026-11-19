@@ -9,6 +9,8 @@ import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
 import space.nows.tube.server.mob.EntityTags;
 import space.nows.tube.server.mob.brain.idle.FloatAround;
+import space.nows.tube.server.mob.brain.idle.LookAround;
+import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.brain.target.Retaliate;
 import space.nows.tube.server.mob.kind.monster.Monster;
@@ -48,8 +50,10 @@ public final class Wither extends Monster {
         FloatControl control = new FloatControl(creature);
         creature.addTrait(control);
         creature.addTrait(new Banner(creature, "entity.minecraft.wither", BossBar.Color.PURPLE));
-        brain.add(1, new SkullFire(creature, control));
+        brain.add(2, new SkullFire(creature, control));
         brain.add(5, new FloatAround(creature, control));
+        brain.add(6, WatchNearby.players(creature, 8f));
+        brain.add(7, new LookAround(creature));
         brain.add(1, new Retaliate(creature));
         brain.add(2, HuntNearest.of(creature, entity -> entity instanceof LivingEntity && !UNDEAD.contains(entity.getEntityType()),
                 10, false, target -> true));

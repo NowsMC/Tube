@@ -7,6 +7,7 @@ import space.nows.tube.api.entity.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
 import space.nows.tube.server.mob.brain.idle.FloatAround;
+import space.nows.tube.server.mob.brain.idle.Panic;
 import space.nows.tube.server.mob.brain.idle.WatchNearby;
 import space.nows.tube.server.mob.brain.social.FollowOwner;
 import space.nows.tube.server.mob.brain.social.StaySeated;
@@ -42,10 +43,11 @@ public final class Parrot extends Animal implements Tamable {
         Tameness tameness = new Tameness(creature);
         creature.addTrait(control);
         creature.addTrait(tameness);
-        brain.add(1, new StaySeated(creature, tameness));
+        brain.add(0, new Panic(creature, 1.25));
+        brain.add(1, WatchNearby.players(creature, 8f));
+        brain.add(2, new StaySeated(creature, tameness));
         brain.add(2, new FollowOwner(creature, tameness, 1.0, 5, 1));
-        brain.add(3, new FloatAround(creature, control, RANGE));
-        brain.add(4, WatchNearby.players(creature, 8f));
+        brain.add(2, new FloatAround(creature, control, RANGE));
     }
 
     @Override

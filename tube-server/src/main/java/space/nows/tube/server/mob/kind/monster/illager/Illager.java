@@ -25,12 +25,16 @@ abstract class Illager extends Monster {
 
     protected abstract boolean seesVillagers();
 
+    protected int caution() {
+        return 1;
+    }
+
     protected abstract void behaviors(Creature creature, Brain brain);
 
     @Override
     public void configure(Creature creature, Brain brain) {
         brain.add(0, new StayAfloat(creature));
-        brain.add(1, AvoidNearby.type(creature, EntityType.CREAKING, 8f, 1.0, 1.2));
+        brain.add(caution(), AvoidNearby.type(creature, EntityType.CREAKING, 8f, 1.0, 1.2));
         behaviors(creature, brain);
         brain.add(8, Wander.anywhere(creature, 0.6));
         brain.add(10, WatchNearby.of(creature, entity -> entity instanceof Creature, 8f));
