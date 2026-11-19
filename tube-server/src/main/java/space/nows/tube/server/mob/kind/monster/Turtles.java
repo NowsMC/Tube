@@ -3,7 +3,7 @@ package space.nows.tube.server.mob.kind.monster;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.metadata.AgeableMobMeta;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.ai.target.HuntNearest;
+import space.nows.tube.server.mob.brain.target.HuntNearest;
 import space.nows.tube.server.mob.move.Liquids;
 
 public final class Turtles {

@@ -2,7 +2,7 @@ package space.nows.tube.server.mob.kind.monster.skeleton;
 
 import net.minestom.server.item.Material;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.ai.combat.MeleeAttack;
+import space.nows.tube.server.mob.brain.combat.MeleeAttack;
 
 final class SkeletonMelee extends MeleeAttack {
 

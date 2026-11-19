@@ -8,7 +8,7 @@ import net.minestom.server.entity.LivingEntity;
 import space.nows.tube.server.gameplay.Archery;
 import space.nows.tube.server.gameplay.SweptArrow;
 import space.nows.tube.server.mob.Creature;
-import space.nows.tube.server.mob.ai.combat.Volley;
+import space.nows.tube.server.mob.brain.combat.Volley;
 import space.nows.tube.server.world.effect.SoundPlayer;
 
 final class SkeletonVolley implements Volley {

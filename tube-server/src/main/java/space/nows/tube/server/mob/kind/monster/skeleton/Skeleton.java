@@ -5,17 +5,17 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.world.Difficulty;
+import space.nows.tube.api.entity.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
-import space.nows.tube.server.mob.ai.GoalSelector;
-import space.nows.tube.server.mob.ai.combat.BowAttack;
-import space.nows.tube.server.mob.ai.flee.AvoidNearby;
-import space.nows.tube.server.mob.ai.flee.FleeSun;
-import space.nows.tube.server.mob.ai.idle.LookAround;
-import space.nows.tube.server.mob.ai.idle.Wander;
-import space.nows.tube.server.mob.ai.idle.WatchNearby;
-import space.nows.tube.server.mob.ai.target.HuntNearest;
-import space.nows.tube.server.mob.ai.target.Retaliate;
+import space.nows.tube.server.mob.brain.combat.BowAttack;
+import space.nows.tube.server.mob.brain.flee.AvoidNearby;
+import space.nows.tube.server.mob.brain.flee.FleeSun;
+import space.nows.tube.server.mob.brain.idle.LookAround;
+import space.nows.tube.server.mob.brain.idle.Wander;
+import space.nows.tube.server.mob.brain.idle.WatchNearby;
+import space.nows.tube.server.mob.brain.target.HuntNearest;
+import space.nows.tube.server.mob.brain.target.Retaliate;
 import space.nows.tube.server.mob.kind.monster.ArmorRoll;
 import space.nows.tube.server.mob.kind.monster.Monster;
 import space.nows.tube.server.mob.kind.monster.Turtles;
@@ -42,19 +42,19 @@ public final class Skeleton extends Monster {
     }
 
     @Override
-    public void configure(Creature creature, GoalSelector goals, GoalSelector targets) {
+    public void configure(Creature creature, Brain brain) {
         int interval = MinecraftServer.getDifficulty() == Difficulty.HARD ? HARD_INTERVAL : INTERVAL;
-        goals.add(3, new FleeSun(creature, 1.0));
-        goals.add(3, AvoidNearby.type(creature, EntityType.WOLF, 6f, 1.0, 1.2));
-        goals.add(4, new BowAttack(creature, 1.0, interval, BOW_RANGE, new SkeletonVolley()));
-        goals.add(4, new SkeletonMelee(creature));
-        goals.add(5, Wander.onLand(creature, 1.0));
-        goals.add(6, WatchNearby.players(creature, 8f));
-        goals.add(6, new LookAround(creature));
-        targets.add(1, new Retaliate(creature));
-        targets.add(2, HuntNearest.players(creature, true));
-        targets.add(3, HuntNearest.of(creature, EntityType.IRON_GOLEM, true));
-        targets.add(3, Turtles.hatchlingHunt(creature));
+        brain.add(3, new FleeSun(creature, 1.0));
+        brain.add(3, AvoidNearby.type(creature, EntityType.WOLF, 6f, 1.0, 1.2));
+        brain.add(4, new BowAttack(creature, 1.0, interval, BOW_RANGE, new SkeletonVolley()));
+        brain.add(4, new SkeletonMelee(creature));
+        brain.add(5, Wander.onLand(creature, 1.0));
+        brain.add(6, WatchNearby.players(creature, 8f));
+        brain.add(6, new LookAround(creature));
+        brain.add(1, new Retaliate(creature));
+        brain.add(2, HuntNearest.players(creature, true));
+        brain.add(3, HuntNearest.of(creature, EntityType.IRON_GOLEM, true));
+        brain.add(3, Turtles.hatchlingHunt(creature));
         creature.addTrait(new SunBurn(creature));
     }
 
