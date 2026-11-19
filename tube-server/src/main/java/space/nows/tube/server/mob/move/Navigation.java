@@ -20,6 +20,7 @@ public final class Navigation {
         this.creature = creature;
         this.navigator = creature.getNavigator();
         navigator.setNodeFollower(() -> new Stride(creature, this));
+        navigator.setNodeGenerator(LoadedGround::new);
     }
 
     public boolean moveTo(Point target, double speed) {
