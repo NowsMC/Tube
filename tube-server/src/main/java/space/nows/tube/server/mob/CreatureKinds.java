@@ -37,6 +37,10 @@ import space.nows.tube.server.mob.kind.fish.Pufferfish;
 import space.nows.tube.server.mob.kind.fish.Salmon;
 import space.nows.tube.server.mob.kind.fish.Tadpole;
 import space.nows.tube.server.mob.kind.fish.TropicalFish;
+import space.nows.tube.server.mob.kind.flier.Allay;
+import space.nows.tube.server.mob.kind.flier.Bee;
+import space.nows.tube.server.mob.kind.flier.HappyGhast;
+import space.nows.tube.server.mob.kind.flier.Parrot;
 import space.nows.tube.server.mob.kind.golem.CopperGolem;
 import space.nows.tube.server.mob.kind.golem.IronGolem;
 import space.nows.tube.server.mob.kind.golem.SnowGolem;
@@ -95,7 +99,7 @@ public final class CreatureKinds {
     private static final Map<EntityType, CreatureKind> KINDS = new HashMap<>();
 
     static {
-        for (CreatureKind kind : List.of(new Cow(), new Illusioner(), new PiglinBrute(), new Piglin(), new CopperGolem(), new WanderingTrader(), new Villager(), new Fox(), new Panda(), new Strider(), new Sniffer(), new CamelHusk(), new Camel(), new Armadillo(), new Goat(), new Frog(), new Axolotl(), new Turtle(), new Tadpole(), new ZombieNautilus(), new Nautilus(), new Dolphin(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Wolf(), new Cat(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
+        for (CreatureKind kind : List.of(new Cow(), new HappyGhast(), new Allay(), new Parrot(), new Bee(), new Illusioner(), new PiglinBrute(), new Piglin(), new CopperGolem(), new WanderingTrader(), new Villager(), new Fox(), new Panda(), new Strider(), new Sniffer(), new CamelHusk(), new Camel(), new Armadillo(), new Goat(), new Frog(), new Axolotl(), new Turtle(), new Tadpole(), new ZombieNautilus(), new Nautilus(), new Dolphin(), new Pig(), new Sheep(), new Chicken(), new Mooshroom(), new Ocelot(), new PolarBear(), new Rabbit(), new Wolf(), new Cat(), new Horse(), new Donkey(), new Mule(), new SkeletonHorse(), new ZombieHorse(), new Llama(), new TraderLlama(),
                 new Zombie(), new Husk(), new Drowned(), new ZombieVillager(), new ZombifiedPiglin(), new Skeleton(), new Stray(), new Bogged(), new Parched(), new WitherSkeleton(), new Endermite(), new Silverfish(), new Giant(), new Spider(), new CaveSpider(), new Creeper(), new Slime(), new MagmaCube(), new Blaze(), new Ghast(), new Vex(), new Bat(), new Pillager(), new Vindicator(), new Evoker(), new Witch(), new Guardian(), new ElderGuardian(), new Hoglin(), new Zoglin(), new Ravager(), new Enderman(), new IronGolem(), new SnowGolem(), new Squid(), new GlowSquid(), new Cod(), new Pufferfish(), new TropicalFish(), new Salmon())) {
             KINDS.put(kind.type(), kind);
         }
