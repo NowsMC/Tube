@@ -4,18 +4,18 @@ import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.metadata.animal.SheepMeta;
 import net.minestom.server.item.Material;
+import space.nows.tube.api.entity.brain.Brain;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.CreatureStats;
-import space.nows.tube.server.mob.ai.GoalSelector;
-import space.nows.tube.server.mob.ai.idle.Graze;
-import space.nows.tube.server.mob.ai.idle.LookAround;
-import space.nows.tube.server.mob.ai.idle.Panic;
-import space.nows.tube.server.mob.ai.idle.StayAfloat;
-import space.nows.tube.server.mob.ai.idle.Tempted;
-import space.nows.tube.server.mob.ai.idle.Wander;
-import space.nows.tube.server.mob.ai.idle.WatchNearby;
-import space.nows.tube.server.mob.ai.social.Breed;
-import space.nows.tube.server.mob.ai.social.FollowParent;
+import space.nows.tube.server.mob.brain.idle.Graze;
+import space.nows.tube.server.mob.brain.idle.LookAround;
+import space.nows.tube.server.mob.brain.idle.Panic;
+import space.nows.tube.server.mob.brain.idle.StayAfloat;
+import space.nows.tube.server.mob.brain.idle.Tempted;
+import space.nows.tube.server.mob.brain.idle.Wander;
+import space.nows.tube.server.mob.brain.idle.WatchNearby;
+import space.nows.tube.server.mob.brain.social.Breed;
+import space.nows.tube.server.mob.brain.social.FollowParent;
 import space.nows.tube.server.mob.life.Lifecycle;
 
 import java.util.Set;
@@ -38,17 +38,17 @@ public final class Sheep extends Animal {
     }
 
     @Override
-    public void configure(Creature creature, GoalSelector goals, GoalSelector targets) {
+    public void configure(Creature creature, Brain brain) {
         Lifecycle life = lifecycle(creature);
-        goals.add(0, new StayAfloat(creature));
-        goals.add(1, new Panic(creature, 1.25));
-        goals.add(2, new Breed(creature, life, 1.0));
-        goals.add(3, new Tempted(creature, 1.1, FOOD));
-        goals.add(4, new FollowParent(creature, life, 1.1));
-        goals.add(5, new Graze(creature, () -> regrow(creature, life)));
-        goals.add(6, Wander.onLand(creature, 1.0));
-        goals.add(7, WatchNearby.players(creature, 6f));
-        goals.add(8, new LookAround(creature));
+        brain.add(0, new StayAfloat(creature));
+        brain.add(1, new Panic(creature, 1.25));
+        brain.add(2, new Breed(creature, life, 1.0));
+        brain.add(3, new Tempted(creature, 1.1, FOOD));
+        brain.add(4, new FollowParent(creature, life, 1.1));
+        brain.add(5, new Graze(creature, () -> regrow(creature, life)));
+        brain.add(6, Wander.onLand(creature, 1.0));
+        brain.add(7, WatchNearby.players(creature, 6f));
+        brain.add(8, new LookAround(creature));
     }
 
     @Override
