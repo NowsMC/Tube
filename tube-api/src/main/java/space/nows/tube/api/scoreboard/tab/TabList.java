@@ -4,6 +4,8 @@ import net.kyori.adventure.text.Component;
 import space.nows.tube.api.entity.player.Player;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface TabList {
 
@@ -23,7 +25,11 @@ public interface TabList {
 
     void update(TabEntry entry);
 
-    void remove(java.util.UUID id);
+    void remove(UUID id);
 
     Collection<TabEntry> entries();
+
+    default Optional<TabEntry> entry(UUID id) {
+        return entries().stream().filter(entry -> entry.id().equals(id)).findFirst();
+    }
 }

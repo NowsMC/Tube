@@ -111,6 +111,7 @@ class ScoreboardTest {
 
         assertEquals(3, updates.collect().size());
         assertEquals(1, viewer.tabList().entries().size());
+        assertEquals(9, viewer.tabList().entry(fake).orElseThrow().order());
         viewer.tabList().remove(fake);
         env.tick();
 
@@ -118,5 +119,11 @@ class ScoreboardTest {
         assertTrue(viewer.tabList().entries().isEmpty());
         assertThrows(IllegalArgumentException.class, () -> viewer.tabList().update(TabEntry.of(fake, "Spacer")));
         assertThrows(IllegalArgumentException.class, () -> TabEntry.of(fake, "SeventeenLetters!"));
+
+        Team guests = scoreboards.createTeam("guests");
+        guests.addMember(viewer);
+        assertEquals(guests, scoreboards.teamOf(viewer).orElseThrow());
+        scoreboards.removeTeam(guests);
+        assertTrue(scoreboards.teamOf(viewer).isEmpty());
     }
 }

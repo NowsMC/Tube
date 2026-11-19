@@ -99,7 +99,11 @@ final class MinestomSidebar implements Sidebar {
     @Override
     public Set<Player> viewers() {
         Set<Player> viewers = new LinkedHashSet<>();
-        sidebar.getViewers().forEach(viewer -> viewers.add(players.wrap(viewer)));
+        for (net.minestom.server.entity.Player viewer : sidebar.getViewers()) {
+            if (viewer.isOnline()) {
+                viewers.add(players.wrap(viewer));
+            }
+        }
         return viewers;
     }
 }
