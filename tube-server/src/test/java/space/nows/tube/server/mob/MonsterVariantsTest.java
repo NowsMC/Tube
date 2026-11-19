@@ -105,4 +105,17 @@ class MonsterVariantsTest {
         }
         assertTrue(affected(PotionEffect.WITHER), () -> "health " + player.getHealth() + " skeleton at " + skeleton.getPosition());
     }
+
+    @Test
+    void zombifiedPiglinsLeavePlayersAloneUntilHit(Env env) {
+        setup(env);
+        Creature piglin = spawn(EntityType.ZOMBIFIED_PIGLIN, new Pos(3, 40, 0));
+        Creature friend = spawn(EntityType.ZOMBIFIED_PIGLIN, new Pos(6, 40, 0));
+        ticks(env, 100);
+        assertTrue(piglin.target() == null, "attacked without reason");
+        piglin.damage(net.minestom.server.entity.damage.Damage.fromPlayer(player, 1));
+        ticks(env, 10);
+        assertTrue(piglin.target() == player, "did not retaliate");
+        assertTrue(friend.target() == player, "friend not alerted");
+    }
 }
