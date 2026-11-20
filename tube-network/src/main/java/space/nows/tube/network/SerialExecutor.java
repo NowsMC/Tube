@@ -3,6 +3,7 @@ package space.nows.tube.network;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +31,13 @@ final class SerialExecutor implements Executor {
 
     private void schedule() {
         if (running.compareAndSet(false, true)) {
-            backing.execute(this::drain);
+            try {
+                backing.execute(this::drain);
+            } catch (RejectedExecutionException e) {
+                tasks.clear();
+                queued.set(0);
+                running.set(false);
+            }
         }
     }
 

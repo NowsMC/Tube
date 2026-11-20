@@ -99,7 +99,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
                         queue.execute(() -> {
                             try {
                                 handler.received(socket, sender, data);
-                            } catch (RuntimeException e) {
+                            } catch (RuntimeException | LinkageError e) {
                                 LOGGER.warn("A UDP handler failed on {}", socket.address(), e);
                             }
                         });
@@ -118,8 +118,8 @@ public final class NettyNetwork implements Network, AutoCloseable {
 
     @Override
     public void close() {
-        handlers.shutdown();
         group.shutdownGracefully(0, 2, java.util.concurrent.TimeUnit.SECONDS).syncUninterruptibly();
+        handlers.shutdown();
     }
 
     private static final class BoundTcp implements TcpServer {
@@ -206,8 +206,9 @@ public final class NettyNetwork implements Network, AutoCloseable {
                 try {
                     guard(() -> handler.received(this, data));
                 } finally {
-                    if (pending.addAndGet(-data.length) < RESUME_READING_BYTES && !channel.config().isAutoRead()) {
-                        channel.config().setAutoRead(true);
+                    long left = pending.addAndGet(-data.length);
+                    if (left < RESUME_READING_BYTES && left + data.length >= RESUME_READING_BYTES && !channel.eventLoop().isShuttingDown()) {
+                        channel.eventLoop().execute(this::resumeReading);
                     }
                 }
             });
@@ -225,10 +226,16 @@ public final class NettyNetwork implements Network, AutoCloseable {
             context.close();
         }
 
+        private void resumeReading() {
+            if (pending.get() < RESUME_READING_BYTES && !channel.config().isAutoRead()) {
+                channel.config().setAutoRead(true);
+            }
+        }
+
         private void guard(Runnable action) {
             try {
                 action.run();
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | LinkageError e) {
                 LOGGER.warn("A TCP handler failed for {}", channel.remoteAddress(), e);
                 channel.close();
             }
