@@ -10,4 +10,8 @@ public final class TestHooks {
     public static void installCombat(GlobalEventHandler handler) {
         Combat.install(handler);
     }
+
+    public static void installFalling(GlobalEventHandler handler) {
+        Falling.install(handler);
+    }
 }

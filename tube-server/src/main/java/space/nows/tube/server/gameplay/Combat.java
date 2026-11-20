@@ -4,7 +4,6 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.entity.EquipmentSlot;
 import net.minestom.server.entity.EquipmentSlotGroup;
-import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.LivingEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.attribute.Attribute;
@@ -19,6 +18,10 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.world.Difficulty;
 import space.nows.tube.server.item.Enchantments;
+import space.nows.tube.server.gameplay.melee.Attackable;
+import space.nows.tube.server.gameplay.melee.Invulnerability;
+import space.nows.tube.server.gameplay.melee.Pace;
+import space.nows.tube.server.gameplay.melee.Swing;
 import space.nows.tube.server.mob.Creature;
 import space.nows.tube.server.mob.KillCredit;
 import space.nows.tube.server.mob.sense.Assault;
@@ -27,9 +30,7 @@ import java.util.Set;
 
 final class Combat {
 
-    private static final Tag<Long> LAST_HURT = Tag.Transient("tube:last_hurt");
     private static final Tag<Long> LAST_SWING = Tag.Transient("tube:last_swing");
-    private static final long INVULNERABLE_TICKS = 10;
     private static final Set<String> BYPASSES_ARMOR = Set.of("minecraft:on_fire", "minecraft:in_wall", "minecraft:cramming", "minecraft:drown",
             "minecraft:fly_into_wall", "minecraft:generic", "minecraft:wither", "minecraft:dragon_breath", "minecraft:starve", "minecraft:fall",
             "minecraft:freeze", "minecraft:stalagmite", "minecraft:magic", "minecraft:indirect_magic", "minecraft:out_of_world",
@@ -41,6 +42,7 @@ final class Combat {
     static void install(GlobalEventHandler handler) {
         handler.addListener(PlayerHandAnimationEvent.class, event -> event.getPlayer().setTag(LAST_SWING, event.getPlayer().getAliveTicks()));
         handler.addListener(PlayerChangeHeldSlotEvent.class, event -> event.getPlayer().setTag(LAST_SWING, event.getPlayer().getAliveTicks()));
+        Pace.install(handler);
         handler.addListener(EntityAttackEvent.class, Combat::attack);
         handler.addListener(EntityDamageEvent.class, event -> {
             if (event.isCancelled()) {
@@ -82,31 +84,20 @@ final class Combat {
         if (!(event.getTarget() instanceof LivingEntity target) || target.isDead() || !(event.getEntity() instanceof LivingEntity attacker)) {
             return;
         }
-        if (target instanceof Player player && (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)) {
-            return;
-        }
-        long now = target.getAliveTicks();
-        Long last = target.getTag(LAST_HURT);
-        if (last != null && now - last < INVULNERABLE_TICKS) {
+        if (!Attackable.by(target) || Invulnerability.active(target)) {
             return;
         }
         float damage;
         double knockback = 0.4;
         Damage source;
+        Swing swing = null;
         if (attacker instanceof Player player) {
             ItemStack weapon = player.getItemInMainHand();
             double charge = charge(player, weapon);
             player.setTag(LAST_SWING, player.getAliveTicks());
-            damage = (float) (attackDamage(weapon) * (0.2 + charge * charge * 0.8));
-            int sharpness = Enchantments.level(weapon, "minecraft:sharpness");
-            if (sharpness > 0) {
-                damage += (float) ((0.5 * sharpness + 0.5) * charge);
-            }
-            boolean critical = charge > 0.9 && !player.isOnGround() && player.getVelocity().y() < 0 && !player.isSprinting() && !player.isFlying();
-            if (critical) {
-                damage *= 1.5f;
-            }
-            if (player.isSprinting() && charge > 0.9) {
+            swing = Swing.of(player, target, weapon, charge, attackDamage(weapon));
+            damage = swing.damage();
+            if (swing.sprinting()) {
                 knockback += 0.5;
             }
             knockback += Enchantments.level(weapon, "minecraft:knockback") * 0.5;
@@ -121,13 +112,14 @@ final class Combat {
             source = Damage.fromEntity(attacker, damage);
         }
         if (target.damage(source)) {
-            target.setTag(LAST_HURT, now);
+            Invulnerability.start(target);
             Assault.record(attacker, target);
             double yaw = Math.toRadians(attacker.getPosition().yaw());
             target.takeKnockback((float) knockback, Math.sin(yaw), -Math.cos(yaw));
             if (attacker instanceof Player player) {
                 Hunger.exhaust(player, 0.1f);
                 ItemStack weapon = player.getItemInMainHand();
+                swing.landed(player, target, weapon);
                 if (weapon.has(DataComponents.MAX_DAMAGE)) {
                     Durability.damage(player, EquipmentSlot.MAIN_HAND, weapon.has(DataComponents.WEAPON) ? 1 : 2);
                 }

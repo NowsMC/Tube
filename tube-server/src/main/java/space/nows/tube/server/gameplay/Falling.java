@@ -8,7 +8,7 @@ import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.tag.Tag;
 
-final class Falling {
+public final class Falling {
 
     private static final Tag<Double> FALL_START = Tag.Transient("tube:fall_start");
     private static final int VOID_MARGIN = 64;
@@ -44,6 +44,11 @@ final class Falling {
                 }
             }
         });
+    }
+
+    public static double distance(Player player) {
+        Double start = player.getTag(FALL_START);
+        return start == null ? 0 : Math.max(0, start - player.getPosition().y());
     }
 
     static boolean affected(Player player) {
