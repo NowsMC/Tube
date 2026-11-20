@@ -2,6 +2,7 @@ package space.nows.tube.network;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,8 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 class NetworkTest {
 
@@ -261,6 +264,112 @@ class NetworkTest {
             }
         } finally {
             server.close();
+        }
+    }
+
+    @Test
+    void aConnectionStopsBeingWritableForASlowReaderAndSaysWhenItCanTakeMore() throws Exception {
+        AtomicReference<TcpConnection> opened = new AtomicReference<>();
+        CountDownLatch connected = new CountDownLatch(1);
+        CountDownLatch writableAgain = new CountDownLatch(1);
+        var server = network.listenTcp(new InetSocketAddress(LOCAL, 0), new TcpHandler() {
+            @Override
+            public void connected(TcpConnection connection) {
+                opened.set(connection);
+                connected.countDown();
+            }
+
+            @Override
+            public void received(TcpConnection connection, byte[] data) {
+            }
+
+            @Override
+            public void writable(TcpConnection connection) {
+                writableAgain.countDown();
+            }
+        });
+        try (Socket socket = new Socket()) {
+            socket.setReceiveBufferSize(4096);
+            socket.connect(server.address());
+            socket.setSoTimeout(10_000);
+            assertTrue(connected.await(5, TimeUnit.SECONDS));
+            TcpConnection connection = opened.get();
+            byte[] chunk = new byte[64 << 10];
+            long sent = 0;
+            CompletableFuture<Void> last = null;
+            while (connection.isWritable() && sent < (64L << 20)) {
+                last = connection.send(chunk);
+                sent += chunk.length;
+                Thread.sleep(1);
+            }
+            assertFalse(connection.isWritable());
+
+            long read = 0;
+            byte[] buffer = new byte[64 << 10];
+            while (read < sent) {
+                int count = socket.getInputStream().read(buffer);
+                assertTrue(count > 0);
+                read += count;
+            }
+            assertTrue(writableAgain.await(5, TimeUnit.SECONDS));
+            last.get(5, TimeUnit.SECONDS);
+            assertTrue(connection.isWritable());
+        } finally {
+            server.close();
+        }
+    }
+
+    @Test
+    void aPluginThatIgnoresWritabilityIsCutOffBeforeMemoryRunsOut() throws Exception {
+        AtomicReference<TcpConnection> opened = new AtomicReference<>();
+        CountDownLatch connected = new CountDownLatch(1);
+        var server = network.listenTcp(new InetSocketAddress(LOCAL, 0), new TcpHandler() {
+            @Override
+            public void connected(TcpConnection connection) {
+                opened.set(connection);
+                connected.countDown();
+            }
+
+            @Override
+            public void received(TcpConnection connection, byte[] data) {
+            }
+        });
+        try (Socket socket = new Socket()) {
+            socket.setReceiveBufferSize(4096);
+            socket.connect(server.address());
+            assertTrue(connected.await(5, TimeUnit.SECONDS));
+            TcpConnection connection = opened.get();
+            byte[] chunk = new byte[1 << 20];
+            CompletableFuture<Void> refused = null;
+            for (int i = 0; i < 64 && refused == null; i++) {
+                CompletableFuture<Void> write = connection.send(chunk);
+                if (write.isCompletedExceptionally()) {
+                    refused = write;
+                }
+            }
+            assertTrue(refused != null);
+            CompletableFuture<Void> failed = refused;
+            assertThrows(ExecutionException.class, () -> failed.get(5, TimeUnit.SECONDS));
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+            while (connection.isOpen() && System.nanoTime() < deadline) {
+                Thread.sleep(10);
+            }
+            assertFalse(connection.isOpen());
+        } finally {
+            server.close();
+        }
+    }
+
+    @Test
+    void sendsReportWhenTheyAreDoneOrFailed() throws Exception {
+        var udp = network.bindUdp(new InetSocketAddress(LOCAL, 0), (socket, sender, data) -> {
+        });
+        try (DatagramSocket client = new DatagramSocket()) {
+            InetSocketAddress target = new InetSocketAddress(LOCAL, client.getLocalPort());
+            udp.send(target, new byte[] {1, 2, 3}).get(5, TimeUnit.SECONDS);
+            assertThrows(ExecutionException.class, () -> udp.send(target, new byte[70_000]).get(5, TimeUnit.SECONDS));
+        } finally {
+            udp.close();
         }
     }
 

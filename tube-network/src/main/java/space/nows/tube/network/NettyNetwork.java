@@ -9,9 +9,11 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.WriteBufferWaterMark;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.DatagramPacket;
@@ -27,7 +29,9 @@ import space.nows.tube.api.network.tcp.TcpServer;
 import space.nows.tube.api.network.udp.UdpHandler;
 import space.nows.tube.api.network.udp.UdpSocket;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,6 +44,9 @@ public final class NettyNetwork implements Network, AutoCloseable {
     private static final int RESUME_READING_BYTES = 256 << 10;
     private static final int MAX_QUEUED_DATAGRAMS = 1024;
     private static final int MESSAGE_COST = 256;
+    private static final int WRITABLE_BELOW_BYTES = 32 << 10;
+    private static final int UNWRITABLE_ABOVE_BYTES = 1 << 20;
+    private static final long MAX_UNSENT_BYTES = 16L << 20;
 
     private final Transport transport;
     private final EventLoopGroup group;
@@ -67,6 +74,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
         Channel channel = Binding.await(new ServerBootstrap()
                 .group(group)
                 .channel(transport.serverChannel())
+                .childOption(ChannelOption.WRITE_BUFFER_WATER_MARK, new WriteBufferWaterMark(WRITABLE_BELOW_BYTES, UNWRITABLE_ABOVE_BYTES))
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel child) {
@@ -159,12 +167,14 @@ public final class NettyNetwork implements Network, AutoCloseable {
         }
 
         @Override
-        public void send(InetSocketAddress target, byte[] data) {
-            channel.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(data), target)).addListener(done -> {
+        public CompletableFuture<Void> send(InetSocketAddress target, byte[] data) {
+            ChannelFuture write = channel.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(data), target));
+            write.addListener(done -> {
                 if (!done.isSuccess()) {
                     LOGGER.debug("Could not send a datagram to {}", target, done.cause());
                 }
             });
+            return Completion.of(write);
         }
 
         @Override
@@ -179,6 +189,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
         private final long id;
         private final SerialExecutor queue;
         private final AtomicLong pending = new AtomicLong();
+        private final AtomicLong unsent = new AtomicLong();
         private volatile Channel channel;
 
         TcpAdapter(TcpHandler handler, long id, SerialExecutor queue) {
@@ -218,6 +229,14 @@ public final class NettyNetwork implements Network, AutoCloseable {
                     }
                 }
             });
+        }
+
+        @Override
+        public void channelWritabilityChanged(ChannelHandlerContext context) {
+            if (context.channel().isWritable()) {
+                queue.execute(() -> guard(() -> handler.writable(this)));
+            }
+            context.fireChannelWritabilityChanged();
         }
 
         @Override
@@ -263,13 +282,26 @@ public final class NettyNetwork implements Network, AutoCloseable {
         }
 
         @Override
-        public void send(byte[] data) {
-            ChannelFuture future = channel.writeAndFlush(Unpooled.wrappedBuffer(data));
-            future.addListener(done -> {
+        public boolean isWritable() {
+            return channel != null && channel.isWritable();
+        }
+
+        @Override
+        public CompletableFuture<Void> send(byte[] data) {
+            if (unsent.addAndGet(data.length) > MAX_UNSENT_BYTES) {
+                unsent.addAndGet(-data.length);
+                LOGGER.warn("Closing {}: its plugin queued more than {} MiB that the client has not taken", channel.remoteAddress(), MAX_UNSENT_BYTES >> 20);
+                channel.close();
+                return CompletableFuture.failedFuture(new IOException("Too much unsent data for " + channel.remoteAddress()));
+            }
+            ChannelFuture write = channel.writeAndFlush(Unpooled.wrappedBuffer(data));
+            write.addListener(done -> {
+                unsent.addAndGet(-data.length);
                 if (!done.isSuccess()) {
                     LOGGER.debug("Could not write to {}", channel.remoteAddress(), done.cause());
                 }
             });
+            return Completion.of(write);
         }
 
         @Override

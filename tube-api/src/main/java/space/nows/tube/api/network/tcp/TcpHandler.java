@@ -7,6 +7,9 @@ public interface TcpHandler {
 
     void received(TcpConnection connection, byte[] data);
 
+    default void writable(TcpConnection connection) {
+    }
+
     default void closed(TcpConnection connection) {
     }
 }

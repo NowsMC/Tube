@@ -14,6 +14,7 @@ import space.nows.tube.api.network.udp.UdpSocket;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public final class ScopedNetwork implements Network {
 
@@ -71,8 +72,8 @@ public final class ScopedNetwork implements Network {
             }
 
             @Override
-            public void send(InetSocketAddress target, byte[] data) {
-                socket.send(target, data);
+            public CompletableFuture<Void> send(InetSocketAddress target, byte[] data) {
+                return socket.send(target, data);
             }
 
             @Override
