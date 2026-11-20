@@ -50,6 +50,8 @@ public final class Crowding implements Trait {
         double scale = Math.min(1, 1 / distance) / distance * STRENGTH;
         Vec push = new Vec(dx * scale, 0, dz * scale);
         creature.setVelocity(creature.getVelocity().sub(push));
-        other.setVelocity(other.getVelocity().add(push));
+        if (!(other instanceof Player)) {
+            other.setVelocity(other.getVelocity().add(push));
+        }
     }
 }

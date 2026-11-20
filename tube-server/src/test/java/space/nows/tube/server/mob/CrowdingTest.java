@@ -1,10 +1,12 @@
 package space.nows.tube.server.mob;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.testing.Env;
 import net.minestom.testing.EnvTest;
@@ -58,6 +60,19 @@ class CrowdingTest {
         ticks(env, 40);
 
         assertTrue(first.getPosition().distance(second.getPosition()) > 0.3, "pigs are " + first.getPosition().distance(second.getPosition()) + " apart");
+    }
+
+    @Test
+    void playersAreNotSentVelocityWhenTouchingMobs(Env env) {
+        setup(env);
+        Player player = env.createPlayer(instance, new Pos(0.3, 40, 0));
+        Creature cow = spawn(EntityType.COW, new Pos(0, 40, 0));
+
+        ticks(env, 10);
+
+        assertEquals(0, player.getVelocity().x());
+        assertEquals(0, player.getVelocity().z());
+        assertTrue(cow.getPosition().distance(player.getPosition()) > 0.3, "cow is " + cow.getPosition().distance(player.getPosition()) + " from the player");
     }
 
     @Test
