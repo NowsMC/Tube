@@ -32,6 +32,7 @@ import space.nows.tube.api.network.udp.UdpSocket;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
@@ -79,7 +80,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
                     @Override
                     protected void initChannel(SocketChannel child) {
                         connections.add(child);
-                        child.pipeline().addLast(new TcpAdapter(handler, connectionIds.incrementAndGet(), new SerialExecutor(handlers)));
+                        child.pipeline().addLast(new TcpAdapter(handler, connectionIds.incrementAndGet(), new SerialExecutor(handlers), handlers));
                     }
                 })
                 .bind(address), address);
@@ -103,19 +104,19 @@ public final class NettyNetwork implements Network, AutoCloseable {
                         byte[] data = new byte[packet.content().readableBytes()];
                         packet.content().readBytes(data);
                         BoundUdp current = holder.get();
-                        BoundUdp socket = current != null ? current : new BoundUdp(context.channel());
+                        BoundUdp socket = current != null ? current : new BoundUdp(context.channel(), handlers);
                         InetSocketAddress sender = packet.sender();
                         queue.execute(() -> {
                             try {
                                 handler.received(socket, sender, data);
-                            } catch (RuntimeException | LinkageError e) {
+                            } catch (Exception | LinkageError | StackOverflowError e) {
                                 LOGGER.warn("A UDP handler failed on {}", socket.address(), e);
                             }
                         });
                     }
                 })
                 .bind(address), address);
-        BoundUdp socket = new BoundUdp(channel);
+        BoundUdp socket = new BoundUdp(channel, handlers);
         holder.set(socket);
         return socket;
     }
@@ -156,9 +157,11 @@ public final class NettyNetwork implements Network, AutoCloseable {
     private static final class BoundUdp implements UdpSocket {
 
         private final Channel channel;
+        private final Executor callbacks;
 
-        BoundUdp(Channel channel) {
+        BoundUdp(Channel channel, Executor callbacks) {
             this.channel = channel;
+            this.callbacks = callbacks;
         }
 
         @Override
@@ -174,7 +177,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
                     LOGGER.debug("Could not send a datagram to {}", target, done.cause());
                 }
             });
-            return Completion.of(write);
+            return Completion.of(write, callbacks);
         }
 
         @Override
@@ -188,14 +191,16 @@ public final class NettyNetwork implements Network, AutoCloseable {
         private final TcpHandler handler;
         private final long id;
         private final SerialExecutor queue;
+        private final Executor callbacks;
         private final AtomicLong pending = new AtomicLong();
         private final AtomicLong unsent = new AtomicLong();
         private volatile Channel channel;
 
-        TcpAdapter(TcpHandler handler, long id, SerialExecutor queue) {
+        TcpAdapter(TcpHandler handler, long id, SerialExecutor queue, Executor callbacks) {
             this.handler = handler;
             this.id = id;
             this.queue = queue;
+            this.callbacks = callbacks;
         }
 
         @Override
@@ -260,7 +265,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
         private void guard(Runnable action) {
             try {
                 action.run();
-            } catch (RuntimeException | LinkageError e) {
+            } catch (Exception | LinkageError | StackOverflowError e) {
                 LOGGER.warn("A TCP handler failed for {}", channel.remoteAddress(), e);
                 channel.close();
             }
@@ -301,7 +306,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
                     LOGGER.debug("Could not write to {}", channel.remoteAddress(), done.cause());
                 }
             });
-            return Completion.of(write);
+            return Completion.of(write, callbacks);
         }
 
         @Override

@@ -374,6 +374,66 @@ class NetworkTest {
     }
 
     @Test
+    void sendCallbacksRunOffTheNetworkThreads() throws Exception {
+        CompletableFuture<Boolean> virtual = new CompletableFuture<>();
+        var server = network.listenTcp(new InetSocketAddress(LOCAL, 0), (connection, data) ->
+                connection.send(data).thenRun(() -> virtual.complete(Thread.currentThread().isVirtual())));
+        try (Socket socket = new Socket(LOCAL, server.address().getPort())) {
+            socket.setSoTimeout(5000);
+            socket.getOutputStream().write(7);
+            assertEquals(7, socket.getInputStream().read());
+            assertTrue(virtual.get(5, TimeUnit.SECONDS));
+        } finally {
+            server.close();
+        }
+    }
+
+    @Test
+    void aHandlerThatSneaksOutACheckedExceptionClosesOnlyItsConnection() throws Exception {
+        var server = network.listenTcp(new InetSocketAddress(LOCAL, 0), (connection, data) -> {
+            if (data[0] == 0) {
+                NetworkTest.<RuntimeException>sneak(new IOException("plugin bug"));
+            }
+            connection.send(data);
+        });
+        try (Socket broken = new Socket(LOCAL, server.address().getPort());
+             Socket healthy = new Socket(LOCAL, server.address().getPort())) {
+            broken.setSoTimeout(5000);
+            healthy.setSoTimeout(5000);
+            broken.getOutputStream().write(0);
+            assertEquals(-1, broken.getInputStream().read());
+            healthy.getOutputStream().write(5);
+            assertEquals(5, healthy.getInputStream().read());
+        } finally {
+            server.close();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void sneak(Throwable error) throws T {
+        throw (T) error;
+    }
+
+    @Test
+    void queryKeepsSeparateTokensForClientsBehindOneAddress() throws IOException {
+        var info = new QueryServer.Info("m", "SMP", "w", "v", "", 0, 1, 1, "", List.of());
+        try (QueryServer server = new QueryServer(network, new InetSocketAddress(LOCAL, 0), () -> info);
+             DatagramSocket first = new DatagramSocket();
+             DatagramSocket second = new DatagramSocket()) {
+            first.setSoTimeout(5000);
+            second.setSoTimeout(5000);
+            int port = server.address().getPort();
+            byte[] firstHandshake = query(first, port, request(9, 1, null, false));
+            byte[] secondHandshake = query(second, port, request(9, 2, null, false));
+            int firstToken = Integer.parseInt(new String(firstHandshake, 5, firstHandshake.length - 6, StandardCharsets.UTF_8));
+            int secondToken = Integer.parseInt(new String(secondHandshake, 5, secondHandshake.length - 6, StandardCharsets.UTF_8));
+
+            assertEquals(0, query(first, port, request(0, 1, firstToken, false))[0]);
+            assertEquals(0, query(second, port, request(0, 2, secondToken, false))[0]);
+        }
+    }
+
+    @Test
     void rconRefusesCommandsBeforeLogin() throws IOException {
         try (RconServer server = new RconServer(network, new InetSocketAddress(LOCAL, 0), "secret", command -> CompletableFuture.completedFuture("ran"));
              Socket socket = new Socket(LOCAL, server.address().getPort())) {
