@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Combat
+
+- Players land critical hits by hitting at full charge while falling, as in vanilla: not on the ground, a ladder or in water, not sprinting, not blind and not riding. A critical deals 1.5 times the weapon's damage, with Sharpness added after the multiplier instead of being multiplied, and shows the critical sound and particles. Before, any hit while moving down counted, and Sharpness was multiplied too.
+- Swords sweep: a full-charge hit from the ground, not sprinting, walking slower than a sprint and not a critical, also hurts other mobs standing next to the target for 1 damage plus Sweeping Edge's share of the hit, with the sweep sound and particle. Tamed pets of the attacker, creative and spectator players and marker armor stands are skipped.
+
+### Mobs
+
+- Jumping into a mob no longer pulls a player back or makes them stick. Mobs pushed players with a velocity packet every tick, which replaced the player's own jump; players are now pushed by the client alone, as in vanilla, and mobs are still pushed away by them.
+
 ## 0.2611.5 - 2026-11-20
 
 ### Plugin API
