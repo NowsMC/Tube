@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class NetworkTest {
 
@@ -342,6 +343,60 @@ class NetworkTest {
             List<String> fields = strings(full, 16);
             assertTrue(fields.containsAll(List.of("hostname", "A Tube Server", "numplayers", "2", "Steve", "Alex")), fields.toString());
         }
+    }
+
+    @Test
+    void queryBuildsItsAnswerOnceEveryFiveSecondsLikeVanilla() throws IOException {
+        var info = new QueryServer.Info("m", "SMP", "w", "v", "", 0, 1, 1, "", List.of());
+        AtomicInteger built = new AtomicInteger();
+        try (QueryServer server = new QueryServer(network, new InetSocketAddress(LOCAL, 0), () -> {
+            built.incrementAndGet();
+            return info;
+        });
+             DatagramSocket client = new DatagramSocket()) {
+            client.setSoTimeout(5000);
+            int port = server.address().getPort();
+            byte[] handshake = query(client, port, request(9, 5, null, false));
+            int token = Integer.parseInt(new String(handshake, 5, handshake.length - 6, StandardCharsets.UTF_8));
+
+            for (int i = 0; i < 5; i++) {
+                query(client, port, request(0, 5, token, i % 2 == 0));
+            }
+
+            assertEquals(1, built.get());
+        }
+    }
+
+    @Test
+    void closingRconDisconnectsItsClients() throws IOException {
+        RconServer server = new RconServer(network, new InetSocketAddress(LOCAL, 0), "secret", command -> CompletableFuture.completedFuture("ran"));
+        try (Socket socket = new Socket(LOCAL, server.address().getPort())) {
+            socket.setSoTimeout(5000);
+            rcon(socket.getOutputStream(), 1, 3, "secret");
+            assertEquals(1, read(socket.getInputStream()).id());
+
+            server.close();
+
+            assertEquals(-1, socket.getInputStream().read());
+        }
+    }
+
+    @Test
+    void aPluginsNetworkForgetsSocketsItClosedAndClosesTheRest() throws IOException {
+        ScopedNetwork scoped = new ScopedNetwork(network);
+        var kept = scoped.listenTcp(new InetSocketAddress(LOCAL, 0), (connection, data) -> {
+        });
+        var closed = scoped.bindUdp(new InetSocketAddress(LOCAL, 0), (udp, sender, data) -> {
+        });
+        closed.close();
+        assertEquals(1, scoped.open());
+
+        try (Socket socket = new Socket(LOCAL, kept.address().getPort())) {
+            socket.setSoTimeout(5000);
+            scoped.closeAll();
+            assertEquals(-1, socket.getInputStream().read());
+        }
+        assertEquals(0, scoped.open());
     }
 
     @Test

@@ -45,15 +45,52 @@ public final class ScopedNetwork implements Network {
     @Override
     public synchronized TcpServer listenTcp(InetSocketAddress address, TcpHandler handler) {
         TcpServer server = delegate.listenTcp(address, handler);
-        sockets.add(server);
-        return server;
+        TcpServer tracked = new TcpServer() {
+            @Override
+            public InetSocketAddress address() {
+                return server.address();
+            }
+
+            @Override
+            public void close() {
+                forget(this);
+                server.close();
+            }
+        };
+        sockets.add(tracked);
+        return tracked;
     }
 
     @Override
     public synchronized UdpSocket bindUdp(InetSocketAddress address, UdpHandler handler) {
         UdpSocket socket = delegate.bindUdp(address, handler);
-        sockets.add(socket);
-        return socket;
+        UdpSocket tracked = new UdpSocket() {
+            @Override
+            public InetSocketAddress address() {
+                return socket.address();
+            }
+
+            @Override
+            public void send(InetSocketAddress target, byte[] data) {
+                socket.send(target, data);
+            }
+
+            @Override
+            public void close() {
+                forget(this);
+                socket.close();
+            }
+        };
+        sockets.add(tracked);
+        return tracked;
+    }
+
+    private synchronized void forget(AutoCloseable socket) {
+        sockets.remove(socket);
+    }
+
+    synchronized int open() {
+        return sockets.size();
     }
 
     @Override
@@ -64,7 +101,7 @@ public final class ScopedNetwork implements Network {
     public synchronized void closeAll() {
         subscriptions.forEach(Subscription::cancel);
         subscriptions.clear();
-        for (AutoCloseable socket : sockets) {
+        for (AutoCloseable socket : List.copyOf(sockets)) {
             try {
                 socket.close();
             } catch (Exception e) {

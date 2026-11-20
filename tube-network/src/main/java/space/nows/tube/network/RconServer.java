@@ -7,6 +7,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.util.concurrent.ScheduledFuture;
@@ -34,10 +36,13 @@ public final class RconServer implements AutoCloseable {
     private static final int LOGIN_TIMEOUT_SECONDS = 30;
 
     private final Channel channel;
+    private final ChannelGroup clients;
     private final LoginGuard guard = new LoginGuard(System::currentTimeMillis);
 
     public RconServer(NettyNetwork network, InetSocketAddress address, String password, Function<String, CompletableFuture<String>> executor) {
         byte[] expected = password.getBytes(StandardCharsets.UTF_8);
+        ChannelGroup clients = new DefaultChannelGroup(network.group().next(), true);
+        this.clients = clients;
         this.channel = Binding.await(new ServerBootstrap()
                 .group(network.group())
                 .channel(network.transport().serverChannel())
@@ -49,6 +54,7 @@ public final class RconServer implements AutoCloseable {
                             child.close();
                             return;
                         }
+                        clients.add(child);
                         child.pipeline()
                                 .addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, MAX_FRAME, 0, 4, 0, 4, true))
                                 .addLast(new Session(expected, executor, guard));
@@ -64,6 +70,7 @@ public final class RconServer implements AutoCloseable {
     @Override
     public void close() {
         channel.close().syncUninterruptibly();
+        clients.close().awaitUninterruptibly();
     }
 
     private static final class Session extends SimpleChannelInboundHandler<ByteBuf> {

@@ -39,6 +39,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
     private static final int PAUSE_READING_BYTES = 1 << 20;
     private static final int RESUME_READING_BYTES = 256 << 10;
     private static final int MAX_QUEUED_DATAGRAMS = 1024;
+    private static final int MESSAGE_COST = 256;
 
     private final Transport transport;
     private final EventLoopGroup group;
@@ -62,7 +63,7 @@ public final class NettyNetwork implements Network, AutoCloseable {
 
     @Override
     public TcpServer listenTcp(InetSocketAddress address, TcpHandler handler) {
-        ChannelGroup connections = new DefaultChannelGroup(group.next());
+        ChannelGroup connections = new DefaultChannelGroup(group.next(), true);
         Channel channel = Binding.await(new ServerBootstrap()
                 .group(group)
                 .channel(transport.serverChannel())
@@ -159,7 +160,11 @@ public final class NettyNetwork implements Network, AutoCloseable {
 
         @Override
         public void send(InetSocketAddress target, byte[] data) {
-            channel.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(data), target));
+            channel.writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(data), target)).addListener(done -> {
+                if (!done.isSuccess()) {
+                    LOGGER.debug("Could not send a datagram to {}", target, done.cause());
+                }
+            });
         }
 
         @Override
@@ -199,15 +204,16 @@ public final class NettyNetwork implements Network, AutoCloseable {
             } finally {
                 buffer.release();
             }
-            if (pending.addAndGet(data.length) > PAUSE_READING_BYTES) {
+            long cost = data.length + MESSAGE_COST;
+            if (pending.addAndGet(cost) > PAUSE_READING_BYTES) {
                 channel.config().setAutoRead(false);
             }
             queue.execute(() -> {
                 try {
                     guard(() -> handler.received(this, data));
                 } finally {
-                    long left = pending.addAndGet(-data.length);
-                    if (left < RESUME_READING_BYTES && left + data.length >= RESUME_READING_BYTES && !channel.eventLoop().isShuttingDown()) {
+                    long left = pending.addAndGet(-cost);
+                    if (left < RESUME_READING_BYTES && left + cost >= RESUME_READING_BYTES && !channel.eventLoop().isShuttingDown()) {
                         channel.eventLoop().execute(this::resumeReading);
                     }
                 }

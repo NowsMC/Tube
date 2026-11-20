@@ -60,4 +60,20 @@ class LoginGuardTest {
         guard.failed(InetAddress.getByAddress(new byte[] {10, 1, 0, 0}));
         assertEquals(1, guard.tracked());
     }
+
+    @Test
+    void ipv6AddressesInOneNetworkShareTheirLock() throws Exception {
+        LoginGuard guard = new LoginGuard(() -> 0);
+        InetAddress first = InetAddress.getByName("2001:db8:1:2::1");
+        InetAddress sameNetwork = InetAddress.getByName("2001:db8:1:2:ffff::9");
+        InetAddress otherNetwork = InetAddress.getByName("2001:db8:1:3::1");
+
+        guard.failed(first);
+        guard.failed(sameNetwork);
+        guard.failed(InetAddress.getByName("2001:db8:1:2:abcd::1"));
+
+        assertTrue(guard.locked(first));
+        assertTrue(guard.locked(sameNetwork));
+        assertFalse(guard.locked(otherNetwork));
+    }
 }
