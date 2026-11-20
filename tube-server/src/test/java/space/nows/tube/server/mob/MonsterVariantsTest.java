@@ -8,6 +8,7 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.item.ItemStack;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.world.Difficulty;
 import net.minestom.testing.Env;
@@ -78,6 +79,7 @@ class MonsterVariantsTest {
         setup(env);
         MinecraftServer.setDifficulty(Difficulty.HARD);
         Creature husk = spawn(EntityType.HUSK, new Pos(2, 40, 0));
+        husk.setItemInMainHand(ItemStack.AIR);
         for (int i = 0; i < 300 && !affected(PotionEffect.HUNGER); i++) {
             env.tick();
         }
